@@ -1,6 +1,12 @@
 import React from 'react'
 import { ThemeProvider, CSSReset } from '@chakra-ui/core'
+import { Router, Route, Switch } from 'react-router-dom'
 // internal
+import history from './utils/history'
+import Profile from './components/general/profile'
+import PrivateRoute from './components/general/private-route'
+import { useAuth0 } from './react-auth0-spa'
+import Navbar from './components/general/navbar'
 import { UserContext } from './context/user-context'
 import { AppContent } from './sections/app/app-content'
 import { SignUp } from './sections/signUp/sign-up'
@@ -9,56 +15,67 @@ import { initSocket } from './api/socket'
 import './App.css'
 
 const APP_STATUS = Object.freeze({
-  AUTHORIZED: 'authorized',
-  UNAUTHORIZED: 'unauthorized',
   LOADING: 'loading',
   SOCKET_CONNECTION_ERROR: 'socket_connection_error',
 })
 
-function renderApp(status) {
-  switch (status) {
-    case APP_STATUS.AUTHORIZED:
-      return (
-        <UserContext.Provider value={{ name: 'oskar' }}>
-          <AppContent />
-        </UserContext.Provider>
-      )
-    case APP_STATUS.UNAUTHORIZED:
-      return <SignUp />
-    case APP_STATUS.LOADING:
-      return <Loader />
-    case APP_STATUS.SOCKET_CONNECTION_ERROR:
-      return <Error text="Please refresh couldn't establish a connection" />
-    default:
-      break
-  }
-}
-
-function App() {
+function MainApp() {
   const [status, setStatus] = React.useState('loading')
+  const { isAuthenticated } = useAuth0()
 
   React.useEffect(() => {
     async function getLoginAndInitSocket() {
       // 1. await login
       // 2. await socket
-      await initSocket({
-        token: '123',
-        group_id: '456',
-      })
-        .then(data => {
-          setStatus(APP_STATUS.AUTHORIZED)
-        })
-        .catch(err => {
-          setStatus(APP_STATUS.SOCKET_CONNECTION_ERROR)
-        })
+      try {
+        await initSocket({ token: '123', group_id: '456' })
+      } catch (e) {
+        console.error(e)
+        setStatus(APP_STATUS.SOCKET_CONNECTION_ERROR)
+        return
+      }
+      setStatus('')
     }
-    getLoginAndInitSocket()
-  }, [])
+    if (isAuthenticated) getLoginAndInitSocket()
+    else setStatus('')
+  }, [isAuthenticated])
+
+  if (status === APP_STATUS.LOADING) return <Loader />
+
+  return (
+    <>
+      {isAuthenticated && (
+        <UserContext.Provider value={{ name: 'oskar' }}>
+          <AppContent />
+        </UserContext.Provider>
+      )}
+      {!isAuthenticated && <SignUp />}
+      {status === APP_STATUS.SOCKET_CONNECTION_ERROR && (
+        <Error text="Please refresh couldn't establish a connection" />
+      )}
+    </>
+  )
+}
+
+function App() {
+  const { auth_loading } = useAuth0()
+
+  if (auth_loading) return <Loader />
 
   return (
     <ThemeProvider>
       <CSSReset />
-      <main className="App">{renderApp(status)}</main>
+      <main className="App">
+        <Router history={history}>
+          <header>
+            <Navbar />
+          </header>
+          <Switch>
+            <Route path="/" exact component={MainApp} />
+            <PrivateRoute path="/profile" component={Profile} />
+          </Switch>
+        </Router>
+      </main>
     </ThemeProvider>
   )
 }

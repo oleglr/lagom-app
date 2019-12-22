@@ -10,6 +10,7 @@ export const initSocket = ({ token, group_id }) => {
     })
     socket.on('connect', () => {
       socket.emit('join group', { group_id }, res => {
+        console.log('res: ', res)
         if (res.err) {
           reject(res.error)
         }
