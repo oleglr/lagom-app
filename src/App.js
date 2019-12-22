@@ -1,26 +1,57 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import { ThemeProvider, CSSReset } from '@chakra-ui/core'
+import { initSocket } from './api/socket'
+import './App.css'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const APP_STATUS = Object.freeze({
+  AUTHORIZED: 'authorized',
+  UNAUTHORIZED: 'unauthorized',
+  LOADING: 'loading',
+  SOCKET_CONNECTION_ERROR: 'socket_connection_error',
+})
+
+function renderApp(status) {
+  switch (status) {
+    case APP_STATUS.AUTHORIZED:
+      return <div>Here we go</div>
+    case APP_STATUS.UNAUTHORIZED:
+      return <div>Login</div>
+    case APP_STATUS.LOADING:
+      return <div>Loading..</div>
+    case APP_STATUS.SOCKET_CONNECTION_ERROR:
+      return <div>Please refresh couldn't establish a connection</div>
+    default:
+      break
+  }
 }
 
-export default App;
+function App() {
+  const [status, setStatus] = React.useState('loading')
+
+  React.useEffect(() => {
+    async function getLoginAndInitSocket() {
+      // 1. await login
+      // 2. await socket
+      await initSocket({
+        token: '123',
+        group_id: '456',
+      })
+        .then(data => {
+          setStatus(APP_STATUS.AUTHORIZED)
+        })
+        .catch(err => {
+          setStatus(APP_STATUS.SOCKET_CONNECTION_ERROR)
+        })
+    }
+    getLoginAndInitSocket()
+  }, [])
+
+  return (
+    <ThemeProvider>
+      <CSSReset />
+      <main className="App">{renderApp(status)}</main>
+    </ThemeProvider>
+  )
+}
+
+export default App
