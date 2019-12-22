@@ -1,5 +1,10 @@
 import React from 'react'
 import { ThemeProvider, CSSReset } from '@chakra-ui/core'
+// internal
+import { UserContext } from './context/user-context'
+import { AppContent } from './sections/app/app-content'
+import { SignUp } from './sections/signUp/sign-up'
+import { Loader, Error } from './components/elements'
 import { initSocket } from './api/socket'
 import './App.css'
 
@@ -13,13 +18,17 @@ const APP_STATUS = Object.freeze({
 function renderApp(status) {
   switch (status) {
     case APP_STATUS.AUTHORIZED:
-      return <div>Here we go</div>
+      return (
+        <UserContext.Provider value={{ name: 'oskar' }}>
+          <AppContent />
+        </UserContext.Provider>
+      )
     case APP_STATUS.UNAUTHORIZED:
-      return <div>Login</div>
+      return <SignUp />
     case APP_STATUS.LOADING:
-      return <div>Loading..</div>
+      return <Loader />
     case APP_STATUS.SOCKET_CONNECTION_ERROR:
-      return <div>Please refresh couldn't establish a connection</div>
+      return <Error text="Please refresh couldn't establish a connection" />
     default:
       break
   }
