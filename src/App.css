@@ -1,6 +1,21 @@
 :root {
   --primary: #ff0083;
   --white: #fff;
+  --carafe: #4e1a3d;
+  --grey: #718096;
+  --moon-blue: #8569ff;
+  --champagne: #ebe0d0;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+body,
+#root,
+main,
+html {
+  height: 100%;
 }
 
 .btn-primary {

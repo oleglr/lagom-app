@@ -7,14 +7,19 @@ import { useAuth0 } from '../../react-auth0-spa'
 const AppHeader = styled.nav`
   display: flex;
   width: 100%;
+  background-color: ${props => (props.nav_color ? props.nav_color : '')};
 `
 
 const NavBar = () => {
   const { isAuthenticated, logout } = useAuth0()
+  let show_header = true
+  if (window.location.pathname === '/sign-up') {
+    show_header = false
+  }
 
   return (
     <>
-      {!isAuthenticated && (
+      {!isAuthenticated && show_header && (
         <AppHeader>
           <div>Logo</div>
         </AppHeader>
