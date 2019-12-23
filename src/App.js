@@ -10,6 +10,7 @@ import Navbar from './components/general/navbar'
 import { UserContext } from './context/user-context'
 import { AppContent } from './sections/app/app-content'
 import { SignUp } from './sections/signUp/sign-up'
+import { SignUpForm } from './sections/signUp/sign-up-form'
 import { Loader, Error } from './components/elements'
 import { initSocket } from './api/socket'
 import './App.css'
@@ -72,6 +73,7 @@ function App() {
           </header>
           <Switch>
             <Route path="/" exact component={MainApp} />
+            <Route path="/sign-up" component={SignUpForm} />
             <PrivateRoute path="/profile" component={Profile} />
           </Switch>
         </Router>

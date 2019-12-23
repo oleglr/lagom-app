@@ -6,20 +6,17 @@ import { useAuth0 } from '../../react-auth0-spa'
 
 const AppHeader = styled.nav`
   display: flex;
-  justify-content: space-around;
   width: 100%;
 `
 
 const NavBar = () => {
-  const { isAuthenticated, loginWithRedirect, logout } = useAuth0()
+  const { isAuthenticated, logout } = useAuth0()
 
   return (
     <>
       {!isAuthenticated && (
         <AppHeader>
-          <Button variantColor="green" onClick={() => loginWithRedirect({})}>
-            Log in
-          </Button>
+          <div>Logo</div>
         </AppHeader>
       )}
 
