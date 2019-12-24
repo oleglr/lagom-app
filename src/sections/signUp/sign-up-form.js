@@ -11,6 +11,7 @@ import { Heading, Button, Text } from '@chakra-ui/core'
 import { Flex } from '../../components/container'
 import { ReactComponent as FacebookIcon } from '../../assets/svgs/facebook.svg'
 import { ReactComponent as GoogleIcon } from '../../assets/svgs/google.svg'
+import { useAuth0 } from '../../react-auth0-spa'
 
 const MainSection = styled.section`
   height: 100%;
@@ -46,6 +47,8 @@ const SocialWrapper = styled(Flex)`
 `
 
 export const SignUpForm = () => {
+  const { loginWithRedirect } = useAuth0()
+
   return (
     <MainSection>
       <FormWrapper>
@@ -80,11 +83,19 @@ export const SignUpForm = () => {
           Or sign up with
         </Text>
         <SocialWrapper columnSize="600px">
-          <Button variant="outline" id="fb-btn">
+          <Button
+            variant="outline"
+            id="fb-btn"
+            onClick={() => loginWithRedirect({ connection: 'facebook' })}
+          >
             <FacebookIcon style={{ height: '28px', paddingRight: '5px' }} />
             <Text fontWeight="normal">Sign up with Facebook</Text>
           </Button>
-          <Button variant="outline" id="google-btn">
+          <Button
+            variant="outline"
+            id="google-btn"
+            onClick={() => loginWithRedirect({ connection: 'google-oauth2' })}
+          >
             <GoogleIcon style={{ height: '32px' }} />
             <Text fontWeight="normal">Sign up with Google</Text>
           </Button>
