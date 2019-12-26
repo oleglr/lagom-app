@@ -32,3 +32,11 @@ html {
 .bold {
   font-weight: bold;
 }
+
+/* overrides */
+.emoji-mart-scroll {
+  height: 200px !important;
+}
+.emoji-mart-title-label {
+  font-size: 18px !important;
+}

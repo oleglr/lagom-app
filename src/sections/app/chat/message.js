@@ -62,6 +62,7 @@ export const Message = () => {
   return (
     <ChatContainer
       justify="start"
+      height="auto-fit"
       onMouseEnter={() => setShowMessageOption(true)}
       onMouseLeave={() => setShowMessageOption(false)}
     >

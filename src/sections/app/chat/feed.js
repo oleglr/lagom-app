@@ -5,7 +5,7 @@ export const ChatFeed = () => {
   // 1. get historical chat
 
   return (
-    <section>
+    <section style={{ marginTop: 'auto' }}>
       <Message />
       <Message />
       <Message />

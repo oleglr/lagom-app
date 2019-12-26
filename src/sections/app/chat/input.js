@@ -1,18 +1,13 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import {
-  Heading,
-  Button,
-  Text,
-  FormControl,
-  Icon,
-  Input,
-} from '@chakra-ui/core'
+import { Picker } from 'emoji-mart'
+import { FormControl, Icon, Input } from '@chakra-ui/core'
+import 'emoji-mart/css/emoji-mart.css'
 
 const InputContainer = styled.div`
   padding-right: 20px;
-  margin: 20px; 0;
-    position: relative;
+  margin: 10px 20px 30px 20px;
+  position: relative;
 `
 const EmojiWrapper = styled.span`
   position: absolute;
@@ -20,14 +15,16 @@ const EmojiWrapper = styled.span`
   top: 11px;
   font-size: 18px;
   transition: all 0.2s ease-in-out;
-  opacity: 0.8;
 
   &:hover {
     cursor: pointer;
     transform: scale(1.1);
     opacity: 1;
   }
+  transform: ${props => (props.is_active ? 'scale(1.1)' : '')};
+  opacity: ${props => (props.is_active ? '1' : '0.8')};
 `
+
 const IconWrapper = styled.span`
   position: absolute;
   left: 7px;
@@ -48,10 +45,16 @@ const IconWrapper = styled.span`
     }
   }
 `
+const EmojiBoxWrapper = styled.div`
+  position: absolute;
+  top: -359px;
+  right: 20px;
+`
 const emoji_array = ['😈', '😇', '😉', '😎', '😓', '😱', '🤢', '🤪', '🧐', '🙄']
 
 export const ChatInput = () => {
   const [emoji, setEmoji] = React.useState('😀')
+  const [showEmojiBox, setShowEmojiBox] = React.useState(false)
 
   return (
     <FormControl>
@@ -69,17 +72,29 @@ export const ChatInput = () => {
         />
         {/* eslint-disable-next-line jsx-a11y/accessible-emoji */}
         <EmojiWrapper
-          onMouseEnter={() =>
+          onMouseEnter={() => {
+            if (showEmojiBox) return
             setEmoji(
               emoji_array[Math.floor(Math.random() * emoji_array.length)]
             )
-          }
-          onMouseLeave={() => setEmoji('😀')}
+          }}
+          is_active={showEmojiBox}
+          onClick={() => setShowEmojiBox(!showEmojiBox)}
           aria-label="emoji"
           role="img"
         >
           {emoji}
         </EmojiWrapper>
+        {showEmojiBox && (
+          <EmojiBoxWrapper>
+            <Picker
+              darkMode={false}
+              title="Pick your emoji…"
+              emoji="point_up"
+              exclude={['foods', 'objects']}
+            />
+          </EmojiBoxWrapper>
+        )}
       </InputContainer>
     </FormControl>
   )

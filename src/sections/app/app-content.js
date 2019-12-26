@@ -14,6 +14,9 @@ import { ChatInput } from './chat/input'
 
 const MainSection = styled.section`
   text-align: center;
+  height: calc(100% - 40px);
+  display: flex;
+  flex-direction: column;
 `
 
 export const AppContent = () => {
