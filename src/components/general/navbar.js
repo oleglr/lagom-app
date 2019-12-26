@@ -3,10 +3,9 @@ import styled from '@emotion/styled'
 import { Link } from 'react-router-dom'
 import { Button } from '@chakra-ui/core'
 import { useAuth0 } from '../../react-auth0-spa'
+import { Flex } from '../container'
 
-const AppHeader = styled.nav`
-  display: flex;
-  width: 100%;
+const AppHeader = styled(Flex)`
   background-color: ${props => (props.nav_color ? props.nav_color : '')};
 `
 
@@ -26,7 +25,7 @@ const NavBar = () => {
       )}
 
       {isAuthenticated && (
-        <AppHeader>
+        <AppHeader justify="space-between">
           <Link to="/">Home</Link>&nbsp;
           <div>
             <Link to="/profile">Profile</Link>

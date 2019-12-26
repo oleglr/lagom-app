@@ -1,13 +1,27 @@
 import React from 'react'
-import { UserContext } from '../../context/user-context'
 import styled from '@emotion/styled'
+import {
+  Heading,
+  Button,
+  Text,
+  FormControl,
+  FormLabel,
+  Icon,
+  Input,
+} from '@chakra-ui/core'
+import { ChatFeed } from './chat/feed'
+import { ChatInput } from './chat/input'
 
 const MainSection = styled.section`
   text-align: center;
 `
 
 export const AppContent = () => {
-  const { name } = React.useContext(UserContext)
-
-  return <MainSection>Hello {name} welcome to lagom</MainSection>
+  return (
+    <MainSection>
+      <Heading size="lg">Best friends</Heading>
+      <ChatFeed />
+      <ChatInput />
+    </MainSection>
+  )
 }

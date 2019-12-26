@@ -37,11 +37,11 @@ function MainApp() {
       }
       setStatus('')
     }
-    if (isAuthenticated) getLoginAndInitSocket()
-    else setStatus('')
+    // if (isAuthenticated) getLoginAndInitSocket()
+    // else setStatus('')
   }, [isAuthenticated])
 
-  if (status === APP_STATUS.LOADING) return <Loader />
+  // if (status === APP_STATUS.LOADING) return <Loader />
 
   return (
     <>
@@ -59,9 +59,9 @@ function MainApp() {
 }
 
 function App() {
-  const { auth_loading } = useAuth0()
+  const { loading } = useAuth0()
 
-  if (auth_loading) return <Loader />
+  if (loading) return <Loader />
 
   return (
     <ThemeProvider>

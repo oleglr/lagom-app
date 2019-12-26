@@ -1,8 +1,10 @@
 :root {
   --primary: #ff0083;
+  --rose-red: #aa1945;
   --white: #fff;
   --carafe: #4e1a3d;
   --grey: #718096;
+  --grey-hover: #f2f3f5;
   --moon-blue: #8569ff;
   --champagne: #ebe0d0;
 }
@@ -25,4 +27,8 @@ html {
 
 .btn-primary:hover {
   opacity: 0.8;
+}
+
+.bold {
+  font-weight: bold;
 }
