@@ -9,10 +9,11 @@ import {
 } from '@chakra-ui/core'
 import { Heading, Button, Text } from '@chakra-ui/core'
 import { Formik, Form, Field } from 'formik'
-import { Flex } from '../../components/container'
+import { Flex, Lottie } from '../../components/container'
 import { ReactComponent as FacebookIcon } from '../../assets/svgs/facebook.svg'
 import { ReactComponent as GoogleIcon } from '../../assets/svgs/google.svg'
 import { useAuth0 } from '../../react-auth0-spa'
+import celebrateAnimation from '../../assets/lotties/677-trophy.json'
 
 const MainSection = styled.section`
   height: 100%;
@@ -62,6 +63,37 @@ function hasSpecialCharacter(str) {
 
 export const SignUpForm = () => {
   const { loginWithRedirect } = useAuth0()
+  const [status, setStatus] = React.useState('in_progress')
+
+  if (status === 'complete') {
+    return (
+      <MainSection>
+        <Heading size="lg" color="white" textAlign="center">
+          Awesome! Welcome to Lagom
+        </Heading>
+        <Flex mt="8rem" height="0" column>
+          <div>
+            <Lottie
+              animationData={celebrateAnimation}
+              height={200}
+              width={200}
+              loop={false}
+            />
+          </div>
+          <div>
+            <Flex mt="2rem">
+              <Button
+                className="btn-primary"
+                onClick={() => loginWithRedirect({})}
+              >
+                Log in
+              </Button>
+            </Flex>
+          </div>
+        </Flex>
+      </MainSection>
+    )
+  }
 
   return (
     <MainSection>
@@ -89,14 +121,32 @@ export const SignUpForm = () => {
             } else if (!hasNumber(values.password)) {
               errors.password = 'Include number'
             } else if (!hasSpecialCharacter(values.password)) {
-              errors.password = 'include special character'
+              errors.password = 'include special character !@#$%'
             }
             return errors
           }}
           onSubmit={(values, { setSubmitting }) => {
-            console.log('submit: ', values)
             setSubmitting(true)
-            setSubmitting(false)
+            fetch(
+              `https://${process.env.REACT_APP_DOMAIN}/dbconnections/signup`,
+              {
+                method: 'POST',
+                body: JSON.stringify({
+                  client_id: process.env.REACT_APP_CLIENT_ID,
+                  email: values.email,
+                  password: values.password,
+                  connection: 'lagom-test',
+                }),
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              }
+            )
+              .then(data => data.json())
+              .then(res => {
+                setSubmitting(false)
+                setStatus('complete')
+              })
           }}
         >
           {({ isSubmitting }) => (
