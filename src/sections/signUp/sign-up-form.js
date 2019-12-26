@@ -8,10 +8,12 @@ import {
   FormHelperText,
 } from '@chakra-ui/core'
 import { Heading, Button, Text } from '@chakra-ui/core'
-import { Flex } from '../../components/container'
+import { Formik, Form, Field } from 'formik'
+import { Flex, Lottie } from '../../components/container'
 import { ReactComponent as FacebookIcon } from '../../assets/svgs/facebook.svg'
 import { ReactComponent as GoogleIcon } from '../../assets/svgs/google.svg'
 import { useAuth0 } from '../../react-auth0-spa'
+import celebrateAnimation from '../../assets/lotties/677-trophy.json'
 
 const MainSection = styled.section`
   height: 100%;
@@ -46,8 +48,52 @@ const SocialWrapper = styled(Flex)`
   }
 `
 
+function hasLowerCase(str) {
+  return /[a-z]/.test(str)
+}
+function hasUpperCase(str) {
+  return /[A-Z]/.test(str)
+}
+function hasNumber(str) {
+  return /[0-9]/.test(str)
+}
+function hasSpecialCharacter(str) {
+  return /[ !@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(str)
+}
+
 export const SignUpForm = () => {
   const { loginWithRedirect } = useAuth0()
+  const [status, setStatus] = React.useState('in_progress')
+
+  if (status === 'complete') {
+    return (
+      <MainSection>
+        <Heading size="lg" color="white" textAlign="center">
+          Awesome! Welcome to Lagom
+        </Heading>
+        <Flex mt="8rem" height="0" column>
+          <div>
+            <Lottie
+              animationData={celebrateAnimation}
+              height={200}
+              width={200}
+              loop={false}
+            />
+          </div>
+          <div>
+            <Flex mt="2rem">
+              <Button
+                className="btn-primary"
+                onClick={() => loginWithRedirect({})}
+              >
+                Log in
+              </Button>
+            </Flex>
+          </div>
+        </Flex>
+      </MainSection>
+    )
+  }
 
   return (
     <MainSection>
@@ -55,30 +101,107 @@ export const SignUpForm = () => {
         <Heading size="lg" textAlign="center">
           Join Lagom
         </Heading>
-        <FormControl style={{ padding: '0 2rem' }}>
-          <FormLabel mt={8} htmlFor="email">
-            Email address
-          </FormLabel>
-          <Input type="email" id="email" aria-describedby="email-helper-text" />
-          <FormHelperText id="email-helper-text">
-            We'll never share your email.
-          </FormHelperText>
-          <FormLabel mt={4} htmlFor="password">
-            Password
-          </FormLabel>
-          <Input type="password" id="password" />
-          <Flex justify="flex-end">
-            <Button
-              width="100px"
-              mt={8}
-              className="btn-primary"
-              type="submit"
-              id="form-submit-btn"
-            >
-              Sign up
-            </Button>
-          </Flex>
-        </FormControl>
+        <Formik
+          initialValues={{ email: '', password: '' }}
+          validate={values => {
+            const errors = {}
+            if (!values.email) {
+              errors.email = 'Required'
+            } else if (
+              !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+            ) {
+              errors.email = 'Invalid email address'
+            }
+            if (!values.password) {
+              errors.password = 'Required'
+            } else if (!hasLowerCase(values.password)) {
+              errors.password = 'Include lower case character'
+            } else if (!hasUpperCase(values.password)) {
+              errors.password = 'Include upper case character'
+            } else if (!hasNumber(values.password)) {
+              errors.password = 'Include number'
+            } else if (!hasSpecialCharacter(values.password)) {
+              errors.password = 'include special character !@#$%'
+            }
+            return errors
+          }}
+          onSubmit={(values, { setSubmitting }) => {
+            setSubmitting(true)
+            fetch(
+              `https://${process.env.REACT_APP_DOMAIN}/dbconnections/signup`,
+              {
+                method: 'POST',
+                body: JSON.stringify({
+                  client_id: process.env.REACT_APP_CLIENT_ID,
+                  email: values.email,
+                  password: values.password,
+                  connection: 'lagom-test',
+                }),
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              }
+            )
+              .then(data => data.json())
+              .then(res => {
+                setSubmitting(false)
+                setStatus('complete')
+              })
+          }}
+        >
+          {({ isSubmitting }) => (
+            <Form>
+              <Field
+                name="email"
+                render={({ field, form }) => (
+                  <FormControl
+                    isInvalid={form.errors.email && form.touched.email}
+                  >
+                    <FormLabel mt={8} htmlFor="email">
+                      Email address
+                    </FormLabel>
+                    <Input
+                      {...field}
+                      type="email"
+                      id="email"
+                      aria-describedby="email-helper-text"
+                    />
+                    <FormHelperText id="email-helper-text">
+                      We'll never share your email.
+                    </FormHelperText>
+                    <FormErrorMessage>{form.errors.email}</FormErrorMessage>
+                  </FormControl>
+                )}
+              />
+              <Field
+                name="password"
+                render={({ field, form }) => (
+                  <FormControl
+                    isInvalid={form.errors.password && form.touched.password}
+                  >
+                    <FormLabel mt={4} htmlFor="password">
+                      Password
+                    </FormLabel>
+                    <Input {...field} type="password" id="password" />
+                    <FormErrorMessage>{form.errors.password}</FormErrorMessage>
+                  </FormControl>
+                )}
+              />
+              <Flex justify="flex-end">
+                <Button
+                  width="100px"
+                  mt={8}
+                  className="btn-primary"
+                  type="submit"
+                  id="form-submit-btn"
+                  disabled={isSubmitting}
+                >
+                  Sign up
+                </Button>
+              </Flex>
+            </Form>
+          )}
+        </Formik>
         <Text mt={4} mb={4} textAlign="center" color="var(--grey)">
           Or sign up with
         </Text>
