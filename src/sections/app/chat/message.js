@@ -1,8 +1,11 @@
 import React from 'react'
 import styled from '@emotion/styled'
 import { Heading, Button, Text, Icon } from '@chakra-ui/core'
+import { Picker } from 'emoji-mart'
 import { Flex, Lottie } from '../../../components/container'
 import { useAuth0 } from '../../../react-auth0-spa'
+import { HoverMenu } from './hover-menu'
+import { EmojiPicker } from './emoji-picker'
 
 const ChatContainer = styled(Flex)`
   margin-bottom: 7px;
@@ -10,9 +13,12 @@ const ChatContainer = styled(Flex)`
   position: relative;
   padding: 5px 15px 5px 5px;
   transition: 0.1s;
+  background-color: ${props =>
+    props.show_emoji_box ? 'var(--grey-hover)' : ''};
 
   &:hover {
-    background-color: var(--grey-hover);
+    background-color: ${props =>
+      !props.has_box_open ? 'var(--grey-hover)' : ''};
   }
 `
 
@@ -23,46 +29,29 @@ const Name = styled.span`
   }
 `
 
-const Menu = styled(Flex)`
-  border: 1px solid #dedbdb;
-  width: fit-content;
-  background-color: #fff;
-  height: fit-content;
+const EmojiBoxWrapper = styled.div`
   position: absolute;
-  right: 50px;
-  top: -11px;
-  border-radius: 5px;
-
-  svg {
-    padding: 8px;
-    border-radius: 5px;
-
-    &:hover {
-      cursor: pointer;
-      background-color: var(--grey-hover);
-    }
-  }
+  top: -359px;
+  right: 20px;
+  z-index: 10;
 `
 
-const HoverMenu = () => {
-  return (
-    <Menu>
-      <Icon name="add" size="30px" />
-      <Icon name="repeat" size="30px" />
-      <Icon name="chat" size="30px" />
-    </Menu>
-  )
-}
-
-export const Message = () => {
+export const Message = ({ setHasBoxOpen, has_box_open }) => {
   const { user } = useAuth0()
   const [showMessageOption, setShowMessageOption] = React.useState(false)
+  const [show_emoji_box, setShowEmojiBox] = React.useState(false)
 
-  console.log('user: ', user)
+  const setShowEmojiPicker = show => {
+    setHasBoxOpen(show)
+    setShowEmojiBox(show)
+  }
+
   return (
     <ChatContainer
       justify="start"
       height="auto-fit"
+      has_box_open={has_box_open}
+      show_emoji_box={show_emoji_box}
       onMouseEnter={() => setShowMessageOption(true)}
       onMouseLeave={() => setShowMessageOption(false)}
     >
@@ -80,7 +69,17 @@ export const Message = () => {
         </Text>
         <Text textAlign="left">Hey man</Text>
       </Flex>
-      {showMessageOption && <HoverMenu />}
+      {showMessageOption && !has_box_open && (
+        <HoverMenu
+          show_emoji_box={show_emoji_box}
+          setShowEmojiBox={setShowEmojiPicker}
+        />
+      )}
+      {show_emoji_box && (
+        <EmojiBoxWrapper>
+          <EmojiPicker closePicker={() => setShowEmojiPicker(false)} />
+        </EmojiBoxWrapper>
+      )}
     </ChatContainer>
   )
 }

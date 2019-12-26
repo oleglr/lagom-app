@@ -1,8 +1,7 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { Picker } from 'emoji-mart'
 import { FormControl, Icon, Input } from '@chakra-ui/core'
-import 'emoji-mart/css/emoji-mart.css'
+import { EmojiPicker } from './emoji-picker'
 
 const InputContainer = styled.div`
   padding-right: 20px;
@@ -52,9 +51,14 @@ const EmojiBoxWrapper = styled.div`
 `
 const emoji_array = ['😈', '😇', '😉', '😎', '😓', '😱', '🤢', '🤪', '🧐', '🙄']
 
-export const ChatInput = () => {
+export const ChatInput = ({ has_box_open, setHasBoxOpen }) => {
   const [emoji, setEmoji] = React.useState('😀')
   const [showEmojiBox, setShowEmojiBox] = React.useState(false)
+
+  const setShowEmojiPicker = show => {
+    setShowEmojiBox(show)
+    setHasBoxOpen(show)
+  }
 
   return (
     <FormControl>
@@ -73,13 +77,16 @@ export const ChatInput = () => {
         {/* eslint-disable-next-line jsx-a11y/accessible-emoji */}
         <EmojiWrapper
           onMouseEnter={() => {
-            if (showEmojiBox) return
+            if (showEmojiBox || has_box_open) return
             setEmoji(
               emoji_array[Math.floor(Math.random() * emoji_array.length)]
             )
           }}
           is_active={showEmojiBox}
-          onClick={() => setShowEmojiBox(!showEmojiBox)}
+          onClick={() => {
+            if (has_box_open) return
+            setShowEmojiPicker(!showEmojiBox)
+          }}
           aria-label="emoji"
           role="img"
         >
@@ -87,12 +94,7 @@ export const ChatInput = () => {
         </EmojiWrapper>
         {showEmojiBox && (
           <EmojiBoxWrapper>
-            <Picker
-              darkMode={false}
-              title="Pick your emoji…"
-              emoji="point_up"
-              exclude={['foods', 'objects']}
-            />
+            <EmojiPicker closePicker={() => setShowEmojiPicker(false)} />
           </EmojiBoxWrapper>
         )}
       </InputContainer>
