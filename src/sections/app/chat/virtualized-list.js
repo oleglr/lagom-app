@@ -30,9 +30,11 @@ export const VirtualizedList = ({ RenderComponent, items }) => {
         columnIndex={0}
         rowIndex={index}
       >
-        <div style={style}>
-          <Message message={items[index]} idx={index} />
-        </div>
+        {({ measure }) => (
+          <div style={style}>
+            <Message message={items[index]} idx={index} measure={measure} />
+          </div>
+        )}
       </CellMeasurer>
     )
   }

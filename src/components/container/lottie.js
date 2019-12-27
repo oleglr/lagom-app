@@ -6,6 +6,7 @@ export const Lottie = ({
   autoplay = true,
   loop = true,
   onAnimationComplete,
+  is_stopped,
   ...props
 }) => {
   const default_options = {
@@ -24,9 +25,9 @@ export const Lottie = ({
       callback: onAnimationComplete,
     })
   }
-
   return (
     <ReactLottie
+      isStopped={is_stopped}
       options={default_options}
       eventListeners={eventListeners}
       isClickToPauseDisabled
