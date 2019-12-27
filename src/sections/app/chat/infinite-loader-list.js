@@ -37,10 +37,10 @@ export const InfiniteLoaderList = ({
       loadMoreItems={loadMore}
     >
       {({ onItemsRendered, ref }) => (
-        <AutoSizer disableHeight>
+        <AutoSizer>
           {({ height, width }) => (
             <List
-              height={height || 400}
+              height={height}
               width={width}
               itemCount={item_count}
               itemSize={item_size || 58}

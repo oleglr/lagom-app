@@ -31,7 +31,7 @@ const RowComponent = ({ data, num, style }) => {
 
 export const ChatFeed = () => {
   return (
-    <section style={{ marginTop: 'auto' }}>
+    <section style={{ marginTop: 'auto', height: '100%' }}>
       <InfiniteLoaderList items={items} RenderComponent={RowComponent} />
     </section>
   )
