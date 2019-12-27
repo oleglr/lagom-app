@@ -51,13 +51,13 @@ const EmojiBoxWrapper = styled.div`
 `
 const emoji_array = ['😈', '😇', '😉', '😎', '😓', '😱', '🤢', '🤪', '🧐', '🙄']
 
-export const ChatInput = ({ has_box_open, setHasBoxOpen }) => {
+export const ChatInput = ({ box_open, setBoxOpen }) => {
   const [emoji, setEmoji] = React.useState('😀')
   const [showEmojiBox, setShowEmojiBox] = React.useState(false)
 
   const setShowEmojiPicker = show => {
     setShowEmojiBox(show)
-    setHasBoxOpen(show)
+    setBoxOpen(show)
   }
 
   return (
@@ -77,14 +77,14 @@ export const ChatInput = ({ has_box_open, setHasBoxOpen }) => {
         {/* eslint-disable-next-line jsx-a11y/accessible-emoji */}
         <EmojiWrapper
           onMouseEnter={() => {
-            if (showEmojiBox || has_box_open) return
+            if (showEmojiBox || box_open) return
             setEmoji(
               emoji_array[Math.floor(Math.random() * emoji_array.length)]
             )
           }}
           is_active={showEmojiBox}
           onClick={() => {
-            if (has_box_open) return
+            if (box_open) return
             setShowEmojiPicker(!showEmojiBox)
           }}
           aria-label="emoji"

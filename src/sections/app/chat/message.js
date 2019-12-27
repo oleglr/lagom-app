@@ -1,11 +1,10 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { Heading, Button, Text, Icon } from '@chakra-ui/core'
-import { Picker } from 'emoji-mart'
-import { Flex, Lottie } from '../../../components/container'
+import { Text } from '@chakra-ui/core'
+import { Flex } from '../../../components/container'
 import { useAuth0 } from '../../../react-auth0-spa'
 import { HoverMenu } from './hover-menu'
-import { EmojiPicker } from './emoji-picker'
+import { ChatContext } from './chat-context'
 
 const ChatContainer = styled(Flex)`
   margin-bottom: 7px;
@@ -14,11 +13,11 @@ const ChatContainer = styled(Flex)`
   padding: 5px 15px 5px 5px;
   transition: 0.1s;
   background-color: ${props =>
-    props.show_emoji_box ? 'var(--grey-hover)' : ''};
+    props.this_menu_is_open ? 'var(--grey-hover)' : ''};
 
   &:hover {
     background-color: ${props =>
-      !props.has_box_open ? 'var(--grey-hover)' : ''};
+      props.a_menu_is_open ? '' : 'var(--grey-hover)'};
   }
 `
 
@@ -29,31 +28,26 @@ const Name = styled.span`
   }
 `
 
-const EmojiBoxWrapper = styled.div`
-  position: absolute;
-  top: -359px;
-  right: 20px;
-  z-index: 10;
-`
-
-export const Message = ({ setHasBoxOpen, has_box_open }) => {
+export const Message = ({ text, idx }) => {
   const { user } = useAuth0()
-  const [showMessageOption, setShowMessageOption] = React.useState(false)
-  const [show_emoji_box, setShowEmojiBox] = React.useState(false)
+  const [show_menu, setShowMenu] = React.useState(false)
+  const { active_message } = React.useContext(ChatContext)
 
-  const setShowEmojiPicker = show => {
-    setHasBoxOpen(show)
-    setShowEmojiBox(show)
+  const a_menu_is_open = typeof active_message === 'number'
+  const this_menu_is_open = a_menu_is_open && active_message === idx
+
+  let should_show_menu = show_menu || this_menu_is_open
+  if (a_menu_is_open && !this_menu_is_open) {
+    should_show_menu = false
   }
 
   return (
     <ChatContainer
       justify="start"
-      height="auto-fit"
-      has_box_open={has_box_open}
-      show_emoji_box={show_emoji_box}
-      onMouseEnter={() => setShowMessageOption(true)}
-      onMouseLeave={() => setShowMessageOption(false)}
+      this_menu_is_open={this_menu_is_open}
+      a_menu_is_open={a_menu_is_open}
+      onMouseEnter={() => setShowMenu(true)}
+      onMouseLeave={() => setShowMenu(false)}
     >
       <img
         src={user.picture}
@@ -67,19 +61,9 @@ export const Message = ({ setHasBoxOpen, has_box_open }) => {
             12:30 PM
           </span>
         </Text>
-        <Text textAlign="left">Hey man</Text>
+        <Text textAlign="left">{text}</Text>
       </Flex>
-      {showMessageOption && !has_box_open && (
-        <HoverMenu
-          show_emoji_box={show_emoji_box}
-          setShowEmojiBox={setShowEmojiPicker}
-        />
-      )}
-      {show_emoji_box && (
-        <EmojiBoxWrapper>
-          <EmojiPicker closePicker={() => setShowEmojiPicker(false)} />
-        </EmojiBoxWrapper>
-      )}
+      {should_show_menu && <HoverMenu message_idx={idx} />}
     </ChatContainer>
   )
 }
