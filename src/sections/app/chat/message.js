@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from '@emotion/styled'
 import { Text } from '@chakra-ui/core'
+import moment from 'moment'
 import { Flex } from '../../../components/container'
 import { useAuth0 } from '../../../react-auth0-spa'
 import { HoverMenu } from './hover-menu'
@@ -28,7 +29,8 @@ const Name = styled.span`
   }
 `
 
-export const Message = ({ text, idx }) => {
+export const Message = ({ message, idx }) => {
+  console.log('message: ', message)
   const { user } = useAuth0()
   const [show_menu, setShowMenu] = React.useState(false)
   const { active_message } = React.useContext(ChatContext)
@@ -58,12 +60,20 @@ export const Message = ({ text, idx }) => {
         <Text>
           <Name className="bold">{user.name}</Name>{' '}
           <span style={{ fontSize: '12px', color: 'var(--grey)' }}>
-            12:30 PM
+            {moment(message.createdAt).format('LT')}
           </span>
         </Text>
-        <Text textAlign="left">{text}</Text>
+        <Text textAlign="left">{message.message}</Text>
+        {!!message.reactions.length && (
+          <Reaction reactions={message.reactions} />
+        )}
       </Flex>
       {should_show_menu && <HoverMenu message_idx={idx} />}
     </ChatContainer>
   )
+}
+
+const Reaction = ({ reactions }) => {
+  return <div>smile</div>
+  // return reactions.map((r, idx) => <div>{r.emoji}</div>)
 }

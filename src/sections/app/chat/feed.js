@@ -1,38 +1,17 @@
 import React from 'react'
-import { Message } from './message'
-import { InfiniteLoaderList } from './infinite-loader-list'
-
-const items = [
-  'Hey',
-  'Yo',
-  'Sup',
-  'Eyyy',
-  'Maan',
-  'you',
-  'me',
-  'him',
-  'all',
-  'this',
-  'is',
-  'hello Oskar',
-  'well hello Jared',
-  'Sup gilfoyle',
-  'son of anton',
-]
-
-const RowComponent = ({ data, num, style }) => {
-  // use has_thread to change height here
-  return (
-    <div style={style}>
-      <Message text={data} idx={num} />
-    </div>
-  )
-}
+import { VirtualizedList } from './virtualized-list'
+import { useFetch } from '../../../components/hooks/fetch-data'
 
 export const ChatFeed = () => {
+  const [data, loading] = useFetch(
+    'http://localhost:3000/chat-history?groupId=5df5c5b8aec1710635f037c4'
+  )
+
+  if (loading) return <div>loading...</div>
+
   return (
     <section style={{ marginTop: 'auto', height: '100%' }}>
-      <InfiniteLoaderList items={items} RenderComponent={RowComponent} />
+      <VirtualizedList items={data.chat} />
     </section>
   )
 }
