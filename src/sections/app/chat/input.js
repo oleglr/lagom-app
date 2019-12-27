@@ -2,6 +2,7 @@ import React from 'react'
 import styled from '@emotion/styled'
 import { FormControl, Icon, Input } from '@chakra-ui/core'
 import { EmojiPicker } from './emoji-picker'
+import { ChatContext } from './chat-context'
 
 const InputContainer = styled.div`
   padding-right: 20px;
@@ -51,13 +52,14 @@ const EmojiBoxWrapper = styled.div`
 `
 const emoji_array = ['😈', '😇', '😉', '😎', '😓', '😱', '🤢', '🤪', '🧐', '🙄']
 
-export const ChatInput = ({ box_open, setBoxOpen }) => {
+export const ChatInput = () => {
   const [emoji, setEmoji] = React.useState('😀')
   const [showEmojiBox, setShowEmojiBox] = React.useState(false)
+  const { setActiveMessage, active_message } = React.useContext(ChatContext)
 
   const setShowEmojiPicker = show => {
     setShowEmojiBox(show)
-    setBoxOpen(show)
+    setActiveMessage(show)
   }
 
   return (
@@ -77,14 +79,14 @@ export const ChatInput = ({ box_open, setBoxOpen }) => {
         {/* eslint-disable-next-line jsx-a11y/accessible-emoji */}
         <EmojiWrapper
           onMouseEnter={() => {
-            if (showEmojiBox || box_open) return
+            if (showEmojiBox || active_message) return
             setEmoji(
               emoji_array[Math.floor(Math.random() * emoji_array.length)]
             )
           }}
           is_active={showEmojiBox}
           onClick={() => {
-            if (box_open) return
+            if (active_message) return
             setShowEmojiPicker(!showEmojiBox)
           }}
           aria-label="emoji"

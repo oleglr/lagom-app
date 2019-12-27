@@ -6,6 +6,7 @@ import { Flex } from '../../../components/container'
 import { useAuth0 } from '../../../react-auth0-spa'
 import { HoverMenu } from './hover-menu'
 import { ChatContext } from './chat-context'
+import { Reaction } from './reaction'
 
 const ChatContainer = styled(Flex)`
   margin-bottom: 7px;
@@ -30,7 +31,6 @@ const Name = styled.span`
 `
 
 export const Message = ({ message, idx }) => {
-  console.log('message: ', message)
   const { user } = useAuth0()
   const [show_menu, setShowMenu] = React.useState(false)
   const { active_message } = React.useContext(ChatContext)
@@ -65,15 +65,10 @@ export const Message = ({ message, idx }) => {
         </Text>
         <Text textAlign="left">{message.message}</Text>
         {!!message.reactions.length && (
-          <Reaction reactions={message.reactions} />
+          <Reaction reactions={message.reactions} message_idx={idx} />
         )}
       </Flex>
       {should_show_menu && <HoverMenu message_idx={idx} />}
     </ChatContainer>
   )
-}
-
-const Reaction = ({ reactions }) => {
-  return <div>smile</div>
-  // return reactions.map((r, idx) => <div>{r.emoji}</div>)
 }
