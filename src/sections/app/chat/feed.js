@@ -51,6 +51,7 @@ const ChatFeedSocket = ({ message_history }) => {
     })
 
     socket().on('added reaction', function(msg) {
+        console.log(Date.now())
         // TODO: handle error
         const found_idx = messages.findIndex(x => x._id === msg._id)
         const new_data = messages

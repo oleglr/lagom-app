@@ -66,6 +66,7 @@ export const HoverMenu = ({ message_idx, message }) => {
                 position={'top'} // preferred position
                 content={
                     <EmojiPicker
+                        showPicker={showPicker}
                         onSelectEmoji={onAddReaction}
                         closePicker={() => togglePicker(false)}
                     />

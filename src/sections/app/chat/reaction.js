@@ -42,7 +42,6 @@ export const Reaction = ({ reactions, message_idx, message_ref }) => {
     const { setActiveMessage } = React.useContext(ChatContext)
 
     const sorted_reactions = sortEmojis(reactions)
-
     const onAddReaction = emoji => {
         console.log('emoji: ', emoji)
         socket().emit(
@@ -71,6 +70,7 @@ export const Reaction = ({ reactions, message_idx, message_ref }) => {
         <ReactionWrapper justify="flex-start" align="center">
             {sorted_reactions.map((r, idx) => (
                 <PopoverBubble
+                    key={r._id}
                     text={
                         <Text>
                             {r.users[0]} <span>reacted with :smile:</span>
@@ -92,6 +92,7 @@ export const Reaction = ({ reactions, message_idx, message_ref }) => {
                     <EmojiPicker
                         onSelectEmoji={onAddReaction}
                         closePicker={() => togglePicker(false)}
+                        showPicker={showPicker}
                     />
                 }
             >

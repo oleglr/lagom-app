@@ -43,7 +43,7 @@ const LinkText = styled(Text)`
         text-decoration: underline;
     }
 `
-export const Message = ({ message, idx, measure }) => {
+export const Message = React.memo(function({ message, idx, measure }) {
     const { user } = useAuth0()
     const [show_menu, setShowMenu] = React.useState(false)
     const { active_message } = React.useContext(ChatContext)
@@ -75,9 +75,9 @@ export const Message = ({ message, idx, measure }) => {
             )}
         </ChatContainer>
     )
-}
+})
 
-const ChatMessage = ({ user, message, idx, measure }) => {
+const ChatMessage = React.memo(function({ user, message, idx, measure }) {
     return (
         <>
             <img
@@ -110,7 +110,7 @@ const ChatMessage = ({ user, message, idx, measure }) => {
             </Flex>
         </>
     )
-}
+})
 
 // const AnimatedWrapper = styled.div`
 //   max-width: 200px;
