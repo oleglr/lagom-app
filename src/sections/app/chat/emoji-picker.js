@@ -4,7 +4,7 @@ import { useOutsideClick } from '../../../components/hooks/outside-click'
 
 import 'emoji-mart/css/emoji-mart.css'
 
-export const EmojiPicker = ({ closePicker }) => {
+export const EmojiPicker = ({ closePicker, onSelectEmoji }) => {
   const ref = React.useRef()
 
   useOutsideClick(ref, () => {
@@ -14,6 +14,8 @@ export const EmojiPicker = ({ closePicker }) => {
   return (
     <div ref={ref}>
       <Picker
+        native
+        onSelect={onSelectEmoji}
         darkMode={false}
         title="Pick your emoji…"
         emoji="point_up"

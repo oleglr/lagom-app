@@ -32,7 +32,7 @@ const ImageStyled = styled.img`
   border-radius: 5px;
   max-height: 250px;
 `
-const StyledText = styled(Text)`
+const LinkText = styled(Text)`
   font-size: 13px;
   color: var(--rose-red);
   font-weight: bold;
@@ -64,7 +64,9 @@ export const Message = ({ message, idx, measure }) => {
       onMouseLeave={() => setShowMenu(false)}
     >
       <ChatMessage user={user} message={message} idx={idx} measure={measure} />
-      {should_show_menu && <HoverMenu message_idx={idx} />}
+      {should_show_menu && (
+        <HoverMenu message_ref={message._id} message_idx={idx} />
+      )}
     </ChatContainer>
   )
 }
@@ -90,10 +92,14 @@ const ChatMessage = ({ user, message, idx, measure }) => {
           measure={measure}
         />
         {!!message.reactions.length && (
-          <Reaction reactions={message.reactions} message_idx={idx} />
+          <Reaction
+            reactions={message.reactions}
+            message_idx={idx}
+            message_ref={message._id}
+          />
         )}
         {!!message.replies.length && (
-          <StyledText>{message.replies.length} replies</StyledText>
+          <LinkText>{message.replies.length} replies</LinkText>
         )}
       </Flex>
     </>

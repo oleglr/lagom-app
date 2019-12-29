@@ -1,19 +1,14 @@
 import React from 'react'
 // import AutoSizer from 'react-virtualized-auto-sizer'
-import {
-  List,
-  AutoSizer,
-  CellMeasurer,
-  CellMeasurerCache,
-} from 'react-virtualized'
+import { List, AutoSizer, CellMeasurer } from 'react-virtualized'
 import { Message } from './message'
 
-const cache = new CellMeasurerCache({
-  fixedWidth: true,
-  defaultHeight: 60,
-})
-
-export const VirtualizedList = ({ RenderComponent, items, scrollTo }) => {
+export const VirtualizedList = ({
+  RenderComponent,
+  items,
+  scrollTo,
+  cache,
+}) => {
   function rowRenderer({
     key, // Unique key within array of rows
     index, // Index of row within collection
@@ -22,6 +17,7 @@ export const VirtualizedList = ({ RenderComponent, items, scrollTo }) => {
     isVisible, // This row is visible within the List (eg it is not an overscanned row)
     style, // Style object to be applied to row (to position it)
   }) {
+    //
     return (
       <CellMeasurer
         key={key}

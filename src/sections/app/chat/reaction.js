@@ -5,8 +5,11 @@ import { Icon, Text } from '@chakra-ui/core'
 import { Flex } from '../../../components/container'
 import { ChatContext } from './chat-context'
 import { EmojiPicker } from './emoji-picker'
+import { getSocket as socket } from '../../../api/socket'
 
 const ReactionWrapper = styled(Flex)`
+  padding-top: 3px;
+
   &:hover {
     cursor: pointer;
   }
@@ -26,20 +29,61 @@ const ReactionPopoverBubble = styled.div`
     font-weight: normal;
   }
 `
-const ReactionPopover = ({ user }) => {
+const ReactionsBox = styled.div`
+  border: 2px solid var(--moon-blue);
+  border-radius: 12px;
+  padding: 0px 5px;
+  margin-right: 5px;
+  display: flex;
+  align-items: center;
+  background-color: #8569ff14;
+  font-weight: bold;
+`
+
+const ReactionPopover = ({ users }) => {
   return (
     <ReactionPopoverBubble>
       <Text>
-        {user} <span>reacted with :smile:</span>
+        {users[0]} <span>reacted with :smile:</span>
       </Text>
     </ReactionPopoverBubble>
   )
 }
-export const Reaction = ({ reactions, message_idx }) => {
+
+function sortEmojis(emoji_arr) {
+  const new_arr = []
+  emoji_arr.forEach(e => {
+    const idx = new_arr.findIndex(new_e => new_e.emoji === e.emoji)
+    if (idx >= 0) new_arr[idx].users.push(e.user)
+    else new_arr.push({ ...e, users: [e.user] })
+  })
+  return new_arr
+}
+
+export const Reaction = ({ reactions, message_idx, message_ref }) => {
   const [showPicker, setShowPicker] = React.useState(false)
   const [showReactionBubble, setShowReactionBubble] = React.useState('')
-
   const { setActiveMessage } = React.useContext(ChatContext)
+
+  const sorted_reactions = sortEmojis(reactions)
+
+  const onAddReaction = emoji => {
+    console.log('emoji: ', emoji)
+    socket().emit(
+      'add reaction',
+      {
+        emoji: emoji.native,
+        ref: message_ref,
+        is_thread: false,
+        // thread_ref,
+        group_id: '5df5c5b8aec1710635f037c4',
+      },
+      e => {
+        console.log('e: ', e)
+      }
+    )
+    togglePicker(false)
+  }
 
   const togglePicker = show => {
     if (show) setActiveMessage(message_idx)
@@ -49,13 +93,13 @@ export const Reaction = ({ reactions, message_idx }) => {
   }
   return (
     <ReactionWrapper justify="flex-start" align="center">
-      {reactions.map((r, idx) => (
+      {sorted_reactions.map((r, idx) => (
         <Popover
           key={idx}
           isOpen={showReactionBubble === idx}
           position={'top'}
           content={({ position, targetRect, popoverRect }) => (
-            <ArrowContainer // if you'd like an arrow, you can import the ArrowContainer!
+            <ArrowContainer
               position={position}
               targetRect={targetRect}
               popoverRect={popoverRect}
@@ -63,23 +107,28 @@ export const Reaction = ({ reactions, message_idx }) => {
               arrowSize={7}
             >
               <div>
-                <ReactionPopover user={r.user} />
+                <ReactionPopover users={r.users} />
               </div>
             </ArrowContainer>
           )}
         >
-          <div
+          <ReactionsBox
             onMouseEnter={() => setShowReactionBubble(idx)}
             onMouseLeave={() => setShowReactionBubble('')}
           >
-            {'😉'}
-          </div>
+            {r.emoji} <span style={{ fontSize: '12px' }}>{r.users.length}</span>
+          </ReactionsBox>
         </Popover>
       ))}
       <Popover
         isOpen={showPicker}
         position={'top'} // preferred position
-        content={<EmojiPicker closePicker={() => togglePicker(false)} />}
+        content={
+          <EmojiPicker
+            onSelectEmoji={onAddReaction}
+            closePicker={() => togglePicker(false)}
+          />
+        }
       >
         <Icon
           onClick={() => togglePicker(!showPicker)}
