@@ -8,7 +8,7 @@ import { EmojiPicker } from './emoji-picker'
 import { getSocket as socket } from '../../../api/socket'
 
 const Menu = styled(Flex)`
-  border: 1px solid #dedbdb;
+  border: 1px solid var(--grey-2);
   width: fit-content;
   background-color: #fff;
   height: fit-content;
@@ -29,16 +29,17 @@ const Menu = styled(Flex)`
   }
 `
 
-export const HoverMenu = ({ message_idx, message_ref }) => {
+export const HoverMenu = ({ message_idx, message }) => {
   const [showPicker, setShowPicker] = React.useState(false)
-  const { setActiveMessage } = React.useContext(ChatContext)
+  const { setActiveMessage, setQuotedMessage } = React.useContext(ChatContext)
 
   const onAddReaction = emoji => {
+    const { _id: ref } = message
     socket().emit(
       'add reaction',
       {
         emoji: emoji.native,
-        ref: message_ref,
+        ref,
         is_thread: false,
         // thread_ref,
         group_id: '5df5c5b8aec1710635f037c4',
@@ -75,7 +76,11 @@ export const HoverMenu = ({ message_idx, message_ref }) => {
           size="30px"
         />
       </Popover>
-      <Icon name="repeat" size="30px" />
+      <Icon
+        onClick={() => setQuotedMessage(message)}
+        name="repeat"
+        size="30px"
+      />
       <Icon name="chat" size="30px" />
     </Menu>
   )

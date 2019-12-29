@@ -1,23 +1,26 @@
 import React from 'react'
 
 export const ChatContext = React.createContext({
-  active_message: 5,
+  active_message: '',
   setActiveMessage: () => {},
+  quoted_message: null,
+  setQuotedMessage: () => {},
 })
 
 export const ChatContextProvider = props => {
-  const setActiveMessage = active_message => {
-    setState({ ...state, active_message })
-  }
-
-  const initState = {
-    active_message: '',
-    setActiveMessage: setActiveMessage,
-  }
-
-  const [state, setState] = React.useState(initState)
+  const [active_message, setActiveMessage] = React.useState('')
+  const [quoted_message, setQuotedMessage] = React.useState('')
 
   return (
-    <ChatContext.Provider value={state}>{props.children}</ChatContext.Provider>
+    <ChatContext.Provider
+      value={{
+        active_message,
+        setActiveMessage,
+        quoted_message,
+        setQuotedMessage,
+      }}
+    >
+      {props.children}
+    </ChatContext.Provider>
   )
 }

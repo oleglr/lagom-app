@@ -7,6 +7,8 @@ import { useAuth0 } from '../../../react-auth0-spa'
 import { HoverMenu } from './hover-menu'
 import { ChatContext } from './chat-context'
 import { Reaction } from './reaction'
+import { Quote } from './quote'
+import { getSocket as socket } from '../../../api/socket'
 
 const ChatContainer = styled(Flex)`
   margin-left: 15px;
@@ -64,9 +66,7 @@ export const Message = ({ message, idx, measure }) => {
       onMouseLeave={() => setShowMenu(false)}
     >
       <ChatMessage user={user} message={message} idx={idx} measure={measure} />
-      {should_show_menu && (
-        <HoverMenu message_ref={message._id} message_idx={idx} />
-      )}
+      {should_show_menu && <HoverMenu message_idx={idx} message={message} />}
     </ChatContainer>
   )
 }
@@ -86,11 +86,7 @@ const ChatMessage = ({ user, message, idx, measure }) => {
             {moment(message.createdAt).format('LT')}
           </span>
         </Text>
-        <Content
-          type={message.action}
-          text={message.message}
-          measure={measure}
-        />
+        <Content message={message} measure={measure} />
         {!!message.reactions.length && (
           <Reaction
             reactions={message.reactions}
@@ -110,17 +106,16 @@ const ChatMessage = ({ user, message, idx, measure }) => {
 //   max-width: 200px;
 //   background-color: ${props => (props.has_color ? 'var(--primary)' : '')};
 // `
-const QuoteStyle = styled.div`
-  text-align: left;
-  font-size: 14px;
-  background: #f3f3f3;
-  border-left: 5px solid var(--carafe);
-  padding: 5px 10px;
-  border-radius: 5px;
-  margin-bottom: 5px;d
-`
-const Content = ({ type, text, measure }) => {
-  switch (type) {
+const Content = ({ message, measure }) => {
+  const {
+    action,
+    message: text,
+    quote_text,
+    quote_user,
+    quote_created,
+  } = message
+
+  switch (action) {
     case 'message':
       return <Text textAlign="left">{text}</Text>
     case 'image':
@@ -133,18 +128,15 @@ const Content = ({ type, text, measure }) => {
         // </AnimatedWrapper>
       )
     case 'quote':
-      // TODO: get quoted text + timestamp
       return (
         <>
-          <QuoteStyle>
-            <Text fontWeight="bold">Sharon</Text>
-            <Text>This is what is replied to</Text>
-            <Text
-              style={{ paddingTop: '5px', fontSize: '12px', opacity: '0.8' }}
-            >
-              24 Dec 12 pm
-            </Text>
-          </QuoteStyle>
+          {quote_text && (
+            <Quote
+              user={quote_user}
+              text={quote_text}
+              time={moment(quote_created).format('lll')}
+            />
+          )}
           <Text textAlign="left">{text}</Text>
         </>
       )

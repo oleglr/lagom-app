@@ -3,6 +3,8 @@ import styled from '@emotion/styled'
 import { FormControl, Icon, Input } from '@chakra-ui/core'
 import { EmojiPicker } from './emoji-picker'
 import { ChatContext } from './chat-context'
+import { Quote } from './quote'
+import { Flex } from '../../../components/container'
 import { getSocket as socket } from '../../../api/socket'
 
 const InputContainer = styled.div`
@@ -53,28 +55,56 @@ const EmojiBoxWrapper = styled.div`
 `
 const emoji_array = ['😈', '😇', '😉', '😎', '😓', '😱', '🤢', '🤪', '🧐', '🙄']
 
+const QuoteContainer = styled(Flex)`
+  margin: 5px 30px 0 20px;
+`
+const QuoteIcon = styled.div`
+  margin-left: 10px;
+
+  &:hover {
+    cursor: pointer;
+  }
+`
+
 export const ChatInput = () => {
   const [emoji, setEmoji] = React.useState('😀')
   const [showEmojiBox, setShowEmojiBox] = React.useState(false)
   const [message, setMessage] = React.useState('')
 
-  const { setActiveMessage, active_message } = React.useContext(ChatContext)
+  const {
+    setActiveMessage,
+    active_message,
+    quoted_message,
+    setQuotedMessage,
+  } = React.useContext(ChatContext)
 
   const onWriteMessage = e => {
     setMessage(e.target.value)
   }
 
+  const addEmojiToText = emoji => {
+    setMessage(message + '' + emoji.native)
+  }
+
   const onSubmit = e => {
     e.preventDefault()
-
     if (!message) return
-    console.log('send: ', message)
+
+    let action = 'message'
+    let ref = null
+
+    const is_quote = !!quoted_message
+    if (is_quote) {
+      action = 'quote'
+      ref = quoted_message._id
+    }
+
     socket().emit(
       'message',
       {
         message,
-        action: 'message',
-        // ref: ,
+        action,
+        ref,
         group_id: '5df5c5b8aec1710635f037c4',
       },
       e => {
@@ -82,6 +112,7 @@ export const ChatInput = () => {
       }
     )
     setMessage('')
+    setQuotedMessage('')
   }
   const setShowEmojiPicker = show => {
     setShowEmojiBox(show)
@@ -90,6 +121,18 @@ export const ChatInput = () => {
 
   return (
     <FormControl>
+      {quoted_message && (
+        <QuoteContainer justify="unset" height="unset" align="center">
+          <Quote
+            w="89%"
+            text={quoted_message.message}
+            user={quoted_message.user}
+          />
+          <QuoteIcon onClick={() => setQuotedMessage('')}>
+            <Icon name="close" size="14px" />
+          </QuoteIcon>
+        </QuoteContainer>
+      )}
       <form onSubmit={onSubmit}>
         <InputContainer>
           <IconWrapper>
@@ -126,7 +169,10 @@ export const ChatInput = () => {
           </EmojiWrapper>
           {showEmojiBox && (
             <EmojiBoxWrapper>
-              <EmojiPicker closePicker={() => setShowEmojiPicker(false)} />
+              <EmojiPicker
+                onSelectEmoji={addEmojiToText}
+                closePicker={() => setShowEmojiPicker(false)}
+              />
             </EmojiBoxWrapper>
           )}
         </InputContainer>

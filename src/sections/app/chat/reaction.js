@@ -25,7 +25,7 @@ const ReactionPopoverBubble = styled.div`
   font-weight: bold;
 
   span {
-    color: #b1b4b9;
+    color: var(--grey-2);
     font-weight: normal;
   }
 `
