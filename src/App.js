@@ -37,11 +37,11 @@ function MainApp() {
       }
       setStatus('')
     }
-    // if (isAuthenticated) getLoginAndInitSocket()
-    // else setStatus('')
+    if (isAuthenticated) getLoginAndInitSocket()
+    else setStatus('')
   }, [isAuthenticated])
 
-  // if (status === APP_STATUS.LOADING) return <Loader />
+  if (status === APP_STATUS.LOADING) return <Loader />
 
   return (
     <>

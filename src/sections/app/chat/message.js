@@ -2,14 +2,11 @@ import React from 'react'
 import styled from '@emotion/styled'
 import { Text } from '@chakra-ui/core'
 import moment from 'moment'
-import { Flex, Lottie } from '../../../components/container'
+import { Flex } from '../../../components/container'
 import { useAuth0 } from '../../../react-auth0-spa'
 import { HoverMenu } from './hover-menu'
 import { ChatContext } from './chat-context'
 import { Reaction } from './reaction'
-
-import cat_slap from '../../../assets/lotties/cat_slap.json'
-import ok_boomer from '../../../assets/lotties/ok_boomer.json'
 
 const ChatContainer = styled(Flex)`
   margin-left: 15px;
@@ -35,7 +32,16 @@ const ImageStyled = styled.img`
   border-radius: 5px;
   max-height: 250px;
 `
+const StyledText = styled(Text)`
+  font-size: 13px;
+  color: var(--rose-red);
+  font-weight: bold;
 
+  &:hover {
+    cursor: pointer;
+    text-decoration: underline;
+  }
+`
 export const Message = ({ message, idx, measure }) => {
   const { user } = useAuth0()
   const [show_menu, setShowMenu] = React.useState(false)
@@ -64,9 +70,6 @@ export const Message = ({ message, idx, measure }) => {
 }
 
 const ChatMessage = ({ user, message, idx, measure }) => {
-  if (message.action === 'quote') {
-    console.log(message)
-  }
   return (
     <>
       <img
@@ -89,20 +92,18 @@ const ChatMessage = ({ user, message, idx, measure }) => {
         {!!message.reactions.length && (
           <Reaction reactions={message.reactions} message_idx={idx} />
         )}
+        {!!message.replies.length && (
+          <StyledText>{message.replies.length} replies</StyledText>
+        )}
       </Flex>
     </>
   )
 }
-const animated = {
-  cat_slap,
-  ok_boomer,
-  santa: cat_slap,
-}
 
-const AnimatedWrapper = styled.div`
-  max-width: 200px;
-  background-color: ${props => (props.has_color ? 'var(--primary)' : '')};
-`
+// const AnimatedWrapper = styled.div`
+//   max-width: 200px;
+//   background-color: ${props => (props.has_color ? 'var(--primary)' : '')};
+// `
 const QuoteStyle = styled.div`
   text-align: left;
   font-size: 14px;
@@ -110,6 +111,7 @@ const QuoteStyle = styled.div`
   border-left: 5px solid var(--carafe);
   padding: 5px 10px;
   border-radius: 5px;
+  margin-bottom: 5px;d
 `
 const Content = ({ type, text, measure }) => {
   switch (type) {
@@ -119,9 +121,10 @@ const Content = ({ type, text, measure }) => {
       return <ImageStyled alt="received" src={text} onLoad={measure} />
     case 'animated':
       return (
-        <AnimatedWrapper has_color={text === 'ok_boomer'}>
-          <Lottie animationData={animated[text]} loop={true} />
-        </AnimatedWrapper>
+        <Text textAlign="left">{text}</Text>
+        // <AnimatedWrapper has_color={text === 'ok_boomer'}>
+        //   <Lottie animationData={animated[text]} loop={true} />
+        // </AnimatedWrapper>
       )
     case 'quote':
       // TODO: get quoted text + timestamp

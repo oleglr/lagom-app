@@ -13,7 +13,7 @@ const cache = new CellMeasurerCache({
   defaultHeight: 60,
 })
 
-export const VirtualizedList = ({ RenderComponent, items }) => {
+export const VirtualizedList = ({ RenderComponent, items, scrollTo }) => {
   function rowRenderer({
     key, // Unique key within array of rows
     index, // Index of row within collection
@@ -49,6 +49,7 @@ export const VirtualizedList = ({ RenderComponent, items }) => {
           deferredMeasurementCache={cache}
           rowHeight={cache.rowHeight}
           rowRenderer={rowRenderer}
+          scrollToIndex={scrollTo || items.length}
         />
       )}
     </AutoSizer>
