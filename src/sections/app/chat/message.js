@@ -116,14 +116,11 @@ const ChatMessage = React.memo(function({ message, idx, measure }) {
     )
 })
 
-// const AnimatedWrapper = styled.div`
-//   max-width: 200px;
-//   background-color: ${props => (props.has_color ? 'var(--primary)' : '')};
-// `
 const Content = ({ message, measure }) => {
     const {
         action,
         message: text,
+        quote_action,
         quote_text,
         quote_user,
         quote_created,
@@ -155,19 +152,13 @@ const Content = ({ message, measure }) => {
                     ))}
                 </Flex>
             )
-
-        case 'animated':
-            return (
-                <Text textAlign="left">{text}</Text>
-                // <AnimatedWrapper has_color={text === 'ok_boomer'}>
-                //   <Lottie animationData={animated[text]} loop={true} />
-                // </AnimatedWrapper>
-            )
         case 'quote':
             return (
                 <>
                     {quote_text && (
                         <Quote
+                            action={quote_action}
+                            measure={measure}
                             user={quote_user}
                             text={quote_text}
                             time={moment(quote_created).format('lll')}

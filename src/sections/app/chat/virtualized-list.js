@@ -2,26 +2,26 @@ import React from 'react'
 // import AutoSizer from 'react-virtualized-auto-sizer'
 import { List, AutoSizer, CellMeasurer } from 'react-virtualized'
 import { Message } from './message'
+// RenderComponent,
+// items,
+// cache,
+// list_ref,
+// scrollTo,
+class VirtualizedList extends React.Component {
+    _did_render = false
 
-export const VirtualizedList = ({
-    RenderComponent,
-    items,
-    scrollTo,
-    cache,
-}) => {
-    function rowRenderer({
+    rowRenderer = ({
         key, // Unique key within array of rows
         index, // Index of row within collection
         parent,
         isScrolling, // The List is currently being scrolled
         isVisible, // This row is visible within the List (eg it is not an overscanned row)
         style, // Style object to be applied to row (to position it)
-    }) {
-        //
+    }) => {
         return (
             <CellMeasurer
                 key={key}
-                cache={cache}
+                cache={this.props.cache}
                 parent={parent}
                 columnIndex={0}
                 rowIndex={index}
@@ -29,7 +29,7 @@ export const VirtualizedList = ({
                 {({ measure }) => (
                     <div style={style}>
                         <Message
-                            message={items[index]}
+                            message={this.props.items[index]}
                             idx={index}
                             measure={measure}
                         />
@@ -39,19 +39,31 @@ export const VirtualizedList = ({
         )
     }
 
-    return (
-        <AutoSizer>
-            {({ height, width }) => (
-                <List
-                    rowCount={items.length}
-                    height={height}
-                    width={width}
-                    deferredMeasurementCache={cache}
-                    rowHeight={cache.rowHeight}
-                    rowRenderer={rowRenderer}
-                    scrollToIndex={scrollTo || items.length}
-                />
-            )}
-        </AutoSizer>
-    )
+    componentDidUpdate() {
+        // Dirty hack to scroll to bottom of list at beginning
+        if (this.props.t === 'now' && !this._did_render) {
+            this.props.list_ref.current.scrollToRow(this.props.items.length)
+            this._did_render = true
+        }
+    }
+
+    render() {
+        return (
+            <AutoSizer>
+                {({ height, width }) => (
+                    <List
+                        rowCount={this.props.items.length}
+                        height={height}
+                        width={width}
+                        deferredMeasurementCache={this.props.cache}
+                        rowHeight={this.props.cache.rowHeight}
+                        rowRenderer={this.rowRenderer}
+                        ref={this.props.list_ref}
+                    />
+                )}
+            </AutoSizer>
+        )
+    }
 }
+
+export { VirtualizedList }

@@ -42,12 +42,17 @@ const ChatFeedSocket = ({ message_history }) => {
     const [messages, setMessage] = React.useState([
         ...message_history.reverse(),
     ])
-    const [last_item_idx, setLastItemIdx] = React.useState(messages.length)
+    // Dirty hack to scroll to bottom of list at beginning
+    const [t, setT] = React.useState()
+    const list_ref = React.useRef()
+
+    React.useEffect(() => {
+        list_ref.current.scrollToRow(messages.length)
+        if (t !== 'now') setT('now')
+    }, [messages, t])
 
     socket().on('message', function(msg) {
-        // TODO: handle error
         setMessage([...messages, msg])
-        setLastItemIdx(messages.length + 2)
     })
 
     socket().on('added reaction', function(msg) {
@@ -65,6 +70,7 @@ const ChatFeedSocket = ({ message_history }) => {
         new_data[found_idx].quote_text = msg.message
         new_data[found_idx].quote_user = msg.user
         new_data[found_idx].quote_created = msg.createdAt
+        new_data[found_idx].quote_action = msg.action
 
         setMessage([...new_data])
         cache.clear(found_idx)
@@ -73,9 +79,10 @@ const ChatFeedSocket = ({ message_history }) => {
     return (
         <section style={{ height: '100%' }}>
             <VirtualizedList
+                t={t}
                 items={messages}
-                scrollTo={last_item_idx}
                 cache={cache}
+                list_ref={list_ref}
             />
         </section>
     )
