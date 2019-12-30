@@ -3,6 +3,7 @@ import styled from '@emotion/styled'
 import { Text } from '@chakra-ui/core'
 import moment from 'moment'
 import { Flex } from '../../../components/container'
+import { ImagePreview } from '../../../components/general/image'
 import { useAuth0 } from '../../../react-auth0-spa'
 import { HoverMenu } from './hover-menu'
 import { ChatContext } from './chat-context'
@@ -132,20 +133,25 @@ const Content = ({ message, measure }) => {
         case 'message':
             return <Text textAlign="left">{text}</Text>
         case 'image':
-            return <ImageStyled alt="received" src={text} onLoad={measure} />
+            return (
+                <ImagePreview img_source={text}>
+                    <ImageStyled alt="received" src={text} onLoad={measure} />
+                </ImagePreview>
+            )
         case 'multiple_image':
             const img_arr = text.split(',')
             return (
                 <Flex justify="unset" wrap="wrap">
-                    {img_arr.map((url, idx) => (
-                        <ImageStyled
-                            key={url}
-                            maxh="100px"
-                            m="10px"
-                            alt="received"
-                            src={url}
-                            onLoad={measure}
-                        />
+                    {img_arr.map(url => (
+                        <ImagePreview img_source={url} key={url}>
+                            <ImageStyled
+                                maxh="100px"
+                                m="10px"
+                                alt="received"
+                                src={url}
+                                onLoad={measure}
+                            />
+                        </ImagePreview>
                     ))}
                 </Flex>
             )
