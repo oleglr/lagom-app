@@ -167,7 +167,7 @@ export const Upload = () => {
                     size={'xl'}
                 >
                     <ModalOverlay />
-                    <ModalContent>
+                    <ModalContent borderRadius="5px">
                         <ModalHeader>Upload a file</ModalHeader>
                         <ModalCloseButton />
                         <ModalBody>

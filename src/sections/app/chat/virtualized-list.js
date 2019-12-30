@@ -48,6 +48,7 @@ class VirtualizedList extends React.Component {
     }
 
     render() {
+        console.log('render: ')
         return (
             <AutoSizer>
                 {({ height, width }) => (

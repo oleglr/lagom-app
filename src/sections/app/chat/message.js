@@ -51,7 +51,7 @@ const LinkText = styled(Text)`
         text-decoration: underline;
     }
 `
-export const Message = React.memo(function({ message, idx, measure }) {
+export const Message = function({ message, idx, measure }) {
     const [show_menu, setShowMenu] = React.useState(false)
     const { active_message } = React.useContext(ChatContext)
 
@@ -77,9 +77,9 @@ export const Message = React.memo(function({ message, idx, measure }) {
             )}
         </ChatContainer>
     )
-})
+}
 
-const ChatMessage = React.memo(function({ message, idx, measure }) {
+const ChatMessage = function({ message, idx, measure }) {
     const { user } = useAuth0()
 
     return (
@@ -114,16 +114,16 @@ const ChatMessage = React.memo(function({ message, idx, measure }) {
             </Flex>
         </>
     )
-})
+}
 
 const Content = ({ message, measure }) => {
     const {
         action,
         message: text,
-        quote_action,
-        quote_text,
-        quote_user,
-        quote_created,
+        t_action: quote_action,
+        t_message: quote_text,
+        t_user: quote_user,
+        t_createdAt: quote_created,
     } = message
 
     switch (action) {
