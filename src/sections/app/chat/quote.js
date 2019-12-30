@@ -13,11 +13,19 @@ const QuoteStyle = styled.div`
     width: ${props => (props.w ? props.w : '')};
 `
 
-export const Quote = ({ user, text, time, w }) => {
+const StyledImage = styled.img`
+    max-height: 100px;
+    max-width: 100px;
+    border-radius: 5px;
+`
+
+export const Quote = ({ user, text, time, action, w }) => {
+    const is_image = action === 'image'
     return (
         <QuoteStyle w={w}>
             <Text fontWeight="bold">{user}</Text>
-            <Text>{text}</Text>
+            {!is_image && <Text>{text}</Text>}
+            {is_image && <StyledImage src={text} alt="reply" />}
             {time && (
                 <Text
                     style={{

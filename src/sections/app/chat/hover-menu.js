@@ -16,12 +16,12 @@ const Menu = styled(Flex)`
     position: absolute;
     right: 50px;
     top: -11px;
-    border-radius: 5px;
+    border-radius: 10px;
     position: relative;
 
     svg {
         padding: 8px;
-        border-radius: 5px;
+        border-radius: 10px;
 
         &:hover {
             cursor: pointer;
@@ -32,7 +32,11 @@ const Menu = styled(Flex)`
 
 export const HoverMenu = ({ message_idx, message }) => {
     const [showPicker, setShowPicker] = React.useState(false)
-    const { setActiveMessage, setQuotedMessage } = React.useContext(ChatContext)
+    const {
+        setActiveMessage,
+        setQuotedMessage,
+        quoted_message,
+    } = React.useContext(ChatContext)
 
     const onAddReaction = emoji => {
         const { _id: ref } = message
@@ -82,8 +86,12 @@ export const HoverMenu = ({ message_idx, message }) => {
             </Popover>
             <PopoverBubble text={<Text>Reply</Text>}>
                 <Icon
-                    onClick={() => setQuotedMessage(message)}
-                    name="repeat"
+                    onClick={() => {
+                        if (quoted_message._id === message._id) {
+                            setQuotedMessage('')
+                        } else setQuotedMessage(message)
+                    }}
+                    name="repeat-clock"
                     size="30px"
                 />
             </PopoverBubble>

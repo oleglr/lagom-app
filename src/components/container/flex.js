@@ -9,6 +9,7 @@ export const Flex = styled.div`
     flex-direction: ${props => (props.column ? 'column' : '')};
     margin-top: ${props => (props.mt ? props.mt : '')};
     padding-left: ${props => (props.pl ? props.pl : '')};
+    flex-wrap: ${props => (props.wrap ? props.wrap : '')};
 
     @media (max-width: ${props => (props.columnSize ? props.columnSize : '')}) {
         flex-direction: column;

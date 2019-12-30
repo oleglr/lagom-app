@@ -43,7 +43,6 @@ export const Reaction = ({ reactions, message_idx, message_ref }) => {
 
     const sorted_reactions = sortEmojis(reactions)
     const onAddReaction = emoji => {
-        console.log('emoji: ', emoji)
         socket().emit(
             'add reaction',
             {

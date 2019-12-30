@@ -9,13 +9,11 @@ function useFetch(url) {
     useEffect(() => {
         async function fetchUrl() {
             const token = await getTokenSilently()
-            console.log('token: ', token)
             const response = await fetch(url, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             })
-            console.log('response: ', response)
             const json = await response.json()
             console.log('json: ', json)
             setData(json)

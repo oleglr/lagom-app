@@ -31,7 +31,14 @@ const Name = styled.span`
 `
 const ImageStyled = styled.img`
     border-radius: 5px;
-    max-height: 250px;
+    max-height: ${props => (props.maxh ? props.maxh : '250px')};
+    margin: ${props => (props.m ? props.m : '')};
+    transition: all 0.2s;
+
+    &:hover {
+        cursor: pointer;
+        filter: brightness(0.5);
+    }
 `
 const LinkText = styled(Text)`
     font-size: 13px;
@@ -44,7 +51,6 @@ const LinkText = styled(Text)`
     }
 `
 export const Message = React.memo(function({ message, idx, measure }) {
-    const { user } = useAuth0()
     const [show_menu, setShowMenu] = React.useState(false)
     const { active_message } = React.useContext(ChatContext)
 
@@ -64,12 +70,7 @@ export const Message = React.memo(function({ message, idx, measure }) {
             onMouseEnter={() => setShowMenu(true)}
             onMouseLeave={() => setShowMenu(false)}
         >
-            <ChatMessage
-                user={user}
-                message={message}
-                idx={idx}
-                measure={measure}
-            />
+            <ChatMessage message={message} idx={idx} measure={measure} />
             {should_show_menu && (
                 <HoverMenu message_idx={idx} message={message} />
             )}
@@ -77,7 +78,9 @@ export const Message = React.memo(function({ message, idx, measure }) {
     )
 })
 
-const ChatMessage = React.memo(function({ user, message, idx, measure }) {
+const ChatMessage = React.memo(function({ message, idx, measure }) {
+    const { user } = useAuth0()
+
     return (
         <>
             <img
@@ -91,7 +94,7 @@ const ChatMessage = React.memo(function({ user, message, idx, measure }) {
             />
             <Flex column align="flex-start" justify="flex-start" pl="5px">
                 <Text>
-                    <Name className="bold">{user.name}</Name>{' '}
+                    <Name className="bold">{message.user}</Name>{' '}
                     <span style={{ fontSize: '12px', color: 'var(--grey)' }}>
                         {moment(message.createdAt).format('LT')}
                     </span>
@@ -130,6 +133,23 @@ const Content = ({ message, measure }) => {
             return <Text textAlign="left">{text}</Text>
         case 'image':
             return <ImageStyled alt="received" src={text} onLoad={measure} />
+        case 'multiple_image':
+            const img_arr = text.split(',')
+            return (
+                <Flex justify="unset" wrap="wrap">
+                    {img_arr.map((url, idx) => (
+                        <ImageStyled
+                            key={url}
+                            maxh="100px"
+                            m="10px"
+                            alt="received"
+                            src={url}
+                            onLoad={measure}
+                        />
+                    ))}
+                </Flex>
+            )
+
         case 'animated':
             return (
                 <Text textAlign="left">{text}</Text>

@@ -4,8 +4,10 @@ import { FormControl, Icon, Input } from '@chakra-ui/core'
 import { EmojiPicker } from './emoji-picker'
 import { ChatContext } from './chat-context'
 import { Quote } from './quote'
+import { Upload } from './upload-file'
 import { Flex } from '../../../components/container'
 import { getSocket as socket } from '../../../api/socket'
+import { useAuth0 } from '../../../react-auth0-spa'
 
 const InputContainer = styled.div`
     padding-right: 20px;
@@ -28,26 +30,6 @@ const EmojiWrapper = styled.span`
     opacity: ${props => (props.is_active ? '1' : '0.8')};
 `
 
-const IconWrapper = styled.span`
-    position: absolute;
-    left: 7px;
-    top: 5px;
-    height: 80%;
-    width: 30px;
-    z-index: 1;
-    padding-top: 5px;
-    border-radius: 5px;
-    transition: 0.2s;
-
-    &:hover {
-        background-color: #aa1945;
-        cursor: pointer;
-
-        svg {
-            color: #fff;
-        }
-    }
-`
 const EmojiBoxWrapper = styled.div`
     position: absolute;
     top: -359px;
@@ -70,6 +52,7 @@ export const ChatInput = () => {
     const [emoji, setEmoji] = React.useState('😀')
     const [showEmojiBox, setShowEmojiBox] = React.useState(false)
     const [message, setMessage] = React.useState('')
+    const { user } = useAuth0()
 
     const {
         setActiveMessage,
@@ -106,6 +89,7 @@ export const ChatInput = () => {
                 action,
                 ref,
                 group_id: '5df5c5b8aec1710635f037c4',
+                user: user.name,
             },
             e => {
                 console.log('e: ', e)
@@ -125,6 +109,7 @@ export const ChatInput = () => {
                 <QuoteContainer justify="unset" height="unset" align="center">
                     <Quote
                         w="89%"
+                        action={quoted_message.action}
                         text={quoted_message.message}
                         user={quoted_message.user}
                     />
@@ -133,11 +118,9 @@ export const ChatInput = () => {
                     </QuoteIcon>
                 </QuoteContainer>
             )}
-            <form onSubmit={onSubmit}>
-                <InputContainer>
-                    <IconWrapper>
-                        <Icon name="attachment" size="14px" />
-                    </IconWrapper>
+            <InputContainer>
+                <Upload />
+                <form onSubmit={onSubmit}>
                     <Input
                         data-lpignore="true"
                         value={message}
@@ -163,6 +146,7 @@ export const ChatInput = () => {
                         }}
                         is_active={showEmojiBox}
                         onClick={() => {
+                            console.log('active_message: ', active_message)
                             if (active_message) return
                             setShowEmojiPicker(!showEmojiBox)
                         }}
@@ -174,13 +158,14 @@ export const ChatInput = () => {
                     {showEmojiBox && (
                         <EmojiBoxWrapper>
                             <EmojiPicker
+                                showPicker={showEmojiBox}
                                 onSelectEmoji={addEmojiToText}
                                 closePicker={() => setShowEmojiPicker(false)}
                             />
                         </EmojiBoxWrapper>
                     )}
-                </InputContainer>
-            </form>
+                </form>
+            </InputContainer>
         </FormControl>
     )
 }
