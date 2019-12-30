@@ -37,8 +37,8 @@ export const Quote = ({ user, text, time, action, w, measure }) => {
                 <StyledImage src={text} alt="reply" onLoad={measure} />
             )}
             {is_multiple_image && (
-                <Flex justify="unset" wrap="wrap">
-                    {img_arr.map(url => (
+                <Flex justify="unset" wrap="wrap" height="unset">
+                    {img_arr.map((url, idx) => (
                         <StyledImage
                             m="10px"
                             alt="reply"
