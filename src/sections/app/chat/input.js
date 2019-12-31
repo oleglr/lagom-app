@@ -125,6 +125,7 @@ export const ChatInput = () => {
                         data-lpignore="true"
                         value={message}
                         onChange={onWriteMessage}
+                        aria-label="Message input"
                         placeholder="Message SJ friends"
                         type="text"
                         borderColor="black"

@@ -81,6 +81,7 @@ export const Message = function({ message, idx, measure }) {
 
 const ChatMessage = function({ message, idx, measure }) {
     const { user } = useAuth0()
+    const reply_length = message.replies.length
 
     return (
         <>
@@ -108,8 +109,10 @@ const ChatMessage = function({ message, idx, measure }) {
                         message_ref={message._id}
                     />
                 )}
-                {!!message.replies.length && (
-                    <LinkText>{message.replies.length} replies</LinkText>
+                {!!reply_length && (
+                    <LinkText>
+                        {reply_length} {reply_length > 1 ? 'replies' : 'reply'}
+                    </LinkText>
                 )}
             </Flex>
         </>
@@ -119,6 +122,7 @@ const ChatMessage = function({ message, idx, measure }) {
 const Content = ({ message, measure }) => {
     const {
         action,
+        image_url,
         message: text,
         t_action: quote_action,
         t_message: quote_text,
@@ -131,26 +135,37 @@ const Content = ({ message, measure }) => {
             return <Text textAlign="left">{text}</Text>
         case 'image':
             return (
-                <ImagePreview img_source={text}>
-                    <ImageStyled alt="received" src={text} onLoad={measure} />
-                </ImagePreview>
+                <>
+                    <Text textAlign="left">{text}</Text>
+                    <ImagePreview img_source={image_url}>
+                        <ImageStyled
+                            m="10px"
+                            alt="received"
+                            src={image_url}
+                            onLoad={measure}
+                        />
+                    </ImagePreview>
+                </>
             )
         case 'multiple_image':
-            const img_arr = text.split(',')
+            const img_arr = image_url.split(',')
             return (
-                <Flex justify="unset" wrap="wrap">
-                    {img_arr.map(url => (
-                        <ImagePreview img_source={url} key={url}>
-                            <ImageStyled
-                                maxh="100px"
-                                m="10px"
-                                alt="received"
-                                src={url}
-                                onLoad={measure}
-                            />
-                        </ImagePreview>
-                    ))}
-                </Flex>
+                <>
+                    <Text textAlign="left">{text}</Text>
+                    <Flex justify="unset" wrap="wrap">
+                        {img_arr.map(url => (
+                            <ImagePreview img_source={url} key={url}>
+                                <ImageStyled
+                                    maxh="100px"
+                                    m="10px"
+                                    alt="received"
+                                    src={url}
+                                    onLoad={measure}
+                                />
+                            </ImagePreview>
+                        ))}
+                    </Flex>
+                </>
             )
         case 'quote':
             return (
@@ -161,6 +176,7 @@ const Content = ({ message, measure }) => {
                             measure={measure}
                             user={quote_user}
                             text={quote_text}
+                            image_url={image_url}
                             time={moment(quote_created).format('lll')}
                         />
                     )}

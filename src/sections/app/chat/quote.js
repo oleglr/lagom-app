@@ -21,20 +21,20 @@ const StyledImage = styled.img`
     margin: ${props => (props.m ? props.m : '')};
 `
 
-export const Quote = ({ user, text, time, action, w, measure }) => {
+export const Quote = ({ user, text, image_url, time, action, w, measure }) => {
     const is_image = action === 'image'
     const is_multiple_image = action === 'multiple_image'
     const is_message = !is_image && !is_multiple_image
     let img_arr
     if (is_multiple_image) {
-        img_arr = text.split(',')
+        img_arr = image_url.split(',')
     }
     return (
         <QuoteStyle w={w}>
             <Text fontWeight="bold">{user}</Text>
             {is_message && <Text>{text}</Text>}
             {is_image && (
-                <StyledImage src={text} alt="reply" onLoad={measure} />
+                <StyledImage src={image_url} alt="reply" onLoad={measure} />
             )}
             {is_multiple_image && (
                 <Flex justify="unset" wrap="wrap" height="unset">

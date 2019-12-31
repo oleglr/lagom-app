@@ -4,7 +4,9 @@ import {
     Alert,
     AlertIcon,
     Button,
+    FormLabel,
     Icon,
+    Input,
     Text,
     Spinner,
     Modal,
@@ -77,9 +79,14 @@ export const Upload = () => {
     const [files, setFiles] = React.useState([])
     const [preview, setPreview] = React.useState([])
     const [status, setStatus] = React.useState('')
+    const [message, setMessage] = React.useState('')
 
     const { getTokenSilently, user } = useAuth0()
     const input_ref = React.useRef()
+
+    const onWriteMessage = e => {
+        setMessage(e.target.value)
+    }
 
     const uploadFileClient = e => {
         const file = e.target.files
@@ -94,6 +101,10 @@ export const Upload = () => {
         const formData = new FormData()
         formData.append('group_id', '5df5c5b8aec1710635f037c4')
         formData.append('user_id', user.name)
+
+        if (message) {
+            formData.append('message', message)
+        }
 
         files.forEach(file => {
             formData.append('chatfile', file)
@@ -148,6 +159,7 @@ export const Upload = () => {
         <>
             <form encType="multipart/form-data">
                 <input
+                    aria-label="hidden file input"
                     name="chatfile"
                     accept="image/*"
                     ref={input_ref}
@@ -199,6 +211,17 @@ export const Upload = () => {
                                         </ImageWrapper>
                                     ))}
                             </Flex>
+                            <div style={{ marginTop: '1rem' }}>
+                                <FormLabel htmlFor="image message">
+                                    Add a comment (optional)
+                                </FormLabel>
+                                <Input
+                                    id="image message"
+                                    type="text"
+                                    value={message}
+                                    onChange={onWriteMessage}
+                                />
+                            </div>
                         </ModalBody>
                         <ModalFooter>
                             {status === 'error' && (
