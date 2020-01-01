@@ -24,7 +24,6 @@ const StyledImage = styled.img`
 export const Quote = ({ user, text, image_url, time, action, w, measure }) => {
     const is_image = action === 'image'
     const is_multiple_image = action === 'multiple_image'
-    const is_message = !is_image && !is_multiple_image
     let img_arr
     if (is_multiple_image) {
         img_arr = image_url.split(',')
@@ -32,7 +31,7 @@ export const Quote = ({ user, text, image_url, time, action, w, measure }) => {
     return (
         <QuoteStyle w={w}>
             <Text fontWeight="bold">{user}</Text>
-            {is_message && <Text>{text}</Text>}
+            {text && <Text>{text}</Text>}
             {is_image && (
                 <StyledImage src={image_url} alt="reply" onLoad={measure} />
             )}

@@ -106,6 +106,7 @@ export const ChatInput = () => {
                         action={quoted_message.action}
                         text={quoted_message.message}
                         user={quoted_message.user}
+                        image_url={quoted_message.image_url}
                     />
                     <QuoteIcon onClick={() => setQuotedMessage('')}>
                         <Icon name="close" size="14px" />
