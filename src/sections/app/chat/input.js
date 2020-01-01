@@ -54,12 +54,7 @@ export const ChatInput = () => {
     const [message, setMessage] = React.useState('')
     const { user } = useAuth0()
 
-    const {
-        setActiveMessage,
-        active_message,
-        quoted_message,
-        setQuotedMessage,
-    } = React.useContext(ChatContext)
+    const { quoted_message, setQuotedMessage } = React.useContext(ChatContext)
 
     const onWriteMessage = e => {
         setMessage(e.target.value)
@@ -100,7 +95,6 @@ export const ChatInput = () => {
     }
     const setShowEmojiPicker = show => {
         setShowEmojiBox(show)
-        setActiveMessage(show)
     }
 
     return (
@@ -136,7 +130,7 @@ export const ChatInput = () => {
                     {/* eslint-disable-next-line jsx-a11y/accessible-emoji */}
                     <EmojiWrapper
                         onMouseEnter={() => {
-                            if (showEmojiBox || active_message) return
+                            if (showEmojiBox) return
                             setEmoji(
                                 emoji_array[
                                     Math.floor(
@@ -147,8 +141,6 @@ export const ChatInput = () => {
                         }}
                         is_active={showEmojiBox}
                         onClick={() => {
-                            console.log('active_message: ', active_message)
-                            if (active_message) return
                             setShowEmojiPicker(!showEmojiBox)
                         }}
                         aria-label="emoji"

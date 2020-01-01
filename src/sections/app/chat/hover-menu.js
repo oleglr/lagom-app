@@ -32,11 +32,7 @@ const Menu = styled(Flex)`
 
 export const HoverMenu = ({ message_idx, message }) => {
     const [showPicker, setShowPicker] = React.useState(false)
-    const {
-        setActiveMessage,
-        setQuotedMessage,
-        quoted_message,
-    } = React.useContext(ChatContext)
+    const { setQuotedMessage, quoted_message } = React.useContext(ChatContext)
 
     const onAddReaction = emoji => {
         const { _id: ref } = message
@@ -57,9 +53,6 @@ export const HoverMenu = ({ message_idx, message }) => {
     }
 
     const togglePicker = show => {
-        if (show) setActiveMessage(message_idx)
-        else setActiveMessage('')
-
         setShowPicker(show)
     }
 

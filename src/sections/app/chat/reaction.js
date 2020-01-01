@@ -37,9 +37,12 @@ function sortEmojis(emoji_arr) {
     return new_arr
 }
 
-export const Reaction = ({ reactions, message_idx, message_ref }) => {
+export const Reaction = React.memo(function({
+    reactions,
+    message_idx,
+    message_ref,
+}) {
     const [showPicker, setShowPicker] = React.useState(false)
-    const { setActiveMessage } = React.useContext(ChatContext)
 
     const sorted_reactions = sortEmojis(reactions)
     const onAddReaction = emoji => {
@@ -60,9 +63,6 @@ export const Reaction = ({ reactions, message_idx, message_ref }) => {
     }
 
     const togglePicker = show => {
-        if (show) setActiveMessage(message_idx)
-        else setActiveMessage('')
-
         setShowPicker(show)
     }
     return (
@@ -105,4 +105,4 @@ export const Reaction = ({ reactions, message_idx, message_ref }) => {
             </Popover>
         </ReactionWrapper>
     )
-}
+})

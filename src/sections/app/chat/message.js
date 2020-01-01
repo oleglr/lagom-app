@@ -6,7 +6,6 @@ import { Flex } from '../../../components/container'
 import { ImagePreview } from '../../../components/general/image'
 import { useAuth0 } from '../../../react-auth0-spa'
 import { HoverMenu } from './hover-menu'
-import { ChatContext } from './chat-context'
 import { Reaction } from './reaction'
 import { Quote } from './quote'
 
@@ -15,12 +14,9 @@ const ChatContainer = styled(Flex)`
     position: relative;
     padding: 5px 15px 5px 5px;
     transition: 0.1s;
-    background-color: ${props =>
-        props.this_menu_is_open ? 'var(--grey-hover)' : ''};
 
     &:hover {
-        background-color: ${props =>
-            props.a_menu_is_open ? '' : 'var(--grey-hover)'};
+        background-color: var(--grey-hover);
     }
 `
 
@@ -51,35 +47,22 @@ const LinkText = styled(Text)`
         text-decoration: underline;
     }
 `
-export const Message = function({ message, idx, measure }) {
+export const Message = React.memo(function({ message, idx, measure }) {
     const [show_menu, setShowMenu] = React.useState(false)
-    const { active_message } = React.useContext(ChatContext)
-
-    const a_menu_is_open = typeof active_message === 'number'
-    const this_menu_is_open = a_menu_is_open && active_message === idx
-
-    let should_show_menu = show_menu || this_menu_is_open
-    if (a_menu_is_open && !this_menu_is_open) {
-        should_show_menu = false
-    }
 
     return (
         <ChatContainer
             justify="start"
-            this_menu_is_open={this_menu_is_open}
-            a_menu_is_open={a_menu_is_open}
             onMouseEnter={() => setShowMenu(true)}
             onMouseLeave={() => setShowMenu(false)}
         >
             <ChatMessage message={message} idx={idx} measure={measure} />
-            {should_show_menu && (
-                <HoverMenu message_idx={idx} message={message} />
-            )}
+            {show_menu && <HoverMenu message_idx={idx} message={message} />}
         </ChatContainer>
     )
-}
+})
 
-const ChatMessage = function({ message, idx, measure }) {
+const ChatMessage = React.memo(function({ message, idx, measure }) {
     const { user } = useAuth0()
     const reply_length = message.replies.length
 
@@ -117,7 +100,7 @@ const ChatMessage = function({ message, idx, measure }) {
             </Flex>
         </>
     )
-}
+})
 
 const Content = ({ message, measure }) => {
     const {

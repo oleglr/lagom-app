@@ -1,12 +1,7 @@
 import React from 'react'
-// import AutoSizer from 'react-virtualized-auto-sizer'
 import { List, AutoSizer, CellMeasurer } from 'react-virtualized'
 import { Message } from './message'
-// RenderComponent,
-// items,
-// cache,
-// list_ref,
-// scrollTo,
+
 class VirtualizedList extends React.Component {
     _did_render = false
 
@@ -48,7 +43,6 @@ class VirtualizedList extends React.Component {
     }
 
     render() {
-        console.log('render: ')
         return (
             <AutoSizer>
                 {({ height, width }) => (
@@ -60,6 +54,7 @@ class VirtualizedList extends React.Component {
                         rowHeight={this.props.cache.rowHeight}
                         rowRenderer={this.rowRenderer}
                         ref={this.props.list_ref}
+                        sortBy={this.props.sortBy}
                     />
                 )}
             </AutoSizer>

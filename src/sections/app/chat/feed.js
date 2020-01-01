@@ -19,40 +19,52 @@ export const ChatFeed = () => {
     return <ChatFeedSocket message_history={data.chat} />
 }
 
-const ChatFeedSocket = ({ message_history }) => {
-    const [messages, setMessage] = React.useState([
-        ...message_history.reverse(),
-    ])
-    // Dirty hack to scroll to bottom of list at beginning
-    const [t, setT] = React.useState()
-    const list_ref = React.useRef()
+class ChatFeedSocket extends React.Component {
+    constructor(props) {
+        super(props)
+        this.list_ref = React.createRef()
+        this.state = {
+            messages: props.message_history.reverse(),
+            socket: socket(),
+            sortBy: 0,
+            t: '',
+        }
+    }
 
-    React.useEffect(() => {
-        list_ref.current.scrollToRow(messages.length)
-        if (t !== 'now') setT('now')
-    }, [messages.length, t])
+    newMessage = msg => {
+        const messages = [...this.state.messages, msg]
+        this.setState({ messages }, () => {
+            this.list_ref.current.scrollToRow(messages.length)
+        })
+    }
 
-    socket().on('message', function(msg) {
-        setMessage([...messages, msg])
-    })
+    newReaction = msg => {
+        const msg_idx = this.state.messages.findIndex(m => m._id === msg._id)
+        cache.clear(msg_idx)
 
-    socket().on('added reaction', function(msg) {
-        // TODO: handle error
-        const found_idx = messages.findIndex(x => x._id === msg._id)
-        const new_data = messages
-        new_data[found_idx] = msg
-        setMessage([...new_data])
-        cache.clear(found_idx)
-    })
+        const new_data = [...this.state.messages]
+        new_data[msg_idx] = msg
 
-    return (
-        <section style={{ height: '100%' }}>
-            <VirtualizedList
-                t={t}
-                items={messages}
-                cache={cache}
-                list_ref={list_ref}
-            />
-        </section>
-    )
+        this.setState({ messages: new_data, sortBy: this.state.sortBy + 1 })
+    }
+
+    componentDidMount() {
+        this.state.socket.on('message', this.newMessage)
+        this.state.socket.on('added reaction', this.newReaction)
+        this.setState({ t: 'now' })
+    }
+
+    render() {
+        return (
+            <section style={{ height: '100%' }}>
+                <VirtualizedList
+                    t={this.state.t}
+                    sortBy={this.state.sortBy}
+                    items={this.state.messages}
+                    cache={cache}
+                    list_ref={this.list_ref}
+                />
+            </section>
+        )
+    }
 }
