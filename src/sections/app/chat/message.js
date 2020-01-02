@@ -5,6 +5,7 @@ import moment from 'moment'
 import { Flex } from '../../../components/container'
 import { ImagePreview } from '../../../components/general/image'
 import { useAuth0 } from '../../../react-auth0-spa'
+import { ChatContext } from './chat-context'
 import { HoverMenu } from './hover-menu'
 import { Reaction } from './reaction'
 import { Quote } from './quote'
@@ -14,6 +15,7 @@ const ChatContainer = styled(Flex)`
     position: relative;
     padding: 5px 15px 5px 5px;
     transition: 0.1s;
+    height: unset;
 
     &:hover {
         background-color: var(--grey-hover);
@@ -47,7 +49,12 @@ const LinkText = styled(Text)`
         text-decoration: underline;
     }
 `
-export const Message = React.memo(function({ message, idx, measure }) {
+export const Message = React.memo(function({
+    message,
+    idx,
+    measure,
+    is_thread,
+}) {
     const [show_menu, setShowMenu] = React.useState(false)
 
     return (
@@ -56,15 +63,32 @@ export const Message = React.memo(function({ message, idx, measure }) {
             onMouseEnter={() => setShowMenu(true)}
             onMouseLeave={() => setShowMenu(false)}
         >
-            <ChatMessage message={message} idx={idx} measure={measure} />
-            {show_menu && <HoverMenu message_idx={idx} message={message} />}
+            <ChatMessage
+                is_thread={is_thread}
+                message={message}
+                idx={idx}
+                measure={measure}
+            />
+            {show_menu && (
+                <HoverMenu
+                    message_idx={idx}
+                    message={message}
+                    is_thread={is_thread}
+                />
+            )}
         </ChatContainer>
     )
 })
 
-const ChatMessage = React.memo(function({ message, idx, measure }) {
+export const ChatMessage = React.memo(function({
+    message,
+    idx,
+    measure,
+    is_thread,
+}) {
     const { user } = useAuth0()
-    const reply_length = message.replies.length
+    const { setThreadMessage } = React.useContext(ChatContext)
+    const reply_length = message.replies && message.replies.length
 
     return (
         <>
@@ -84,16 +108,21 @@ const ChatMessage = React.memo(function({ message, idx, measure }) {
                         {moment(message.createdAt).format('LT')}
                     </span>
                 </Text>
-                <Content message={message} measure={measure} />
+                <Content
+                    message={message}
+                    measure={measure}
+                    is_thread={is_thread}
+                />
                 {!!message.reactions.length && (
                     <Reaction
+                        is_thread={is_thread}
                         reactions={message.reactions}
                         message_idx={idx}
                         message_ref={message._id}
                     />
                 )}
-                {!!reply_length && (
-                    <LinkText>
+                {!!reply_length && !is_thread && (
+                    <LinkText onClick={() => setThreadMessage(message)}>
                         {reply_length} {reply_length > 1 ? 'replies' : 'reply'}
                     </LinkText>
                 )}
@@ -102,7 +131,7 @@ const ChatMessage = React.memo(function({ message, idx, measure }) {
     )
 })
 
-const Content = ({ message, measure }) => {
+const Content = ({ message, measure, is_thread }) => {
     const {
         action,
         image_url,
@@ -122,6 +151,7 @@ const Content = ({ message, measure }) => {
                     <Text textAlign="left">{text}</Text>
                     <ImagePreview img_source={image_url}>
                         <ImageStyled
+                            maxh={is_thread ? '100px' : '200px'}
                             m="10px"
                             alt="received"
                             src={image_url}
@@ -135,19 +165,21 @@ const Content = ({ message, measure }) => {
             return (
                 <>
                     <Text textAlign="left">{text}</Text>
-                    <Flex justify="unset" wrap="wrap">
-                        {img_arr.map(url => (
-                            <ImagePreview img_source={url} key={url}>
-                                <ImageStyled
-                                    maxh="100px"
-                                    m="10px"
-                                    alt="received"
-                                    src={url}
-                                    onLoad={measure}
-                                />
-                            </ImagePreview>
-                        ))}
-                    </Flex>
+                    {!is_thread && (
+                        <Flex justify="unset" wrap="wrap">
+                            {img_arr.map(url => (
+                                <ImagePreview img_source={url} key={url}>
+                                    <ImageStyled
+                                        maxh="100px"
+                                        m="10px"
+                                        alt="received"
+                                        src={url}
+                                        onLoad={measure}
+                                    />
+                                </ImagePreview>
+                            ))}
+                        </Flex>
+                    )}
                 </>
             )
         case 'quote':

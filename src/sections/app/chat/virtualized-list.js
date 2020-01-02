@@ -27,6 +27,7 @@ class VirtualizedList extends React.Component {
                             message={this.props.items[index]}
                             idx={index}
                             measure={measure}
+                            is_thread={this.props.is_thread}
                         />
                     </div>
                 )}

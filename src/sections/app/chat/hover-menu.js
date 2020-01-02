@@ -6,7 +6,7 @@ import { Icon, Text } from '@chakra-ui/core'
 import { Flex } from '../../../components/container'
 import { ChatContext } from './chat-context'
 import { EmojiPicker } from './emoji-picker'
-import { getSocket as socket } from '../../../api/socket'
+import { addReaction, addThreadReaction } from './socket-methods'
 
 const Menu = styled(Flex)`
     border: 1px solid var(--grey-2);
@@ -30,25 +30,23 @@ const Menu = styled(Flex)`
     }
 `
 
-export const HoverMenu = ({ message_idx, message }) => {
+export const HoverMenu = ({ message_idx, message, is_thread }) => {
     const [showPicker, setShowPicker] = React.useState(false)
-    const { setQuotedMessage, quoted_message } = React.useContext(ChatContext)
+    const {
+        setQuotedMessage,
+        quoted_message,
+        setThreadMessage,
+        thread_message,
+    } = React.useContext(ChatContext)
 
-    const onAddReaction = emoji => {
+    const onAddReaction = ({ native: emoji }) => {
         const { _id: ref } = message
-        socket().emit(
-            'add reaction',
-            {
-                emoji: emoji.native,
-                ref,
-                is_thread: false,
-                // thread_ref,
-                group_id: '5df5c5b8aec1710635f037c4',
-            },
-            e => {
-                console.log('e: ', e)
-            }
-        )
+        if (is_thread) {
+            let thread_ref = thread_message._id
+            addThreadReaction({ emoji, thread_ref, ref })
+        } else {
+            addReaction({ emoji, ref })
+        }
         togglePicker(false)
     }
 
@@ -77,20 +75,29 @@ export const HoverMenu = ({ message_idx, message }) => {
                     />
                 </PopoverBubble>
             </Popover>
-            <PopoverBubble text={<Text>Reply</Text>}>
-                <Icon
-                    onClick={() => {
-                        if (quoted_message._id === message._id) {
-                            setQuotedMessage('')
-                        } else setQuotedMessage(message)
-                    }}
-                    name="repeat-clock"
-                    size="30px"
-                />
-            </PopoverBubble>
-            <PopoverBubble text={<Text>Start a thread</Text>}>
-                <Icon name="chat" size="30px" />
-            </PopoverBubble>
+            {!is_thread && (
+                <>
+                    {' '}
+                    <PopoverBubble text={<Text>Reply</Text>}>
+                        <Icon
+                            onClick={() => {
+                                if (quoted_message._id === message._id) {
+                                    setQuotedMessage('')
+                                } else setQuotedMessage(message)
+                            }}
+                            name="repeat-clock"
+                            size="30px"
+                        />
+                    </PopoverBubble>
+                    <PopoverBubble text={<Text>Start a thread</Text>}>
+                        <Icon
+                            onClick={() => setThreadMessage(message)}
+                            name="chat"
+                            size="30px"
+                        />
+                    </PopoverBubble>{' '}
+                </>
+            )}
         </Menu>
     )
 }

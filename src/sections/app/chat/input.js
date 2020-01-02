@@ -6,8 +6,6 @@ import { ChatContext } from './chat-context'
 import { Quote } from './quote'
 import { Upload } from './upload-file'
 import { Flex } from '../../../components/container'
-import { getSocket as socket } from '../../../api/socket'
-import { useAuth0 } from '../../../react-auth0-spa'
 
 const InputContainer = styled.div`
     padding-right: 20px;
@@ -48,11 +46,10 @@ const QuoteIcon = styled.div`
     }
 `
 
-export const ChatInput = () => {
+export const ChatInput = ({ onSend }) => {
     const [emoji, setEmoji] = React.useState('😀')
     const [showEmojiBox, setShowEmojiBox] = React.useState(false)
     const [message, setMessage] = React.useState('')
-    const { user } = useAuth0()
 
     const { quoted_message, setQuotedMessage } = React.useContext(ChatContext)
 
@@ -76,22 +73,8 @@ export const ChatInput = () => {
             action = 'quote'
             ref = quoted_message._id
         }
-
-        socket().emit(
-            'message',
-            {
-                message,
-                action,
-                ref,
-                group_id: '5df5c5b8aec1710635f037c4',
-                user: user.name,
-            },
-            e => {
-                console.log('e: ', e)
-            }
-        )
+        onSend({ message, action, ref })
         setMessage('')
-        setQuotedMessage('')
     }
     const setShowEmojiPicker = show => {
         setShowEmojiBox(show)

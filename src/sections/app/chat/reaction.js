@@ -3,14 +3,14 @@ import styled from '@emotion/styled'
 import Popover from 'react-tiny-popover'
 import { Icon, Text } from '@chakra-ui/core'
 import { Flex } from '../../../components/container'
-import { ChatContext } from './chat-context'
 import { EmojiPicker } from './emoji-picker'
-import { getSocket as socket } from '../../../api/socket'
 import { PopoverBubble } from '../../../components/general/popover-bubble'
+import { ChatContext } from './chat-context'
+import { addReaction, addThreadReaction } from './socket-methods'
 
 const ReactionWrapper = styled(Flex)`
     padding-top: 3px;
-
+    max-width: ${props => (props.is_thread ? '200px' : '')}
     &:hover {
         cursor: pointer;
     }
@@ -25,6 +25,10 @@ const ReactionsBox = styled.div`
     align-items: center;
     background-color: #8569ff14;
     font-weight: bold;
+
+    &:hover {
+        cursor: pointer;
+    }
 `
 
 function sortEmojis(emoji_arr) {
@@ -41,24 +45,20 @@ export const Reaction = React.memo(function({
     reactions,
     message_idx,
     message_ref,
+    is_thread,
 }) {
     const [showPicker, setShowPicker] = React.useState(false)
+    const { thread_message } = React.useContext(ChatContext)
 
     const sorted_reactions = sortEmojis(reactions)
-    const onAddReaction = emoji => {
-        socket().emit(
-            'add reaction',
-            {
-                emoji: emoji.native,
-                ref: message_ref,
-                is_thread: false,
-                // thread_ref,
-                group_id: '5df5c5b8aec1710635f037c4',
-            },
-            e => {
-                console.log('e: ', e)
-            }
-        )
+
+    const onAddReaction = ({ native: emoji }) => {
+        if (is_thread) {
+            let thread_ref = thread_message._id
+            addThreadReaction({ emoji, thread_ref, ref: message_ref })
+        } else {
+            addReaction({ emoji, ref: message_ref })
+        }
         togglePicker(false)
     }
 
@@ -66,7 +66,11 @@ export const Reaction = React.memo(function({
         setShowPicker(show)
     }
     return (
-        <ReactionWrapper justify="flex-start" align="center">
+        <ReactionWrapper
+            justify="flex-start"
+            align="center"
+            is_thread={is_thread}
+        >
             {sorted_reactions.map((r, idx) => (
                 <PopoverBubble
                     key={r._id}

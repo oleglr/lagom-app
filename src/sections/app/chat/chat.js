@@ -1,8 +1,9 @@
 import React from 'react'
 import { Heading } from '@chakra-ui/core'
 import { ChatFeed } from './feed'
-import { ChatInput } from './input'
+import { SendMessage } from './send-message'
 import { ChatContextProvider } from './chat-context'
+import { ThreadDrawer } from './thread'
 
 export const Chat = () => {
     return (
@@ -10,7 +11,8 @@ export const Chat = () => {
             <Heading size="lg">Best friends</Heading>
             <ChatContextProvider>
                 <ChatFeed />
-                <ChatInput />
+                <SendMessage />
+                <ThreadDrawer />
             </ChatContextProvider>
         </>
     )
