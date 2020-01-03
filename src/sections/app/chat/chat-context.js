@@ -8,8 +8,18 @@ export const ChatContext = React.createContext({
 })
 
 export const ChatContextProvider = props => {
-    const [quoted_message, setQuotedMessage] = React.useState('')
-    const [thread_message, setThreadMessage] = React.useState()
+    const [quoted_message, setQuote] = React.useState('')
+    const [thread_message, setThread] = React.useState()
+
+    const setQuotedMessage = m => {
+        setQuote(m)
+        document.getElementById('main-input').focus()
+    }
+
+    const setThreadMessage = m => {
+        setQuote('')
+        setThread(m)
+    }
 
     return (
         <ChatContext.Provider

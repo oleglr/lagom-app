@@ -35,7 +35,6 @@ export const HoverMenu = ({ message_idx, message, is_thread }) => {
     const {
         setQuotedMessage,
         quoted_message,
-        setThreadMessage,
         thread_message,
     } = React.useContext(ChatContext)
 
@@ -89,13 +88,13 @@ export const HoverMenu = ({ message_idx, message, is_thread }) => {
                             size="30px"
                         />
                     </PopoverBubble>
-                    <PopoverBubble text={<Text>Start a thread</Text>}>
+                    {/* <PopoverBubble text={<Text>Start a thread</Text>}>
                         <Icon
                             onClick={() => setThreadMessage(message)}
                             name="chat"
                             size="30px"
                         />
-                    </PopoverBubble>{' '}
+                    </PopoverBubble>{' '} */}
                 </>
             )}
         </Menu>

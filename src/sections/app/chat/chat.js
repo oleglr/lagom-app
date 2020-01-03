@@ -3,7 +3,8 @@ import { Heading } from '@chakra-ui/core'
 import { ChatFeed } from './feed'
 import { SendMessage } from './send-message'
 import { ChatContextProvider } from './chat-context'
-import { ThreadDrawer } from './thread'
+// TODO: enable thread
+// import { ThreadDrawer } from './thread'
 
 export const Chat = () => {
     return (
@@ -12,7 +13,7 @@ export const Chat = () => {
             <ChatContextProvider>
                 <ChatFeed />
                 <SendMessage />
-                <ThreadDrawer />
+                {/* <ThreadDrawer /> */}
             </ChatContextProvider>
         </>
     )

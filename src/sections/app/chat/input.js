@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { FormControl, Icon, Input, Button } from '@chakra-ui/core'
+import { FormControl, Icon, Input } from '@chakra-ui/core'
 import { EmojiPicker } from './emoji-picker'
 import { ChatContext } from './chat-context'
 import { Quote } from './quote'
@@ -54,6 +54,19 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
 
     const { quoted_message, setQuotedMessage } = React.useContext(ChatContext)
 
+    React.useEffect(() => {
+        const handleUserKeyPress = e => {
+            if (e.keyCode === 27) {
+                setQuotedMessage('')
+            }
+        }
+        window.addEventListener('keydown', handleUserKeyPress)
+
+        return () => {
+            window.removeEventListener('keydown', handleUserKeyPress)
+        }
+    }, [setQuotedMessage])
+
     const onWriteMessage = e => {
         setMessage(e.target.value)
     }
@@ -61,6 +74,7 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
     const addEmojiToText = emoji => {
         setMessage(message + '' + emoji.native)
         setShowEmojiBox(false)
+        document.getElementById('main-input').focus()
     }
 
     const onSubmit = e => {
@@ -120,6 +134,7 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
                             paddingLeft="43px"
                             paddingRight="43px"
                             height="3rem"
+                            id="main-input"
                         />
                         {/* eslint-disable-next-line jsx-a11y/accessible-emoji */}
                         <EmojiWrapper

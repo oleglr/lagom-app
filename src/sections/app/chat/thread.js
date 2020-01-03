@@ -8,7 +8,6 @@ import {
     DrawerContent,
     DrawerCloseButton,
     Text,
-    Button,
 } from '@chakra-ui/core'
 import { ChatContext } from './chat-context'
 import { ChatInput } from './input'
@@ -16,7 +15,6 @@ import { ThreadFeed } from './thread-feed'
 import { getSocket as socket } from '../../../api/socket'
 import { useAuth0 } from '../../../react-auth0-spa'
 import { Content } from './message'
-import { Flex } from '../../../components/container'
 
 export const ThreadDrawer = () => {
     const { thread_message, setThreadMessage } = React.useContext(ChatContext)
