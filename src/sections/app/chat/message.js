@@ -12,16 +12,15 @@ import { Quote } from './quote'
 
 const ChatContainer = styled(Flex)`
     margin-left: 15px;
-    position: relative;
     padding: 5px 15px 5px 5px;
     transition: 0.1s;
     height: unset;
+    min-width: 100%;
 
     &:hover {
         background-color: var(--grey-hover);
     }
 `
-
 const Name = styled.span`
     &:hover {
         cursor: pointer;
@@ -31,6 +30,7 @@ const Name = styled.span`
 const ImageStyled = styled.img`
     border-radius: 5px;
     max-height: ${props => (props.maxh ? props.maxh : '250px')};
+    max-width: ${props => (props.maxh ? props.maxw : '250px')};
     margin: ${props => (props.m ? props.m : '')};
     transition: all 0.2s;
 
@@ -49,6 +49,10 @@ const LinkText = styled(Text)`
         text-decoration: underline;
     }
 `
+const HoverWrapper = styled.span`
+    visibility: ${props => (props.show_menu ? 'visible' : 'hidden')};
+`
+
 export const Message = React.memo(function({
     message,
     idx,
@@ -69,13 +73,13 @@ export const Message = React.memo(function({
                 idx={idx}
                 measure={measure}
             />
-            {show_menu && (
+            <HoverWrapper show_menu={show_menu}>
                 <HoverMenu
                     message_idx={idx}
                     message={message}
                     is_thread={is_thread}
                 />
-            )}
+            </HoverWrapper>
         </ChatContainer>
     )
 })
@@ -131,7 +135,7 @@ export const ChatMessage = React.memo(function({
     )
 })
 
-const Content = ({ message, measure, is_thread }) => {
+export const Content = ({ message, measure, is_thread }) => {
     const {
         action,
         image_url,
@@ -165,21 +169,20 @@ const Content = ({ message, measure, is_thread }) => {
             return (
                 <>
                     <Text textAlign="left">{text}</Text>
-                    {!is_thread && (
-                        <Flex justify="unset" wrap="wrap">
-                            {img_arr.map(url => (
-                                <ImagePreview img_source={url} key={url}>
-                                    <ImageStyled
-                                        maxh="100px"
-                                        m="10px"
-                                        alt="received"
-                                        src={url}
-                                        onLoad={measure}
-                                    />
-                                </ImagePreview>
-                            ))}
-                        </Flex>
-                    )}
+                    <Flex justify="unset" wrap="wrap">
+                        {img_arr.map(url => (
+                            <ImagePreview img_source={url} key={url}>
+                                <ImageStyled
+                                    maxh="100px"
+                                    maxw={is_thread ? '100px' : null}
+                                    m="10px"
+                                    alt="received"
+                                    src={url}
+                                    onLoad={measure}
+                                />
+                            </ImagePreview>
+                        ))}
+                    </Flex>
                 </>
             )
         case 'quote':

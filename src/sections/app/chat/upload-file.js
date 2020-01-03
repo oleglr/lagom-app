@@ -31,6 +31,8 @@ const IconWrapper = styled.span`
     padding-top: 5px;
     border-radius: 5px;
     transition: 0.2s;
+    display: flex;
+    justify-content: center;
 
     &:hover {
         background-color: #aa1945;
@@ -75,7 +77,7 @@ const IconCloseWrapper = styled.div`
     }
 `
 
-export const Upload = () => {
+export const Upload = ({ is_thread, thread_message_id }) => {
     const [files, setFiles] = React.useState([])
     const [preview, setPreview] = React.useState([])
     const [status, setStatus] = React.useState('')
@@ -83,6 +85,7 @@ export const Upload = () => {
 
     const { getTokenSilently, user } = useAuth0()
     const input_ref = React.useRef()
+    const text_input_ref = React.useRef()
 
     const onWriteMessage = e => {
         setMessage(e.target.value)
@@ -105,13 +108,17 @@ export const Upload = () => {
         if (message) {
             formData.append('message', message)
         }
+        if (is_thread) {
+            formData.append('message_id', thread_message_id)
+        }
 
         files.forEach(file => {
             formData.append('chatfile', file)
         })
 
         const token = await getTokenSilently()
-        const endpoint = files.length > 1 ? 'upload-multiple' : 'upload'
+        const type = files.length > 1 ? 'upload-multiple' : 'upload'
+        const endpoint = is_thread ? type + '-thread' : type
 
         fetch(`http://localhost:3000/${endpoint}`, {
             method: 'POST',
@@ -165,7 +172,7 @@ export const Upload = () => {
                     ref={input_ref}
                     type="file"
                     hidden
-                    multiple
+                    multiple={is_thread ? false : true}
                     onChange={uploadFileClient}
                 />
                 <IconWrapper onClick={() => input_ref.current.click()}>
@@ -178,7 +185,7 @@ export const Upload = () => {
                     onClose={() => setFiles('')}
                     size={'xl'}
                 >
-                    <ModalOverlay />
+                    <ModalOverlay zIndex="1400" />
                     <ModalContent borderRadius="5px">
                         <ModalHeader>Upload a file</ModalHeader>
                         <ModalCloseButton />
@@ -211,17 +218,20 @@ export const Upload = () => {
                                         </ImageWrapper>
                                     ))}
                             </Flex>
-                            <div style={{ marginTop: '1rem' }}>
-                                <FormLabel htmlFor="image message">
-                                    Add a comment (optional)
-                                </FormLabel>
-                                <Input
-                                    id="image message"
-                                    type="text"
-                                    value={message}
-                                    onChange={onWriteMessage}
-                                />
-                            </div>
+                            {!is_thread && (
+                                <div style={{ marginTop: '1rem' }}>
+                                    <FormLabel htmlFor="image message">
+                                        Add a comment (optional)
+                                    </FormLabel>
+                                    <Input
+                                        id="image message"
+                                        type="text"
+                                        value={message}
+                                        onChange={onWriteMessage}
+                                        ref={text_input_ref}
+                                    />
+                                </div>
+                            )}
                         </ModalBody>
                         <ModalFooter>
                             {status === 'error' && (

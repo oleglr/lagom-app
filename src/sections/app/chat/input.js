@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { FormControl, Icon, Input } from '@chakra-ui/core'
+import { FormControl, Icon, Input, Button } from '@chakra-ui/core'
 import { EmojiPicker } from './emoji-picker'
 import { ChatContext } from './chat-context'
 import { Quote } from './quote'
@@ -8,13 +8,14 @@ import { Upload } from './upload-file'
 import { Flex } from '../../../components/container'
 
 const InputContainer = styled.div`
-    padding-right: 20px;
-    margin: 10px 20px 30px 20px;
+    padding-right: ${props => (props.is_thread ? '' : '20px')};
+    margin: ${props => (props.is_thread ? '' : '10px 20px 30px 20px')};
     position: relative;
 `
+
 const EmojiWrapper = styled.span`
     position: absolute;
-    right: 27px;
+    right: ${props => (props.is_thread ? '13px' : '27px')};
     top: 11px;
     font-size: 18px;
     transition: all 0.2s ease-in-out;
@@ -46,7 +47,7 @@ const QuoteIcon = styled.div`
     }
 `
 
-export const ChatInput = ({ onSend }) => {
+export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
     const [emoji, setEmoji] = React.useState('😀')
     const [showEmojiBox, setShowEmojiBox] = React.useState(false)
     const [message, setMessage] = React.useState('')
@@ -59,6 +60,7 @@ export const ChatInput = ({ onSend }) => {
 
     const addEmojiToText = emoji => {
         setMessage(message + '' + emoji.native)
+        setShowEmojiBox(false)
     }
 
     const onSubmit = e => {
@@ -81,68 +83,79 @@ export const ChatInput = ({ onSend }) => {
     }
 
     return (
-        <FormControl>
-            {quoted_message && (
-                <QuoteContainer justify="unset" height="unset" align="center">
-                    <Quote
-                        w="89%"
-                        action={quoted_message.action}
-                        text={quoted_message.message}
-                        user={quoted_message.user}
-                        image_url={quoted_message.image_url}
-                    />
-                    <QuoteIcon onClick={() => setQuotedMessage('')}>
-                        <Icon name="close" size="14px" />
-                    </QuoteIcon>
-                </QuoteContainer>
-            )}
-            <InputContainer>
-                <Upload />
-                <form onSubmit={onSubmit}>
-                    <Input
-                        data-lpignore="true"
-                        value={message}
-                        onChange={onWriteMessage}
-                        aria-label="Message input"
-                        placeholder="Message SJ friends"
-                        type="text"
-                        borderColor="black"
-                        paddingLeft="43px"
-                        paddingRight="43px"
-                        height="3rem"
-                    />
-                    {/* eslint-disable-next-line jsx-a11y/accessible-emoji */}
-                    <EmojiWrapper
-                        onMouseEnter={() => {
-                            if (showEmojiBox) return
-                            setEmoji(
-                                emoji_array[
-                                    Math.floor(
-                                        Math.random() * emoji_array.length
-                                    )
-                                ]
-                            )
-                        }}
-                        is_active={showEmojiBox}
-                        onClick={() => {
-                            setShowEmojiPicker(!showEmojiBox)
-                        }}
-                        aria-label="emoji"
-                        role="img"
+        <>
+            <FormControl width="100%" mr="10px">
+                {quoted_message && (
+                    <QuoteContainer
+                        justify="unset"
+                        height="unset"
+                        align="center"
                     >
-                        {emoji}
-                    </EmojiWrapper>
-                    {showEmojiBox && (
-                        <EmojiBoxWrapper>
-                            <EmojiPicker
-                                showPicker={showEmojiBox}
-                                onSelectEmoji={addEmojiToText}
-                                closePicker={() => setShowEmojiPicker(false)}
-                            />
-                        </EmojiBoxWrapper>
-                    )}
-                </form>
-            </InputContainer>
-        </FormControl>
+                        <Quote
+                            w="89%"
+                            action={quoted_message.action}
+                            text={quoted_message.message}
+                            user={quoted_message.user}
+                            image_url={quoted_message.image_url}
+                        />
+                        <QuoteIcon onClick={() => setQuotedMessage('')}>
+                            <Icon name="close" size="14px" />
+                        </QuoteIcon>
+                    </QuoteContainer>
+                )}
+                <InputContainer is_thread={is_thread}>
+                    <Upload
+                        is_thread={is_thread}
+                        thread_message_id={thread_message_id}
+                    />
+                    <form onSubmit={onSubmit}>
+                        <Input
+                            data-lpignore="true"
+                            value={message}
+                            onChange={onWriteMessage}
+                            aria-label="Message input"
+                            placeholder="Message SJ friends"
+                            type="text"
+                            borderColor="black"
+                            paddingLeft="43px"
+                            paddingRight="43px"
+                            height="3rem"
+                        />
+                        {/* eslint-disable-next-line jsx-a11y/accessible-emoji */}
+                        <EmojiWrapper
+                            onMouseEnter={() => {
+                                if (showEmojiBox) return
+                                setEmoji(
+                                    emoji_array[
+                                        Math.floor(
+                                            Math.random() * emoji_array.length
+                                        )
+                                    ]
+                                )
+                            }}
+                            is_active={showEmojiBox}
+                            onClick={() => {
+                                setShowEmojiPicker(!showEmojiBox)
+                            }}
+                            aria-label="emoji"
+                            role="img"
+                        >
+                            {emoji}
+                        </EmojiWrapper>
+                        {showEmojiBox && (
+                            <EmojiBoxWrapper>
+                                <EmojiPicker
+                                    showPicker={showEmojiBox}
+                                    onSelectEmoji={addEmojiToText}
+                                    closePicker={() =>
+                                        setShowEmojiPicker(false)
+                                    }
+                                />
+                            </EmojiBoxWrapper>
+                        )}
+                    </form>
+                </InputContainer>
+            </FormControl>
+        </>
     )
 }

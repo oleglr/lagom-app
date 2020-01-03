@@ -46,6 +46,7 @@ export class ThreadFeed extends React.Component {
 
     render() {
         if (this.state.status === 'loading') return <div>loading...</div>
+
         return <ThreadFeedSocket message_history={this.state.thread_data} />
     }
 }
@@ -54,6 +55,7 @@ class ThreadFeedSocket extends React.Component {
     constructor(props) {
         super(props)
         this.list_ref = React.createRef()
+        console.log(props.message_history)
         this.state = {
             messages: props.message_history.reverse(),
             socket: socket(),
@@ -64,6 +66,9 @@ class ThreadFeedSocket extends React.Component {
 
     newMessage = msg => {
         const messages = [...msg.messages]
+        // TODO: investigate why this is needed
+        cache_thread.clearAll()
+
         this.setState({ messages }, () => {
             this.list_ref.current.scrollToRow(messages.length)
         })

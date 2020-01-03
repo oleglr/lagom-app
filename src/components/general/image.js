@@ -20,7 +20,7 @@ export const ImagePreview = ({ children, img_source }) => {
     return (
         <>
             <Modal onClose={onClose} size="full" isOpen={isOpen} isCentered>
-                <ModalOverlay backgroundColor="rgba(0,0,0,0.9)" />
+                <ModalOverlay backgroundColor="rgba(0,0,0,0.9)" zIndex="1400" />
                 <ModalContent width="fit-content">
                     <ModalCloseButton />
                     <ModalBody

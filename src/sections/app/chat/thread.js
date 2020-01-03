@@ -7,6 +7,7 @@ import {
     DrawerOverlay,
     DrawerContent,
     DrawerCloseButton,
+    Text,
     Button,
 } from '@chakra-ui/core'
 import { ChatContext } from './chat-context'
@@ -14,6 +15,8 @@ import { ChatInput } from './input'
 import { ThreadFeed } from './thread-feed'
 import { getSocket as socket } from '../../../api/socket'
 import { useAuth0 } from '../../../react-auth0-spa'
+import { Content } from './message'
+import { Flex } from '../../../components/container'
 
 export const ThreadDrawer = () => {
     const { thread_message, setThreadMessage } = React.useContext(ChatContext)
@@ -51,8 +54,13 @@ export const ThreadDrawer = () => {
             {thread_message && (
                 <DrawerContent>
                     <DrawerCloseButton />
-                    <DrawerHeader>Thread</DrawerHeader>
-
+                    <DrawerHeader
+                        fontSize="16px"
+                        style={{ borderBottom: '2px solid var(--grey-2)' }}
+                    >
+                        <Text fontSize="14px">{thread_message.user}</Text>
+                        <Content message={thread_message} is_thread={true} />
+                    </DrawerHeader>
                     <DrawerBody>
                         <div
                             style={{
@@ -66,9 +74,9 @@ export const ThreadDrawer = () => {
                     <DrawerFooter>
                         <ChatInput
                             is_thread={true}
+                            thread_message_id={thread_message._id}
                             onSend={sendThreadMessage}
                         />
-                        <Button variantColor="teal">Send</Button>
                     </DrawerFooter>
                 </DrawerContent>
             )}
