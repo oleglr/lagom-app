@@ -11,6 +11,7 @@ import { UserContext } from './context/user-context'
 import { AppContent } from './sections/app/app-content'
 import { SignUp } from './sections/signUp/sign-up'
 import { SignUpForm } from './sections/signUp/sign-up-form'
+import { NewGroup } from './sections/app/new-group/new-group'
 import { Loader, Error } from './components/elements'
 import { initSocket } from './api/socket'
 import './App.css'
@@ -37,8 +38,10 @@ function MainApp() {
             }
             setStatus('')
         }
-        if (isAuthenticated) getLoginAndInitSocket()
-        else setStatus('')
+        if (isAuthenticated) {
+            getLoginAndInitSocket()
+            // getGroupMembers()
+        } else setStatus('')
     }, [isAuthenticated])
 
     if (status === APP_STATUS.LOADING) return <Loader />
@@ -75,6 +78,7 @@ function App() {
                         <Route path="/" exact component={MainApp} />
                         <Route path="/sign-up" component={SignUpForm} />
                         <PrivateRoute path="/profile" component={Profile} />
+                        <PrivateRoute path="/new-group" component={NewGroup} />
                     </Switch>
                 </Router>
             </main>
