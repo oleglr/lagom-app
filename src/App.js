@@ -68,7 +68,7 @@ const MainContent = styled.div`
 `
 
 function App() {
-    const { loading } = useAuth0()
+    const { loading, isAuthenticated } = useAuth0()
 
     if (loading) return <Loader />
 
@@ -78,7 +78,7 @@ function App() {
             <main className="App">
                 <Router history={history}>
                     <MainContent>
-                        <SideMenu />
+                        {isAuthenticated && <SideMenu />}
                         <Switch>
                             <Route path="/" exact component={MainApp} />
                             <Route path="/sign-up" component={SignUpForm} />
