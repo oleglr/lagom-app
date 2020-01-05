@@ -7,16 +7,21 @@ import {
     Text,
     Button,
     Drawer,
-    DrawerBody,
-    DrawerFooter,
-    DrawerHeader,
+    Icon,
     DrawerOverlay,
     DrawerContent,
     DrawerCloseButton,
 } from '@chakra-ui/core'
 import { useHistory } from 'react-router-dom'
+import { useMediaQuery } from 'react-responsive'
+import { useDisclosure } from '@chakra-ui/core'
 
 const Aside = styled.aside`
+    min-width: 275px;
+    height: 100%;
+    background-color: var(--secondary);
+`
+const StyledDrawerContent = styled(DrawerContent)`
     min-width: 275px;
     height: 100%;
     background-color: var(--secondary);
@@ -65,125 +70,166 @@ const GroupNameHeading = styled(Heading)`
     }
 `
 
-export const SideMenu = () => {
+const SideContent = ({ onClose }) => {
     const history = useHistory()
     const path_name = history.location.pathname
-    // if is mobile / tablet --> open and close
-    // else always stay open
+
+    return (
+        <>
+            <GroupNameHeading size="md" onClick={() => history.push('/')}>
+                Best Friends
+            </GroupNameHeading>
+            <Stack justify="center">
+                <Button
+                    marginLeft="16px"
+                    className="btn-primary"
+                    width="150px"
+                    onClick={() => {
+                        if (onClose) onClose()
+                        history.push('/invite')
+                    }}
+                >
+                    Invite Friends
+                </Button>
+            </Stack>
+            <Stack spacing={2} paddingLeft="16px">
+                <SectionHeader>Group</SectionHeader>
+                <ItemWrapper isActive={path_name === '/'}>
+                    <Link to="/">
+                        <Stack isInline align="center">
+                            <Text>
+                                <span aria-label="house" role="img">
+                                    🏡
+                                </span>{' '}
+                                Home
+                            </Text>
+                        </Stack>
+                    </Link>
+                </ItemWrapper>
+                <ItemWrapper
+                    isInline
+                    align="center"
+                    isActive={path_name === '/members'}
+                >
+                    <Link to="/members">
+                        <Stack isInline align="center">
+                            <Text>
+                                <span aria-label="group members" role="img">
+                                    👨‍👨‍👧‍👦
+                                </span>{' '}
+                                Members
+                            </Text>
+                        </Stack>
+                    </Link>
+                </ItemWrapper>
+                <ItemWrapper
+                    isInline
+                    align="center"
+                    isActive={path_name === '/media'}
+                >
+                    <Link to="/media">
+                        <Stack isInline align="center">
+                            <Text>
+                                <span aria-label="floppy disk" role="img">
+                                    💾
+                                </span>{' '}
+                                Media
+                            </Text>
+                        </Stack>
+                    </Link>
+                </ItemWrapper>
+                <ItemWrapper
+                    isInline
+                    align="center"
+                    isActive={path_name === '/expenses'}
+                >
+                    <Link to="/expenses">
+                        <Stack isInline align="center">
+                            <Text>
+                                <span aria-label="money bag" role="img">
+                                    💰
+                                </span>{' '}
+                                Expenses
+                            </Text>
+                        </Stack>
+                    </Link>
+                </ItemWrapper>
+                {/* Travel bucket list, new resolutions, new goals, restaurants to try this month, movies to watch */}
+                <SectionHeader>Personal</SectionHeader>
+                <ItemWrapper
+                    isInline
+                    align="center"
+                    isActive={path_name === '/profile'}
+                >
+                    <Link to="/profile">
+                        <Stack isInline align="center">
+                            <Text>
+                                <span aria-label="balloon" role="img">
+                                    😄
+                                </span>{' '}
+                                Profile
+                            </Text>
+                        </Stack>
+                    </Link>
+                </ItemWrapper>
+                <ItemWrapper
+                    isInline
+                    align="center"
+                    isActive={path_name === '/my-groups'}
+                >
+                    <Link to="my-groups">
+                        <Stack isInline align="center">
+                            <Text>
+                                <span aria-label="balloon" role="img">
+                                    🎈
+                                </span>{' '}
+                                Groups
+                            </Text>
+                        </Stack>
+                    </Link>
+                </ItemWrapper>
+            </Stack>
+        </>
+    )
+}
+export const SideMenu = () => {
+    const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1000px)' })
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    const btnRef = React.useRef()
+
+    if (isTabletOrMobile) {
+        return (
+            <>
+                <Stack backgroundColor="var(--secondary)">
+                    <Button
+                        marginTop="8px"
+                        ref={btnRef}
+                        backgroundColor="transparent"
+                        onClick={onOpen}
+                    >
+                        <Icon name="arrow-right" color="#fff" />
+                    </Button>
+                </Stack>
+                <Drawer
+                    isOpen={isOpen}
+                    placement="left"
+                    onClose={onClose}
+                    finalFocusRef={btnRef}
+                >
+                    <DrawerOverlay />
+                    <StyledDrawerContent>
+                        <DrawerCloseButton color="#fff" />
+                        <SideContent onClose={onClose} />
+                    </StyledDrawerContent>
+                </Drawer>
+            </>
+        )
+    }
 
     return (
         <Aside>
             <Nav>
-                <GroupNameHeading size="md" onClick={() => history.push('/')}>
-                    Best Friends
-                </GroupNameHeading>
-                <Stack justify="center">
-                    <Button
-                        marginLeft="16px"
-                        className="btn-primary"
-                        width="150px"
-                        onClick={() => history.push('/invite')}
-                    >
-                        Invite Friends
-                    </Button>
-                </Stack>
-                <Stack spacing={2} paddingLeft="16px">
-                    <SectionHeader>Group</SectionHeader>
-                    <ItemWrapper isActive={path_name === '/'}>
-                        <Link to="/">
-                            <Stack isInline align="center">
-                                <Text>
-                                    <span aria-label="house" role="img">
-                                        🏡
-                                    </span>{' '}
-                                    Home
-                                </Text>
-                            </Stack>
-                        </Link>
-                    </ItemWrapper>
-                    <ItemWrapper
-                        isInline
-                        align="center"
-                        isActive={path_name === '/members'}
-                    >
-                        <Link to="/members">
-                            <Stack isInline align="center">
-                                <Text>
-                                    <span aria-label="group members" role="img">
-                                        👨‍👨‍👧‍👦
-                                    </span>{' '}
-                                    Members
-                                </Text>
-                            </Stack>
-                        </Link>
-                    </ItemWrapper>
-                    <ItemWrapper
-                        isInline
-                        align="center"
-                        isActive={path_name === '/media'}
-                    >
-                        <Link to="/media">
-                            <Stack isInline align="center">
-                                <Text>
-                                    <span aria-label="floppy disk" role="img">
-                                        💾
-                                    </span>{' '}
-                                    Media
-                                </Text>
-                            </Stack>
-                        </Link>
-                    </ItemWrapper>
-                    <ItemWrapper
-                        isInline
-                        align="center"
-                        isActive={path_name === '/expenses'}
-                    >
-                        <Link to="/expenses">
-                            <Stack isInline align="center">
-                                <Text>
-                                    <span aria-label="money bag" role="img">
-                                        💰
-                                    </span>{' '}
-                                    Expenses
-                                </Text>
-                            </Stack>
-                        </Link>
-                    </ItemWrapper>
-                    {/* Travel bucket list, new resolutions, new goals, restaurants to try this month, movies to watch */}
-                    <SectionHeader>Personal</SectionHeader>
-                    <ItemWrapper
-                        isInline
-                        align="center"
-                        isActive={path_name === '/profile'}
-                    >
-                        <Link to="/profile">
-                            <Stack isInline align="center">
-                                <Text>
-                                    <span aria-label="balloon" role="img">
-                                        😄
-                                    </span>{' '}
-                                    Profile
-                                </Text>
-                            </Stack>
-                        </Link>
-                    </ItemWrapper>
-                    <ItemWrapper
-                        isInline
-                        align="center"
-                        isActive={path_name === '/my-groups'}
-                    >
-                        <Link to="my-groups">
-                            <Stack isInline align="center">
-                                <Text>
-                                    <span aria-label="balloon" role="img">
-                                        🎈
-                                    </span>{' '}
-                                    Groups
-                                </Text>
-                            </Stack>
-                        </Link>
-                    </ItemWrapper>
-                </Stack>
+                <SideContent />
             </Nav>
         </Aside>
     )
