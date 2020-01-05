@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import styled from '@emotion/styled'
 import { Stack, Heading, Text, Button } from '@chakra-ui/core'
 import { ReactComponent as HomeIcon } from '../../assets/svgs/home-icon.svg'
@@ -9,7 +10,7 @@ import { ReactComponent as UserProfileIcon } from '../../assets/svgs/user-profil
 import { ReactComponent as GroupsIcon } from '../../assets/svgs/groups-icon.svg'
 
 const Aside = styled.aside`
-    width: 275px;
+    min-width: 275px;
     height: 100%;
     background-color: #161930;
 `
@@ -69,31 +70,55 @@ export const SideMenu = () => {
                 </Stack>
                 <Stack spacing={2} paddingLeft="16px">
                     <SectionHeader>Group</SectionHeader>
-                    <ItemWrapper isInline align="center">
-                        <HomeIcon />
-                        <Text>Feed</Text>
+                    <ItemWrapper>
+                        <Link to="/">
+                            <Stack isInline align="center">
+                                <HomeIcon />
+                                <Text>Feed</Text>
+                            </Stack>
+                        </Link>
                     </ItemWrapper>
                     <ItemWrapper isInline align="center">
-                        <GroupMembersIcon />
-                        <Text>Members</Text>
+                        <Link to="/members">
+                            <Stack isInline align="center">
+                                <GroupMembersIcon />
+                                <Text>Members</Text>
+                            </Stack>
+                        </Link>
                     </ItemWrapper>
                     <ItemWrapper isInline align="center">
-                        <MediaIcon />
-                        <Text>Media</Text>
+                        <Link to="/media">
+                            <Stack isInline align="center">
+                                <MediaIcon />
+                                <Text>Media</Text>
+                            </Stack>
+                        </Link>
                     </ItemWrapper>
                     <ItemWrapper isInline align="center">
-                        <ExpensesIcon />
-                        <Text>Expenses</Text>
+                        <Link to="/expenses">
+                            <Stack isInline align="center">
+                                <ExpensesIcon />
+                                <Text>Expenses</Text>
+                            </Stack>
+                        </Link>
                     </ItemWrapper>
                     {/* Travel bucket list, new resolutions, new goals, restaurants to try this month, movies to watch */}
                     <SectionHeader>Personal</SectionHeader>
                     <ItemWrapper isInline align="center">
-                        <UserProfileIcon />
-                        <Text>Profile</Text>
+                        <Link to="/profile">
+                            <Stack isInline align="center">
+                                <UserProfileIcon />
+                                <Text>Profile</Text>
+                            </Stack>
+                        </Link>
                     </ItemWrapper>
                     <ItemWrapper isInline align="center">
-                        <GroupsIcon />
-                        <Text>Groups</Text>
+                        <Link to="groups">
+                            <Stack isInline align="center">
+                                <GroupsIcon />
+                                <Text>Groups</Text>
+                            </Stack>
+                        </Link>
                     </ItemWrapper>
                 </Stack>
             </Nav>

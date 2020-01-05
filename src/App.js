@@ -1,4 +1,5 @@
 import React from 'react'
+import styled from '@emotion/styled'
 import { ThemeProvider, CSSReset } from '@chakra-ui/core'
 import { Router, Route, Switch } from 'react-router-dom'
 // internal
@@ -13,6 +14,7 @@ import { SignUpForm } from './sections/signUp/sign-up-form'
 import { NewGroup } from './sections/app/new-group/new-group'
 import { Loader, Error } from './components/elements'
 import { initSocket } from './api/socket'
+import { SideMenu } from './sections/app/side-menu'
 import './App.css'
 
 const APP_STATUS = Object.freeze({
@@ -60,6 +62,11 @@ function MainApp() {
     )
 }
 
+const MainContent = styled.div`
+    height: 100%;
+    display: flex;
+`
+
 function App() {
     const { loading } = useAuth0()
 
@@ -70,12 +77,18 @@ function App() {
             <CSSReset />
             <main className="App">
                 <Router history={history}>
-                    <Switch>
-                        <Route path="/" exact component={MainApp} />
-                        <Route path="/sign-up" component={SignUpForm} />
-                        <PrivateRoute path="/profile" component={Profile} />
-                        <PrivateRoute path="/new-group" component={NewGroup} />
-                    </Switch>
+                    <MainContent>
+                        <SideMenu />
+                        <Switch>
+                            <Route path="/" exact component={MainApp} />
+                            <Route path="/sign-up" component={SignUpForm} />
+                            <PrivateRoute path="/profile" component={Profile} />
+                            <PrivateRoute
+                                path="/new-group"
+                                component={NewGroup}
+                            />
+                        </Switch>
+                    </MainContent>
                 </Router>
             </main>
         </ThemeProvider>
