@@ -19,7 +19,7 @@ const MainSection = styled.section`
     height: 100%;
     width: 100%;
     padding-top: 4rem;
-    background-color: var(--moon-blue);
+    background-color: var(--secondary);
 `
 
 const FormWrapper = styled.div`

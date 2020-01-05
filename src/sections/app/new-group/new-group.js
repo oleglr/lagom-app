@@ -119,6 +119,7 @@ export const NewGroup = () => {
                                             type="text"
                                             id="group-name"
                                             placeholder="E.g. The ones who knock"
+                                            data-lpignore="true"
                                         />
                                         <FormErrorMessage>
                                             {form.errors.group_name}

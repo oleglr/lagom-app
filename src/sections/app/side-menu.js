@@ -1,13 +1,25 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from '@emotion/styled'
-import { Stack, Heading, Text, Button } from '@chakra-ui/core'
+import {
+    Stack,
+    Heading,
+    Text,
+    Button,
+    Drawer,
+    DrawerBody,
+    DrawerFooter,
+    DrawerHeader,
+    DrawerOverlay,
+    DrawerContent,
+    DrawerCloseButton,
+} from '@chakra-ui/core'
 import { useHistory } from 'react-router-dom'
 
 const Aside = styled.aside`
     min-width: 275px;
     height: 100%;
-    background-color: #161930;
+    background-color: var(--secondary);
 `
 const Nav = styled.nav`
     height: 100%;
@@ -16,13 +28,13 @@ const Nav = styled.nav`
 const SectionHeader = styled(Text)`
     text-transform: uppercase;
     font-weight: bold;
-    color: #9ebdfb;
+    color: var(--text-on-secondary);
     font-size: 14px;
     margin-top: 16px;
 `
 const ItemWrapper = styled(Stack)`
-    color: #fff;
     transition: all 0.2s;
+    color: ${props => (props.isActive ? 'var(--primary)' : '#fff')};
 
     svg {
         height: 16px;
@@ -55,6 +67,9 @@ const GroupNameHeading = styled(Heading)`
 
 export const SideMenu = () => {
     const history = useHistory()
+    const path_name = history.location.pathname
+    // if is mobile / tablet --> open and close
+    // else always stay open
 
     return (
         <Aside>
@@ -74,7 +89,7 @@ export const SideMenu = () => {
                 </Stack>
                 <Stack spacing={2} paddingLeft="16px">
                     <SectionHeader>Group</SectionHeader>
-                    <ItemWrapper>
+                    <ItemWrapper isActive={path_name === '/'}>
                         <Link to="/">
                             <Stack isInline align="center">
                                 <Text>
@@ -86,7 +101,11 @@ export const SideMenu = () => {
                             </Stack>
                         </Link>
                     </ItemWrapper>
-                    <ItemWrapper isInline align="center">
+                    <ItemWrapper
+                        isInline
+                        align="center"
+                        isActive={path_name === '/members'}
+                    >
                         <Link to="/members">
                             <Stack isInline align="center">
                                 <Text>
@@ -98,7 +117,11 @@ export const SideMenu = () => {
                             </Stack>
                         </Link>
                     </ItemWrapper>
-                    <ItemWrapper isInline align="center">
+                    <ItemWrapper
+                        isInline
+                        align="center"
+                        isActive={path_name === '/media'}
+                    >
                         <Link to="/media">
                             <Stack isInline align="center">
                                 <Text>
@@ -110,7 +133,11 @@ export const SideMenu = () => {
                             </Stack>
                         </Link>
                     </ItemWrapper>
-                    <ItemWrapper isInline align="center">
+                    <ItemWrapper
+                        isInline
+                        align="center"
+                        isActive={path_name === '/expenses'}
+                    >
                         <Link to="/expenses">
                             <Stack isInline align="center">
                                 <Text>
@@ -124,7 +151,11 @@ export const SideMenu = () => {
                     </ItemWrapper>
                     {/* Travel bucket list, new resolutions, new goals, restaurants to try this month, movies to watch */}
                     <SectionHeader>Personal</SectionHeader>
-                    <ItemWrapper isInline align="center">
+                    <ItemWrapper
+                        isInline
+                        align="center"
+                        isActive={path_name === '/profile'}
+                    >
                         <Link to="/profile">
                             <Stack isInline align="center">
                                 <Text>
@@ -136,7 +167,11 @@ export const SideMenu = () => {
                             </Stack>
                         </Link>
                     </ItemWrapper>
-                    <ItemWrapper isInline align="center">
+                    <ItemWrapper
+                        isInline
+                        align="center"
+                        isActive={path_name === '/my-groups'}
+                    >
                         <Link to="my-groups">
                             <Stack isInline align="center">
                                 <Text>
