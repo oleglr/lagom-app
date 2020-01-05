@@ -6,7 +6,6 @@ import history from './utils/history'
 import Profile from './components/general/profile'
 import PrivateRoute from './components/general/private-route'
 import { useAuth0 } from './react-auth0-spa'
-import Navbar from './components/general/navbar'
 import { UserContext } from './context/user-context'
 import { AppContent } from './sections/app/app-content'
 import { SignUp } from './sections/signUp/sign-up'
@@ -71,9 +70,6 @@ function App() {
             <CSSReset />
             <main className="App">
                 <Router history={history}>
-                    <header>
-                        <Navbar />
-                    </header>
                     <Switch>
                         <Route path="/" exact component={MainApp} />
                         <Route path="/sign-up" component={SignUpForm} />

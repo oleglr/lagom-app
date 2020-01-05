@@ -9,7 +9,7 @@ import { ChatContextProvider } from './chat-context'
 export const Chat = () => {
     return (
         <>
-            <Heading size="lg">Best friends</Heading>
+            {/* <Heading size="lg">Best friends</Heading> */}
             <ChatContextProvider>
                 <ChatFeed />
                 <SendMessage />
