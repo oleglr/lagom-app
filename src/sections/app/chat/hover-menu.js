@@ -7,6 +7,7 @@ import { Flex } from '../../../components/container'
 import { ChatContext } from './chat-context'
 import { EmojiPicker } from './emoji-picker'
 import { addReaction, addThreadReaction } from './socket-methods'
+import { useGlobal } from '../../../context/global-context'
 
 const Menu = styled(Flex)`
     border: 1px solid var(--grey-2);
@@ -37,14 +38,20 @@ export const HoverMenu = ({ message_idx, message, is_thread }) => {
         quoted_message,
         thread_message,
     } = React.useContext(ChatContext)
+    const { active_group } = useGlobal()
 
     const onAddReaction = ({ native: emoji }) => {
         const { _id: ref } = message
         if (is_thread) {
             let thread_ref = thread_message._id
-            addThreadReaction({ emoji, thread_ref, ref })
+            addThreadReaction({
+                emoji,
+                thread_ref,
+                ref,
+                group_id: active_group.id,
+            })
         } else {
-            addReaction({ emoji, ref })
+            addReaction({ emoji, ref, group_id: active_group.id })
         }
         togglePicker(false)
     }

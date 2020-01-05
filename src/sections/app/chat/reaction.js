@@ -7,6 +7,7 @@ import { EmojiPicker } from './emoji-picker'
 import { PopoverBubble } from '../../../components/general/popover-bubble'
 import { ChatContext } from './chat-context'
 import { addReaction, addThreadReaction } from './socket-methods'
+import { useGlobal } from '../../../context/global-context'
 
 const ReactionWrapper = styled(Flex)`
     padding-top: 3px;
@@ -49,15 +50,21 @@ export const Reaction = React.memo(function({
 }) {
     const [showPicker, setShowPicker] = React.useState(false)
     const { thread_message } = React.useContext(ChatContext)
+    const { active_group } = useGlobal()
 
     const sorted_reactions = sortEmojis(reactions)
 
     const onAddReaction = ({ native: emoji }) => {
         if (is_thread) {
             let thread_ref = thread_message._id
-            addThreadReaction({ emoji, thread_ref, ref: message_ref })
+            addThreadReaction({
+                emoji,
+                thread_ref,
+                ref: message_ref,
+                group_id: active_group.id,
+            })
         } else {
-            addReaction({ emoji, ref: message_ref })
+            addReaction({ emoji, ref: message_ref, group_id: active_group.id })
         }
         togglePicker(false)
     }

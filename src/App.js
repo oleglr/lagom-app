@@ -7,7 +7,7 @@ import history from './utils/history'
 import Profile from './components/general/profile'
 import PrivateRoute from './components/general/private-route'
 import { useAuth0 } from './react-auth0-spa'
-import { UserContext } from './context/user-context'
+import { GlobalContextProvider } from './context/global-context'
 import { AppContent } from './sections/app/app-content'
 import { SignUp } from './sections/signUp/sign-up'
 import { SignUpForm } from './sections/signUp/sign-up-form'
@@ -15,6 +15,7 @@ import { NewGroup } from './sections/app/new-group/new-group'
 import { Loader, Error } from './components/elements'
 import { initSocket } from './api/socket'
 import { SideMenu } from './sections/app/side-menu'
+import { Invite } from './sections/app/new-group/invite'
 import './App.css'
 
 const APP_STATUS = Object.freeze({
@@ -41,7 +42,6 @@ function MainApp() {
         }
         if (isAuthenticated) {
             getLoginAndInitSocket()
-            // getGroupMembers()
         } else setStatus('')
     }, [isAuthenticated])
 
@@ -49,11 +49,7 @@ function MainApp() {
 
     return (
         <>
-            {isAuthenticated && (
-                <UserContext.Provider value={{ name: 'oskar' }}>
-                    <AppContent />
-                </UserContext.Provider>
-            )}
+            {isAuthenticated && <AppContent />}
             {!isAuthenticated && <SignUp />}
             {status === APP_STATUS.SOCKET_CONNECTION_ERROR && (
                 <Error text="Please refresh couldn't establish a connection" />
@@ -76,20 +72,46 @@ function App() {
         <ThemeProvider>
             <CSSReset />
             <main className="App">
-                <Router history={history}>
-                    <MainContent>
-                        {isAuthenticated && <SideMenu />}
-                        <Switch>
-                            <Route path="/" exact component={MainApp} />
-                            <Route path="/sign-up" component={SignUpForm} />
-                            <PrivateRoute path="/profile" component={Profile} />
-                            <PrivateRoute
-                                path="/new-group"
-                                component={NewGroup}
-                            />
-                        </Switch>
-                    </MainContent>
-                </Router>
+                <GlobalContextProvider>
+                    <Router history={history}>
+                        <MainContent>
+                            {isAuthenticated && <SideMenu />}
+                            <Switch>
+                                <Route path="/" exact component={MainApp} />
+                                <Route path="/sign-up" component={SignUpForm} />
+
+                                <PrivateRoute
+                                    path="/profile"
+                                    component={Profile}
+                                />
+                                <PrivateRoute
+                                    path="/my-groups"
+                                    component={Profile}
+                                />
+                                <PrivateRoute
+                                    path="/media"
+                                    component={Profile}
+                                />
+                                <PrivateRoute
+                                    path="/members"
+                                    component={Profile}
+                                />
+                                <PrivateRoute
+                                    path="/invite"
+                                    component={Invite}
+                                />
+                                <PrivateRoute
+                                    path="/expenses"
+                                    component={Profile}
+                                />
+                                <PrivateRoute
+                                    path="/new-group"
+                                    component={NewGroup}
+                                />
+                            </Switch>
+                        </MainContent>
+                    </Router>
+                </GlobalContextProvider>
             </main>
         </ThemeProvider>
     )

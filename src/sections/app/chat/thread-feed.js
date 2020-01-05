@@ -2,6 +2,7 @@ import React from 'react'
 import { VirtualizedList } from './virtualized-list'
 import { getSocket as socket } from '../../../api/socket'
 import { CellMeasurerCache } from 'react-virtualized'
+import { useGlobal } from '../../../context/global-context'
 
 const cache_thread = new CellMeasurerCache({
     fixedWidth: true,
@@ -30,12 +31,13 @@ export class ThreadFeed extends React.Component {
     componentDidMount() {
         // fetch thread data
         // add listener to when getting thread data
+        const { active_group } = useGlobal()
         this.state.socket.on('get thread', this.onThread)
         this.state.socket.emit(
             'get thread',
             {
                 thread_id: this.props.message_id,
-                group_id: '5df5c5b8aec1710635f037c4',
+                group_id: active_group.id,
             },
             e => {
                 console.log('e: ', e)

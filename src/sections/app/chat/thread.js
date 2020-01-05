@@ -14,10 +14,12 @@ import { ChatInput } from './input'
 import { ThreadFeed } from './thread-feed'
 import { getSocket as socket } from '../../../api/socket'
 import { useAuth0 } from '../../../react-auth0-spa'
+import { useGlobal } from '../../../context/global-context'
 import { Content } from './message'
 
 export const ThreadDrawer = () => {
     const { thread_message, setThreadMessage } = React.useContext(ChatContext)
+    const { active_group } = useGlobal()
     const { user } = useAuth0()
 
     const sendThreadMessage = ({ action, ref, message }) => {
@@ -25,7 +27,7 @@ export const ThreadDrawer = () => {
             'thread message',
             {
                 message_id: thread_message._id,
-                group_id: '5df5c5b8aec1710635f037c4',
+                group_id: active_group.id,
                 user_id: 'anonymous',
                 message: {
                     message,

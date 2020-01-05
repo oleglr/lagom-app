@@ -2,12 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from '@emotion/styled'
 import { Stack, Heading, Text, Button } from '@chakra-ui/core'
-import { ReactComponent as HomeIcon } from '../../assets/svgs/home-icon.svg'
-import { ReactComponent as GroupMembersIcon } from '../../assets/svgs/group-members-icon.svg'
-import { ReactComponent as MediaIcon } from '../../assets/svgs/media-icon.svg'
-import { ReactComponent as ExpensesIcon } from '../../assets/svgs/expenses-icon.svg'
-import { ReactComponent as UserProfileIcon } from '../../assets/svgs/user-profile-icon.svg'
-import { ReactComponent as GroupsIcon } from '../../assets/svgs/groups-icon.svg'
+import { useHistory } from 'react-router-dom'
 
 const Aside = styled.aside`
     min-width: 275px;
@@ -52,18 +47,27 @@ const GroupNameHeading = styled(Heading)`
     padding-top: 16px;
     border-bottom: 1px solid var(--grey);
     color: #fff;
+
+    &:hover {
+        cursor: pointer;
+    }
 `
 
 export const SideMenu = () => {
+    const history = useHistory()
+
     return (
         <Aside>
             <Nav>
-                <GroupNameHeading size="md">Best Friends</GroupNameHeading>
+                <GroupNameHeading size="md" onClick={() => history.push('/')}>
+                    Best Friends
+                </GroupNameHeading>
                 <Stack justify="center">
                     <Button
                         marginLeft="16px"
                         className="btn-primary"
                         width="150px"
+                        onClick={() => history.push('/invite')}
                     >
                         Invite Friends
                     </Button>
@@ -73,32 +77,48 @@ export const SideMenu = () => {
                     <ItemWrapper>
                         <Link to="/">
                             <Stack isInline align="center">
-                                <HomeIcon />
-                                <Text>Feed</Text>
+                                <Text>
+                                    <span aria-label="house" role="img">
+                                        🏡
+                                    </span>{' '}
+                                    Home
+                                </Text>
                             </Stack>
                         </Link>
                     </ItemWrapper>
                     <ItemWrapper isInline align="center">
                         <Link to="/members">
                             <Stack isInline align="center">
-                                <GroupMembersIcon />
-                                <Text>Members</Text>
+                                <Text>
+                                    <span aria-label="group members" role="img">
+                                        👨‍👨‍👧‍👦
+                                    </span>{' '}
+                                    Members
+                                </Text>
                             </Stack>
                         </Link>
                     </ItemWrapper>
                     <ItemWrapper isInline align="center">
                         <Link to="/media">
                             <Stack isInline align="center">
-                                <MediaIcon />
-                                <Text>Media</Text>
+                                <Text>
+                                    <span aria-label="floppy disk" role="img">
+                                        💾
+                                    </span>{' '}
+                                    Media
+                                </Text>
                             </Stack>
                         </Link>
                     </ItemWrapper>
                     <ItemWrapper isInline align="center">
                         <Link to="/expenses">
                             <Stack isInline align="center">
-                                <ExpensesIcon />
-                                <Text>Expenses</Text>
+                                <Text>
+                                    <span aria-label="money bag" role="img">
+                                        💰
+                                    </span>{' '}
+                                    Expenses
+                                </Text>
                             </Stack>
                         </Link>
                     </ItemWrapper>
@@ -107,16 +127,24 @@ export const SideMenu = () => {
                     <ItemWrapper isInline align="center">
                         <Link to="/profile">
                             <Stack isInline align="center">
-                                <UserProfileIcon />
-                                <Text>Profile</Text>
+                                <Text>
+                                    <span aria-label="balloon" role="img">
+                                        😄
+                                    </span>{' '}
+                                    Profile
+                                </Text>
                             </Stack>
                         </Link>
                     </ItemWrapper>
                     <ItemWrapper isInline align="center">
-                        <Link to="groups">
+                        <Link to="my-groups">
                             <Stack isInline align="center">
-                                <GroupsIcon />
-                                <Text>Groups</Text>
+                                <Text>
+                                    <span aria-label="balloon" role="img">
+                                        🎈
+                                    </span>{' '}
+                                    Groups
+                                </Text>
                             </Stack>
                         </Link>
                     </ItemWrapper>

@@ -1,8 +1,9 @@
 import React from 'react'
+import { CellMeasurerCache } from 'react-virtualized'
 import { VirtualizedList } from './virtualized-list'
+import { useGlobal } from '../../../context/global-context'
 import { useFetch } from '../../../components/hooks/fetch-data'
 import { getSocket as socket } from '../../../api/socket'
-import { CellMeasurerCache } from 'react-virtualized'
 
 const cache = new CellMeasurerCache({
     fixedWidth: true,
@@ -10,8 +11,9 @@ const cache = new CellMeasurerCache({
 })
 
 export const ChatFeed = () => {
+    const { active_group } = useGlobal()
     const [data, loading] = useFetch(
-        'http://localhost:3000/chat-history?groupId=5df5c5b8aec1710635f037c4'
+        `http://localhost:3000/chat-history?groupId=${active_group.id}`
     )
 
     if (loading) return <div>loading...</div>

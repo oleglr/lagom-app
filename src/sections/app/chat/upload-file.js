@@ -20,6 +20,7 @@ import {
 import { PopoverBubble } from '../../../components/general/popover-bubble'
 import { Flex } from '../../../components/container'
 import { useAuth0 } from '../../../react-auth0-spa'
+import { useGlobal } from '../../../context/global-context'
 
 const IconWrapper = styled.span`
     position: absolute;
@@ -84,6 +85,8 @@ export const Upload = ({ is_thread, thread_message_id }) => {
     const [message, setMessage] = React.useState('')
 
     const { getTokenSilently, user } = useAuth0()
+    const { active_group } = useGlobal()
+
     const input_ref = React.useRef()
     const text_input_ref = React.useRef()
 
@@ -102,7 +105,7 @@ export const Upload = ({ is_thread, thread_message_id }) => {
         setStatus('loading')
 
         const formData = new FormData()
-        formData.append('group_id', '5df5c5b8aec1710635f037c4')
+        formData.append('group_id', active_group.id)
         formData.append('user_id', user.name)
 
         if (message) {
