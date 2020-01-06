@@ -24,36 +24,12 @@ const APP_STATUS = Object.freeze({
 })
 
 function MainApp() {
-    const [status, setStatus] = React.useState('loading')
     const { isAuthenticated } = useAuth0()
-
-    React.useEffect(() => {
-        async function getLoginAndInitSocket() {
-            // 1. await login
-            // 2. await socket
-            try {
-                await initSocket({ token: '123', group_id: '456' })
-            } catch (e) {
-                console.error(e)
-                setStatus(APP_STATUS.SOCKET_CONNECTION_ERROR)
-                return
-            }
-            setStatus('')
-        }
-        if (isAuthenticated) {
-            getLoginAndInitSocket()
-        } else setStatus('')
-    }, [isAuthenticated])
-
-    if (status === APP_STATUS.LOADING) return <Loader />
 
     return (
         <>
             {isAuthenticated && <AppContent />}
             {!isAuthenticated && <SignUp />}
-            {status === APP_STATUS.SOCKET_CONNECTION_ERROR && (
-                <Error text="Please refresh couldn't establish a connection" />
-            )}
         </>
     )
 }
@@ -64,9 +40,49 @@ const MainContent = styled.div`
 `
 
 function App() {
-    const { loading, isAuthenticated } = useAuth0()
+    const { loading, isAuthenticated, user } = useAuth0()
+    const [socket_status, setSocketStatus] = React.useState(APP_STATUS.LOADING)
 
-    if (loading) return <Loader />
+    React.useEffect(() => {
+        async function getLoginAndInitSocket() {
+            try {
+                const all_groups = Object.keys(
+                    user['http://localhost:3001/user_metadata']
+                )
+
+                // if doesn't have group set State to create group
+                if (!all_groups || !all_groups.length) {
+                    setSocketStatus(APP_STATUS.NO_GROUP)
+                    return
+                }
+
+                const first_group = all_groups[0]
+                const group_id =
+                    user['http://localhost:3001/user_metadata'][first_group]
+
+                await initSocket({ group_id, user_id: user.sub })
+            } catch (e) {
+                console.error(e)
+                setSocketStatus(APP_STATUS.SOCKET_CONNECTION_ERROR)
+                return
+            }
+            setSocketStatus('')
+        }
+        if (isAuthenticated) {
+            if (!user) return
+            getLoginAndInitSocket()
+        } else setSocketStatus('')
+    }, [user, isAuthenticated])
+
+    if (loading || socket_status === 'loading') return <Loader />
+
+    if (socket_status === APP_STATUS.SOCKET_CONNECTION_ERROR) {
+        return <Error text="Please refresh couldn't establish a connection" />
+    }
+
+    if (socket_status === APP_STATUS.NO_GROUP) {
+        history.push('/new-group')
+    }
 
     return (
         <ThemeProvider>

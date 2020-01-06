@@ -27,7 +27,6 @@ class ChatFeedSocket extends React.Component {
         this.list_ref = React.createRef()
         this.state = {
             messages: props.message_history.reverse(),
-            socket: socket(),
             sortBy: 0,
             t: '',
         }
@@ -51,8 +50,8 @@ class ChatFeedSocket extends React.Component {
     }
 
     componentDidMount() {
-        this.state.socket.on('message', this.newMessage)
-        this.state.socket.on('added reaction', this.newReaction)
+        socket().on('message', this.newMessage)
+        socket().on('added reaction', this.newReaction)
         this.setState({ t: 'now' })
     }
 
