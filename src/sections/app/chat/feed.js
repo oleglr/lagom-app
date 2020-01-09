@@ -1,9 +1,11 @@
 import React from 'react'
 import { CellMeasurerCache } from 'react-virtualized'
 import { VirtualizedList } from './virtualized-list'
-import { useGlobal } from '../../../context/global-context'
+// import { useGlobal } from '../../../context/global-context'
 import { useFetch } from '../../../components/hooks/fetch-data'
 import { getSocket as socket } from '../../../api/socket'
+import { WithContext } from '../../../react-auth0-spa'
+import { useGlobal } from '../../../context/global-context'
 
 const cache = new CellMeasurerCache({
     fixedWidth: true,
@@ -20,6 +22,36 @@ export const ChatFeed = () => {
 
     return <ChatFeedSocket message_history={data.chat} />
 }
+
+class ChatFeedC extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            data: null,
+            is_loading: true,
+        }
+    }
+    async fetchData(url) {
+        const token = await this.props.value.getTokenSilently()
+        const response = await fetch(url, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        const json = await response.json()
+        this.setState({ data: json, is_loading: false })
+    }
+    componentDidMount() {
+        this.fetchData(
+            `http://localhost:3000/chat-history?groupId=${this.props.active_group.id}`
+        )
+    }
+    render() {
+        if (this.state.is_loading) return <div>loading...</div>
+        return <ChatFeedSocket message_history={this.state.data.chat} />
+    }
+}
+export default WithContext(ChatFeedC)
 
 class ChatFeedSocket extends React.Component {
     constructor(props) {

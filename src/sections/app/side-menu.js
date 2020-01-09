@@ -15,6 +15,8 @@ import {
 import { useHistory } from 'react-router-dom'
 import { useMediaQuery } from 'react-responsive'
 import { useDisclosure } from '@chakra-ui/core'
+import { useGlobal } from '../../context/global-context'
+import { useAuth0 } from '../../react-auth0-spa'
 
 const Aside = styled.aside`
     min-width: 275px;
@@ -73,25 +75,34 @@ const GroupNameHeading = styled(Heading)`
 const SideContent = ({ onClose }) => {
     const history = useHistory()
     const path_name = history.location.pathname
+    const { active_group } = useGlobal()
+    const { logout } = useAuth0()
 
     return (
         <>
-            <GroupNameHeading size="md" onClick={() => history.push('/')}>
-                Best Friends
-            </GroupNameHeading>
-            <Stack justify="center">
-                <Button
-                    marginLeft="16px"
-                    className="btn-primary"
-                    width="150px"
-                    onClick={() => {
-                        if (onClose) onClose()
-                        history.push('/invite')
-                    }}
-                >
-                    Invite Friends
-                </Button>
-            </Stack>
+            {active_group && active_group.name && (
+                <>
+                    <GroupNameHeading
+                        size="md"
+                        onClick={() => history.push('/')}
+                    >
+                        {active_group.name}
+                    </GroupNameHeading>
+                    <Stack justify="center">
+                        <Button
+                            marginLeft="16px"
+                            className="btn-primary"
+                            width="150px"
+                            onClick={() => {
+                                if (onClose) onClose()
+                                history.push('/invite')
+                            }}
+                        >
+                            Invite Friends
+                        </Button>
+                    </Stack>
+                </>
+            )}
             <Stack spacing={2} paddingLeft="16px">
                 <SectionHeader>Group</SectionHeader>
                 <ItemWrapper isActive={path_name === '/'}>
@@ -172,7 +183,17 @@ const SideContent = ({ onClose }) => {
                         </Stack>
                     </Link>
                 </ItemWrapper>
-                <ItemWrapper
+                <Button
+                    width="fit-content"
+                    onClick={() => logout()}
+                    variant="link"
+                    color="white"
+                    marginTop="auto"
+                    marginBottom="16px"
+                >
+                    Logout
+                </Button>
+                {/* <ItemWrapper
                     isInline
                     align="center"
                     isActive={path_name === '/my-groups'}
@@ -187,7 +208,7 @@ const SideContent = ({ onClose }) => {
                             </Text>
                         </Stack>
                     </Link>
-                </ItemWrapper>
+                </ItemWrapper> */}
             </Stack>
         </>
     )
