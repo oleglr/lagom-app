@@ -12,14 +12,14 @@ export const GlobalContext = React.createContext({
 })
 
 export const GlobalContextProvider = ({ children, activeGroup }) => {
-    const [active_group, setActiveGroupId] = React.useState(activeGroup)
+    const [active_group, setActiveGroup] = React.useState(activeGroup)
     const [all_groups, setAllGroups] = React.useState([])
 
     return (
         <GlobalContext.Provider
             value={{
                 active_group,
-                setActiveGroupId,
+                setActiveGroup,
                 all_groups,
                 setAllGroups,
             }}

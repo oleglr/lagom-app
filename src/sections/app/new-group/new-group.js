@@ -15,13 +15,17 @@ import { Flex, MainSection, FormWrapper } from '../../../components/container'
 import { useAuth0 } from '../../../react-auth0-spa'
 import { Success } from './success'
 import { InviteForm } from './invite-form'
+import { useGlobal } from '../../../context/global-context'
+import { initSocket } from '../../../api/socket'
 
 export const NewGroup = () => {
     const [form_status, setFormStatus] = React.useState('create_group')
+    const { setActiveGroup } = useGlobal()
 
     const { getTokenSilently, user } = useAuth0()
 
     const setNewGroup = (group, cb) => {
+        setActiveGroup({ name: group.group_name, id: group.group_id })
         setFormStatus('invite_form')
     }
 
@@ -73,6 +77,7 @@ export const NewGroup = () => {
                     }}
                     onSubmit={async (values, { setStatus }) => {
                         setFormStatus('loading_new_group')
+
                         const token = await getTokenSilently()
 
                         fetch(`http://localhost:3000/new-group`, {
@@ -87,11 +92,16 @@ export const NewGroup = () => {
                             },
                         })
                             .then(data => data.json())
-                            .then(res => {
+                            .then(async res => {
+                                console.log('res: ', res)
                                 if (res.error) {
                                     setStatus({ msg: res.error })
                                     return
                                 }
+                                const res_group = await initSocket({
+                                    group_id: res.group_id,
+                                    user_id: user.sub,
+                                })
                                 setNewGroup(res)
                             })
                     }}

@@ -22,6 +22,8 @@ import './App.css'
 const APP_STATUS = Object.freeze({
     LOADING: 'loading',
     SOCKET_CONNECTION_ERROR: 'socket_connection_error',
+    NO_GROUP: 'no_group',
+    ADDING_USER_TO_GROUP: 'adding_user_to_group',
 })
 
 function MainApp() {
@@ -40,51 +42,57 @@ const MainContent = styled.div`
 `
 
 function App() {
-    const { loading, isAuthenticated, user } = useAuth0()
+    const { loading, isAuthenticated, user, getTokenSilently } = useAuth0()
     const [socket_status, setSocketStatus] = React.useState(APP_STATUS.LOADING)
+    const [token, setToken] = React.useState(APP_STATUS.LOADING)
     const [activeGroup, setActiveGroup] = React.useState()
 
     React.useEffect(() => {
         async function getLoginAndInitSocket() {
             try {
-                if (!user['http://localhost:3001/user_metadata']) {
-                    setSocketStatus(APP_STATUS.NO_GROUP)
-                    return
-                }
-                const all_groups = Object.keys(
+                const is_invited_and_just_signed_up =
+                    localStorage.getItem('signup_group_id') &&
+                    localStorage.getItem('signup_inviter_id')
+
+                const user_metadata =
                     user['http://localhost:3001/user_metadata']
-                )
+                const has_group = user_metadata.group && user_metadata.group.id
 
-                // if doesn't have group set State to create group
-                if (!all_groups || !all_groups.length) {
+                if (is_invited_and_just_signed_up && !has_group) {
+                    const temp_token = await getTokenSilently()
+                    setToken(temp_token)
+                    setSocketStatus(APP_STATUS.ADDING_USER_TO_GROUP)
+                    return
+                }
+
+                if (!user_metadata || !has_group) {
                     setSocketStatus(APP_STATUS.NO_GROUP)
                     return
                 }
 
-                const first_group = all_groups[0]
-                const group_id =
-                    user['http://localhost:3001/user_metadata'][first_group]
-                setActiveGroup({ name: first_group, id: group_id })
+                setActiveGroup({
+                    name: user_metadata.group.name,
+                    id: user_metadata.group.id,
+                })
                 // 1. get group
                 const res_group = await initSocket({
-                    group_id,
+                    group_id: user_metadata.group.id,
                     user_id: user.sub,
                 })
-                // 2. get group_members from auth0
                 console.log('res_group: ', res_group)
-                // await fetchGroupMembers()
-                // 3. set pictures in home
+                setSocketStatus('')
             } catch (e) {
                 console.error(e)
                 setSocketStatus(APP_STATUS.SOCKET_CONNECTION_ERROR)
                 return
             }
-            setSocketStatus('')
         }
         if (isAuthenticated) {
             if (!user) return
             getLoginAndInitSocket()
         } else setSocketStatus('')
+        // TODO: fix getTokenSilently
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user, isAuthenticated])
 
     if (loading || socket_status === 'loading') return <Loader />
@@ -93,9 +101,41 @@ function App() {
         return <Error text="Please refresh couldn't establish a connection" />
     }
 
-    // TODO: + not coming from invite link
-    if (socket_status === APP_STATUS.NO_GROUP) {
-        // history.push('/profile')
+    if (socket_status === APP_STATUS.ADDING_USER_TO_GROUP) {
+        fetch(`http://localhost:3000/new-group-member`, {
+            method: 'POST',
+            body: JSON.stringify({
+                group_id: localStorage.getItem('signup_group_id'),
+                user_id: user.sub,
+                inviter_id: localStorage.getItem('signup_inviter_id'),
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        })
+            .then(data => data.json())
+            .then(res => {
+                console.log('res: ', res)
+                if (res.error) {
+                    return
+                }
+                // TODO ==:
+                // added to group ---> update user + active id
+                // for now:
+                localStorage.removeItem('signup_group_id')
+                localStorage.removeItem('signup_inviter_id')
+                window.location.replace('http://localhost:3001/')
+            })
+        return <Loader />
+    }
+
+    //  not coming from invite link
+    if (
+        socket_status === APP_STATUS.NO_GROUP &&
+        !/external-invite/.test(window.location.pathname)
+    ) {
+        history.push('/new-group')
     }
 
     return (

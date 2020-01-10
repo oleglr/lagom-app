@@ -226,6 +226,7 @@ export const SignUpForm = () => {
                         variant="outline"
                         id="fb-btn"
                         onClick={() =>
+                            // TODO: save group_id, user_id to localstorage
                             loginWithRedirect({ connection: 'facebook' })
                         }
                     >
@@ -238,6 +239,7 @@ export const SignUpForm = () => {
                         variant="outline"
                         id="google-btn"
                         onClick={() =>
+                            // TODO: save group_id, user_id to localstorage
                             loginWithRedirect({ connection: 'google-oauth2' })
                         }
                     >

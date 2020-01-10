@@ -1,24 +1,18 @@
 import React from 'react'
 import { useAuth0 } from '../../react-auth0-spa'
 import { useHistory } from 'react-router-dom'
-import { Heading, Button, Text, Spinner, Stack } from '@chakra-ui/core'
+import { Heading, Button, Spinner, Stack } from '@chakra-ui/core'
 import { MainSection, FormWrapper, Lottie } from '../../components/container'
+import { Error } from '../../components/elements'
+import { getUrlParameter } from '../../utils/history'
 import tadaAnimation from '../../assets/lotties/13491-pop-new-year.json'
-
-function getUrlParameter(name) {
-    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]')
-    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)')
-    var results = regex.exec(window.location.search)
-    return results === null
-        ? ''
-        : decodeURIComponent(results[1].replace(/\+/g, ' '))
-}
 
 export const ExternalInvite = ({ ...props }) => {
     const [status, setStatus] = React.useState('loading')
+    const [form_status, setFormStatus] = React.useState('')
     const [group_res, setGroupRes] = React.useState({})
 
-    const { isAuthenticated, user } = useAuth0()
+    const { isAuthenticated, user, getTokenSilently } = useAuth0()
     const history = useHistory()
 
     React.useEffect(() => {
@@ -56,17 +50,21 @@ export const ExternalInvite = ({ ...props }) => {
     }, [history])
 
     const joinGroup = async () => {
-        setStatus('loading_add_to_group')
+        setFormStatus('loading')
+
         // add user to existing group
+        const token = await getTokenSilently()
+
         fetch(`http://localhost:3000/new-group-member`, {
             method: 'POST',
             body: JSON.stringify({
-                group_id: group_res.id,
+                group_id: group_res.group_id,
                 user_id: user.sub,
                 inviter_id: group_res.inviter_id,
             }),
             headers: {
                 'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
             },
         })
             .then(data => data.json())
@@ -76,7 +74,10 @@ export const ExternalInvite = ({ ...props }) => {
                     setStatus('error')
                     return
                 }
-                setStatus('')
+                // TODO ==:
+                // added to group ---> update user + active id
+                // for now:
+                window.location.replace('http://localhost:3001/')
                 // setGroupRes(res)
                 // setStatus('added_to_g')
             })
@@ -85,11 +86,17 @@ export const ExternalInvite = ({ ...props }) => {
     const redirectToSignup = () => {
         // redirect user to signup with query string for group
         // --> after signup automatically add user to group
+        localStorage.setItem('signup_group_id', group_res.group_id)
+        localStorage.setItem('signup_inviter_id', group_res.inviter_id)
+        history.push(`/sign-up`)
     }
 
     return (
         <MainSection>
             <FormWrapper>
+                {status === 'error' && (
+                    <Error text="Couldn't establish a connection - please refresh and try again" />
+                )}
                 {status === 'loading' && <Spinner />}
                 {status === 'has_group_details' && (
                     <Stack>
@@ -115,7 +122,7 @@ export const ExternalInvite = ({ ...props }) => {
                                     onClick={() => joinGroup()}
                                     variantColor="teal"
                                 >
-                                    {status === 'loading_add_to_group' ? (
+                                    {form_status === 'loading' ? (
                                         <Spinner />
                                     ) : (
                                         'Accept'

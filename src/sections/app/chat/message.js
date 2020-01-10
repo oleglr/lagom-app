@@ -9,6 +9,7 @@ import { ChatContext } from './chat-context'
 import { HoverMenu } from './hover-menu'
 import { Reaction } from './reaction'
 import { Quote } from './quote'
+import LagomRobotImg from '../../../assets/images/lagom_robot.png'
 
 const ChatContainer = styled(Flex)`
     margin-left: 15px;
@@ -52,6 +53,7 @@ const LinkText = styled(Text)`
 const HoverWrapper = styled.span`
     visibility: ${props => (props.show_menu ? 'visible' : 'hidden')};
 `
+const LAGOMBOT = 'Lagom Robot'
 
 export const Message = React.memo(function({
     message,
@@ -93,16 +95,18 @@ export const ChatMessage = React.memo(function({
     const { user } = useAuth0()
     const { setThreadMessage } = React.useContext(ChatContext)
     const reply_length = message.replies && message.replies.length
+    const user_img = message.user === LAGOMBOT ? LagomRobotImg : user.picture
 
     return (
         <>
             <img
-                src={user.picture}
+                src={user_img}
                 alt="Profile"
                 style={{
                     borderRadius: '5px',
                     maxHeight: '45px',
                     marginTop: '4px',
+                    backgroundColor: 'coral',
                 }}
             />
             <Flex column align="flex-start" justify="flex-start" pl="5px">

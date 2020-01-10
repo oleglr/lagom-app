@@ -8,14 +8,6 @@ export const Auth0Context = React.createContext()
 
 export const useAuth0 = () => useContext(Auth0Context)
 
-export const WithContext = Component => {
-    return props => (
-        <Auth0Context.Consumer>
-            {value => <Component {...props} value={value} />}
-        </Auth0Context.Consumer>
-    )
-}
-
 export const Auth0Provider = ({
     children,
     onRedirectCallback = DEFAULT_REDIRECT_CALLBACK,
