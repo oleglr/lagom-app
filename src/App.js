@@ -57,7 +57,10 @@ function App() {
 
                 const user_metadata =
                     user['http://localhost:3001/user_metadata']
-                const has_group = user_metadata.group && user_metadata.group.id
+                const has_group =
+                    user_metadata &&
+                    user_metadata.group &&
+                    user_metadata.group.id
 
                 if (is_invited_and_just_signed_up && !has_group) {
                     const temp_token = await getTokenSilently()
@@ -89,7 +92,7 @@ function App() {
             }
         }
         if (isAuthenticated) {
-            if (!user) return
+            if (!user || loading) return
             getLoginAndInitSocket()
         } else {
             if (loading) return
@@ -97,7 +100,7 @@ function App() {
         }
         // TODO: fix getTokenSilently
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user, isAuthenticated])
+    }, [user, isAuthenticated, loading])
 
     if (loading || socket_status === 'loading') return <Loader />
 
