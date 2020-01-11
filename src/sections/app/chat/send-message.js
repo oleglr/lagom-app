@@ -18,7 +18,7 @@ export const SendMessage = () => {
                 action,
                 ref,
                 group_id: active_group.id,
-                user: user.name,
+                user: user.sub,
             },
             e => {
                 console.log('e: ', e)

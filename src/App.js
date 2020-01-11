@@ -46,6 +46,7 @@ function App() {
     const [socket_status, setSocketStatus] = React.useState(APP_STATUS.LOADING)
     const [token, setToken] = React.useState(APP_STATUS.LOADING)
     const [activeGroup, setActiveGroup] = React.useState()
+    const [groupMembers, setGroupMembers] = React.useState()
 
     React.useEffect(() => {
         async function getLoginAndInitSocket() {
@@ -79,7 +80,7 @@ function App() {
                     group_id: user_metadata.group.id,
                     user_id: user.sub,
                 })
-                console.log('res_group: ', res_group)
+                setGroupMembers(res_group.users)
                 setSocketStatus('')
             } catch (e) {
                 console.error(e)
@@ -90,7 +91,10 @@ function App() {
         if (isAuthenticated) {
             if (!user) return
             getLoginAndInitSocket()
-        } else setSocketStatus('')
+        } else {
+            if (loading) return
+            setSocketStatus('')
+        }
         // TODO: fix getTokenSilently
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user, isAuthenticated])
@@ -142,7 +146,10 @@ function App() {
         <ThemeProvider>
             <CSSReset />
             <main className="App">
-                <GlobalContextProvider activeGroup={activeGroup}>
+                <GlobalContextProvider
+                    activeGroup={activeGroup}
+                    groupMembers={groupMembers}
+                >
                     <Router history={history}>
                         <MainContent>
                             {isAuthenticated && <SideMenu />}

@@ -71,6 +71,7 @@ export const ExternalInvite = ({ ...props }) => {
             .then(res => {
                 console.log('res: ', res)
                 if (res.error) {
+                    setGroupRes(res.error)
                     setStatus('error')
                     return
                 }
@@ -94,9 +95,7 @@ export const ExternalInvite = ({ ...props }) => {
     return (
         <MainSection>
             <FormWrapper>
-                {status === 'error' && (
-                    <Error text="Couldn't establish a connection - please refresh and try again" />
-                )}
+                {status === 'error' && <Error text={`Error: ${group_res}`} />}
                 {status === 'loading' && <Spinner />}
                 {status === 'has_group_details' && (
                     <Stack>
