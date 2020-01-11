@@ -7,24 +7,27 @@ export const GlobalContext = React.createContext({
     setActiveGroup: () => {},
     all_groups: null,
     setAllGroups: () => {},
-    // members: null,
-    // setAllMembers: () => {},
+    group_members: null,
+    setGroupMembers: () => {},
 })
 
-// use websocket to get group
-// use websocket to get group members
-export const GlobalContextProvider = ({ children }) => {
-    const [active_group, setActiveGroup] = React.useState({
-        name: 'Best friends',
-        id: '5df5c5b8aec1710635f037c4',
-    })
-    const [all_groups, setAllGroups] = React.useState('')
+// TODO: consider moving to app.js instead of copying props here
+export const GlobalContextProvider = ({
+    children,
+    activeGroup,
+    groupMembers,
+}) => {
+    const [active_group, setActiveGroup] = React.useState(activeGroup)
+    const [group_members, setGroupMembers] = React.useState(groupMembers)
+    const [all_groups, setAllGroups] = React.useState([])
 
     return (
         <GlobalContext.Provider
             value={{
                 active_group,
                 setActiveGroup,
+                group_members,
+                setGroupMembers,
                 all_groups,
                 setAllGroups,
             }}

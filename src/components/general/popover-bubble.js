@@ -2,13 +2,14 @@ import React from 'react'
 import styled from '@emotion/styled'
 import Popover, { ArrowContainer } from 'react-tiny-popover'
 
-const Bubble = styled.div`
+export const Bubble = styled.div`
     background-color: black;
     color: white;
     padding: 5px 5px;
     border-radius: 5px;
     font-size: 13px;
-    max-width: 150px;
+    max-width: ${props => (props.max_w ? props.max_w : '150px;')};
+    min-width: ${props => (props.min_w ? props.min_w : '')};
     text-align: center;
     font-weight: bold;
 

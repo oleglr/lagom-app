@@ -1,9 +1,10 @@
 import React from 'react'
 import { CellMeasurerCache } from 'react-virtualized'
 import { VirtualizedList } from './virtualized-list'
-import { useGlobal } from '../../../context/global-context'
+// import { useGlobal } from '../../../context/global-context'
 import { useFetch } from '../../../components/hooks/fetch-data'
 import { getSocket as socket } from '../../../api/socket'
+import { useGlobal } from '../../../context/global-context'
 
 const cache = new CellMeasurerCache({
     fixedWidth: true,
@@ -21,13 +22,12 @@ export const ChatFeed = () => {
     return <ChatFeedSocket message_history={data.chat} />
 }
 
-class ChatFeedSocket extends React.Component {
+export class ChatFeedSocket extends React.Component {
     constructor(props) {
         super(props)
         this.list_ref = React.createRef()
         this.state = {
             messages: props.message_history.reverse(),
-            socket: socket(),
             sortBy: 0,
             t: '',
         }
@@ -51,8 +51,8 @@ class ChatFeedSocket extends React.Component {
     }
 
     componentDidMount() {
-        this.state.socket.on('message', this.newMessage)
-        this.state.socket.on('added reaction', this.newReaction)
+        socket().on('message', this.newMessage)
+        socket().on('added reaction', this.newReaction)
         this.setState({ t: 'now' })
     }
 

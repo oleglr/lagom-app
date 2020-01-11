@@ -4,11 +4,12 @@ import { Text } from '@chakra-ui/core'
 import moment from 'moment'
 import { Flex } from '../../../components/container'
 import { ImagePreview } from '../../../components/general/image'
-import { useAuth0 } from '../../../react-auth0-spa'
+import { useGlobal } from '../../../context/global-context'
 import { ChatContext } from './chat-context'
 import { HoverMenu } from './hover-menu'
 import { Reaction } from './reaction'
 import { Quote } from './quote'
+import LagomRobotImg from '../../../assets/images/lagom_robot.png'
 
 const ChatContainer = styled(Flex)`
     margin-left: 15px;
@@ -52,6 +53,7 @@ const LinkText = styled(Text)`
 const HoverWrapper = styled.span`
     visibility: ${props => (props.show_menu ? 'visible' : 'hidden')};
 `
+const LAGOMBOT = 'Lagom Robot'
 
 export const Message = React.memo(function({
     message,
@@ -84,30 +86,39 @@ export const Message = React.memo(function({
     )
 })
 
+const getUser = (message, members) => {
+    const user = members.find(u => u.user_id === message.user)
+    if (user) return { name: user.name, img: user.picture }
+    if (message.user === LAGOMBOT) return { name: LAGOMBOT, img: LagomRobotImg }
+    return { name: 'unkown user', img: LagomRobotImg }
+}
+
 export const ChatMessage = React.memo(function({
     message,
     idx,
     measure,
     is_thread,
 }) {
-    const { user } = useAuth0()
+    const { group_members } = useGlobal()
     const { setThreadMessage } = React.useContext(ChatContext)
     const reply_length = message.replies && message.replies.length
+    const user = getUser(message, group_members)
 
     return (
         <>
             <img
-                src={user.picture}
+                src={user.img}
                 alt="Profile"
                 style={{
                     borderRadius: '5px',
                     maxHeight: '45px',
                     marginTop: '4px',
+                    backgroundColor: 'coral',
                 }}
             />
             <Flex column align="flex-start" justify="flex-start" pl="5px">
                 <Text>
-                    <Name className="bold">{message.user}</Name>{' '}
+                    <Name className="bold">{user.name}</Name>{' '}
                     <span style={{ fontSize: '12px', color: 'var(--grey)' }}>
                         {moment(message.createdAt).format('LT')}
                     </span>
