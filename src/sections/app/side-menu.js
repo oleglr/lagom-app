@@ -31,6 +31,8 @@ const StyledDrawerContent = styled(DrawerContent)`
 const Nav = styled.nav`
     height: 100%;
     width: 100%;
+    display: flex;
+    flex-direction: column;
 `
 const SectionHeader = styled(Text)`
     text-transform: uppercase;
@@ -183,16 +185,6 @@ const SideContent = ({ onClose }) => {
                         </Stack>
                     </Link>
                 </ItemWrapper>
-                <Button
-                    width="fit-content"
-                    onClick={() => logout()}
-                    variant="link"
-                    color="white"
-                    marginTop="auto"
-                    marginBottom="16px"
-                >
-                    Logout
-                </Button>
                 {/* <ItemWrapper
                     isInline
                     align="center"
@@ -210,6 +202,17 @@ const SideContent = ({ onClose }) => {
                     </Link>
                 </ItemWrapper> */}
             </Stack>
+            <Button
+                width="fit-content"
+                onClick={() => logout()}
+                variant="link"
+                color="white"
+                marginTop="auto"
+                marginBottom="16px"
+                marginLeft="16px"
+            >
+                Logout
+            </Button>
         </>
     )
 }

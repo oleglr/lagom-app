@@ -3,7 +3,7 @@ import styled from '@emotion/styled'
 export const MainSection = styled.section`
     height: 100%;
     width: 100%;
-    padding-top: 4rem;
+    padding-top: ${props => (props.pt ? props.pt : '4rem')};
 `
 
 export const FormWrapper = styled.div`

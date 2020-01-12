@@ -106,7 +106,7 @@ export const Upload = ({ is_thread, thread_message_id }) => {
 
         const formData = new FormData()
         formData.append('group_id', active_group.id)
-        formData.append('user_id', user.name)
+        formData.append('user_id', user.sub)
 
         if (message) {
             formData.append('message', message)
@@ -183,11 +183,7 @@ export const Upload = ({ is_thread, thread_message_id }) => {
                         <Icon name="attachment" size="14px" />
                     </PopoverBubble>
                 </IconWrapper>
-                <Modal
-                    isOpen={!!files.length}
-                    onClose={() => setFiles('')}
-                    size={'xl'}
-                >
+                <Modal isOpen={!!files.length} onClose={() => setFiles('')} size={'xl'}>
                     <ModalOverlay zIndex="1400" />
                     <ModalContent borderRadius="5px">
                         <ModalHeader>Upload a file</ModalHeader>
@@ -195,10 +191,7 @@ export const Upload = ({ is_thread, thread_message_id }) => {
                         <ModalBody>
                             {preview && preview.length === 1 && (
                                 <Flex>
-                                    <StyledImage
-                                        alt="upload preview"
-                                        src={preview[0]}
-                                    />
+                                    <StyledImage alt="upload preview" src={preview[0]} />
                                 </Flex>
                             )}
                             <Flex justify="unset" wrap="wrap">
@@ -206,26 +199,16 @@ export const Upload = ({ is_thread, thread_message_id }) => {
                                     preview.length > 1 &&
                                     preview.map((url, idx) => (
                                         <ImageWrapper key={idx}>
-                                            <IconCloseWrapper
-                                                onClick={() => removeFile(idx)}
-                                            >
-                                                <Icon
-                                                    name="close"
-                                                    size="10px"
-                                                />
+                                            <IconCloseWrapper onClick={() => removeFile(idx)}>
+                                                <Icon name="close" size="10px" />
                                             </IconCloseWrapper>
-                                            <SmallImage
-                                                alt="Upload preview"
-                                                src={url}
-                                            />
+                                            <SmallImage alt="Upload preview" src={url} />
                                         </ImageWrapper>
                                     ))}
                             </Flex>
                             {!is_thread && (
                                 <div style={{ marginTop: '1rem' }}>
-                                    <FormLabel htmlFor="image message">
-                                        Add a comment (optional)
-                                    </FormLabel>
+                                    <FormLabel htmlFor="image message">Add a comment (optional)</FormLabel>
                                     <Input
                                         id="image message"
                                         type="text"
@@ -240,15 +223,10 @@ export const Upload = ({ is_thread, thread_message_id }) => {
                             {status === 'error' && (
                                 <Alert status="error">
                                     <AlertIcon />
-                                    Please try again, there was a connection
-                                    issue.
+                                    Please try again, there was a connection issue.
                                 </Alert>
                             )}
-                            <Button
-                                variant="ghost"
-                                mr={3}
-                                onClick={() => setFiles('')}
-                            >
+                            <Button variant="ghost" mr={3} onClick={() => setFiles('')}>
                                 Close
                             </Button>
                             <Button onClick={sendFiles} className="btn-primary">
