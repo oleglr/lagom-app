@@ -1,8 +1,8 @@
 import React from 'react'
 import moment from 'moment'
 import styled from '@emotion/styled'
-import { Image, Box, Stack, Icon } from '@chakra-ui/core'
-import { List, AutoSizer, CellMeasurer, CellMeasurerCache, createMasonryCellPositioner } from 'react-virtualized'
+import { Image, Box, Stack } from '@chakra-ui/core'
+import { List, AutoSizer } from 'react-virtualized'
 import { ImagePreview } from '../../../components/general/image'
 import { useGlobal } from '../../../context/global-context'
 
@@ -10,20 +10,6 @@ const getUser = (message, members) => {
     const user = members.find(u => u.user_id === message.user)
     if (user) return { name: user.nickname, img: user.picture }
 }
-
-const cache = new CellMeasurerCache({
-    defaultHeight: 250,
-    defaultWidth: 200,
-    fixedWidth: false,
-})
-
-// Our masonry layout will use 3 columns with a 10px gutter between
-const cellPositioner = createMasonryCellPositioner({
-    cellMeasurerCache: cache,
-    columnCount: 3,
-    columnWidth: 200,
-    spacer: 10,
-})
 
 const ImageCard = styled(Box)`
     &:hover {
@@ -51,12 +37,13 @@ const MediaCard = ({ message, measure }) => {
             <ImagePreview img_source={message.image_url}>
                 <Image
                     className="media-img"
-                    size={'200px'}
-                    bjectFit="cover"
+                    height="130px"
+                    width="200px"
+                    objectFit="cover"
                     alt={message.action}
                     src={message.image_url}
                 />
-                <Box p={'6'} maxHeight="98px">
+                <Box p={'2'} maxHeight="98px">
                     <Stack isInline align="center" maxWidth="180px">
                         <img
                             src={user.img}
@@ -87,10 +74,11 @@ class MediaList extends React.Component {
         return (
             <AutoSizer>
                 {({ height, width }) => {
-                    const item_size = 250
-                    const row_height = 325
+                    const item_size = 200
+                    const row_height = 225
 
                     const itemsPerRow = Math.floor(width / item_size)
+
                     const rowCount = Math.ceil(this.props.items.length / itemsPerRow)
 
                     return (
