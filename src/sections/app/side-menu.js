@@ -68,6 +68,7 @@ const GroupNameHeading = styled(Heading)`
     padding-top: 16px;
     border-bottom: 1px solid var(--grey);
     color: #fff;
+    max-width: 250px;
 
     &:hover {
         cursor: pointer;
@@ -84,10 +85,7 @@ const SideContent = ({ onClose }) => {
         <>
             {active_group && active_group.name && (
                 <>
-                    <GroupNameHeading
-                        size="md"
-                        onClick={() => history.push('/')}
-                    >
+                    <GroupNameHeading size="md" onClick={() => history.push('/')}>
                         {active_group.name}
                     </GroupNameHeading>
                     <Stack justify="center">
@@ -119,11 +117,7 @@ const SideContent = ({ onClose }) => {
                         </Stack>
                     </Link>
                 </ItemWrapper>
-                <ItemWrapper
-                    isInline
-                    align="center"
-                    isActive={path_name === '/members'}
-                >
+                <ItemWrapper isInline align="center" isActive={path_name === '/members'}>
                     <Link to="/members">
                         <Stack isInline align="center">
                             <Text>
@@ -135,11 +129,7 @@ const SideContent = ({ onClose }) => {
                         </Stack>
                     </Link>
                 </ItemWrapper>
-                <ItemWrapper
-                    isInline
-                    align="center"
-                    isActive={path_name === '/media'}
-                >
+                <ItemWrapper isInline align="center" isActive={path_name === '/media'}>
                     <Link to="/media">
                         <Stack isInline align="center">
                             <Text>
@@ -151,11 +141,7 @@ const SideContent = ({ onClose }) => {
                         </Stack>
                     </Link>
                 </ItemWrapper>
-                <ItemWrapper
-                    isInline
-                    align="center"
-                    isActive={path_name === '/expenses'}
-                >
+                <ItemWrapper isInline align="center" isActive={path_name === '/expenses'}>
                     <Link to="/expenses">
                         <Stack isInline align="center">
                             <Text>
@@ -169,11 +155,7 @@ const SideContent = ({ onClose }) => {
                 </ItemWrapper>
                 {/* Travel bucket list, new resolutions, new goals, restaurants to try this month, movies to watch */}
                 <SectionHeader>Personal</SectionHeader>
-                <ItemWrapper
-                    isInline
-                    align="center"
-                    isActive={path_name === '/profile'}
-                >
+                <ItemWrapper isInline align="center" isActive={path_name === '/profile'}>
                     <Link to="/profile">
                         <Stack isInline align="center">
                             <Text>
@@ -225,21 +207,11 @@ export const SideMenu = () => {
         return (
             <>
                 <Stack backgroundColor="var(--secondary)">
-                    <Button
-                        marginTop="8px"
-                        ref={btnRef}
-                        backgroundColor="transparent"
-                        onClick={onOpen}
-                    >
+                    <Button marginTop="8px" ref={btnRef} backgroundColor="transparent" onClick={onOpen}>
                         <Icon name="arrow-right" color="#fff" />
                     </Button>
                 </Stack>
-                <Drawer
-                    isOpen={isOpen}
-                    placement="left"
-                    onClose={onClose}
-                    finalFocusRef={btnRef}
-                >
+                <Drawer isOpen={isOpen} placement="left" onClose={onClose} finalFocusRef={btnRef}>
                     <DrawerOverlay />
                     <StyledDrawerContent>
                         <DrawerCloseButton color="#fff" />
