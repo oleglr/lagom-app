@@ -24,6 +24,8 @@ import { useAuth0 } from '../../react-auth0-spa'
 import { MainSection, FormWrapper } from '../container'
 import AvatarEditor from 'react-avatar-editor'
 
+const MAX_FILE_SIZE = 3000000
+
 const Profile = () => {
     const [form_status, setFormStatus] = React.useState('')
     const [files, setFiles] = React.useState([])
@@ -145,15 +147,21 @@ const Profile = () => {
                         }}
                         onSubmit={async (values, { setStatus, setSubmitting }) => {
                             setFormStatus('submitting')
-                            const is_no_changes = user.name === values.nickname && !preview
+                            const is_no_changes = user.name === values.nickname && !preview.length
                             if (is_no_changes) {
                                 setFormStatus('')
                                 return
                             }
 
+                            if (files && files.blob && files.blob.size > MAX_FILE_SIZE) {
+                                setFormStatus('')
+                                setStatus({ msg: `File size cannot exceed 3mb` })
+                                return
+                            }
+
                             const token = await getTokenSilently()
 
-                            if (preview) {
+                            if (preview && preview.length) {
                                 const formData = new FormData()
                                 formData.append('user_id', user.sub)
                                 formData.append('nickname', values.nickname)
@@ -209,19 +217,13 @@ const Profile = () => {
                                             <FormLabel htmlFor="user-name">Username</FormLabel>
                                             <Input {...field} type="text" id="user-name" data-lpignore="true" />
                                             <FormErrorMessage>{form.errors.nickname}</FormErrorMessage>
-                                            {status && status.msg && (
-                                                <Stack isInline align="center">
-                                                    <Icon color="red.500" name="warning" size="18px" />
-                                                    <Text>Server error {status.msg}, please try again</Text>
-                                                </Stack>
-                                            )}
                                         </FormControl>
                                     )}
                                 />
                                 {status && status.msg && (
                                     <Stack isInline align="center">
                                         <Icon color="red.500" name="warning" size="18px" />
-                                        <Text>Server error {status.msg}, please try again</Text>
+                                        <Text>Error {status.msg}</Text>
                                     </Stack>
                                 )}
                                 <Stack justify="flex-end">

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Heading, Image, Box, Badge, Text, Button, Stack } from '@chakra-ui/core'
+import { Heading, Image, Box, Badge } from '@chakra-ui/core'
 import moment from 'moment'
 import { Flex } from '../../../components/container'
 import { useGlobal } from '../../../context/global-context'

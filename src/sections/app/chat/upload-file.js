@@ -77,12 +77,14 @@ const IconCloseWrapper = styled.div`
         cursor: pointer;
     }
 `
+const MAX_FILE_SIZE = 5000000
 
 export const Upload = ({ is_thread, thread_message_id }) => {
     const [files, setFiles] = React.useState([])
     const [preview, setPreview] = React.useState([])
     const [status, setStatus] = React.useState('')
     const [message, setMessage] = React.useState('')
+    const [error_msg, setErrorMsg] = React.useState('')
 
     const { getTokenSilently, user } = useAuth0()
     const { active_group } = useGlobal()
@@ -96,11 +98,14 @@ export const Upload = ({ is_thread, thread_message_id }) => {
 
     const uploadFileClient = e => {
         const file = e.target.files
+        setErrorMsg('')
+        setStatus('')
         setFiles(Array.from(file))
     }
 
     const sendFiles = async e => {
         if (!files.length) return
+        if (error_msg) return
 
         setStatus('loading')
 
@@ -130,11 +135,16 @@ export const Upload = ({ is_thread, thread_message_id }) => {
                 Authorization: `Bearer ${token}`,
             },
         })
-            .then(res => res.json())
             .then(res => {
-                if (res.errors || res.error) {
-                    console.warn(res.error, res.errors)
+                if (res.status === 500) {
+                    return { error: 'Server error' }
+                }
+                return res.json()
+            })
+            .then(res => {
+                if (res.error) {
                     setStatus('error')
+                    setErrorMsg(res.error)
                     return
                 }
                 setStatus('')
@@ -153,8 +163,13 @@ export const Upload = ({ is_thread, thread_message_id }) => {
             setPreview(undefined)
             return
         }
-
         const object_urls = files.map(f => URL.createObjectURL(f))
+        files.forEach(f => {
+            if (f.size > MAX_FILE_SIZE) {
+                setStatus('error')
+                setErrorMsg(`File size cannot exceed 5mb`)
+            }
+        })
         setPreview(object_urls)
 
         // free memory when ever this component is unmounted
@@ -223,7 +238,7 @@ export const Upload = ({ is_thread, thread_message_id }) => {
                             {status === 'error' && (
                                 <Alert status="error">
                                     <AlertIcon />
-                                    Please try again, there was a connection issue.
+                                    {error_msg}
                                 </Alert>
                             )}
                             <Button variant="ghost" mr={3} onClick={() => setFiles('')}>
