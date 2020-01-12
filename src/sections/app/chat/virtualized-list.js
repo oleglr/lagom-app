@@ -14,13 +14,7 @@ class VirtualizedList extends React.Component {
         style, // Style object to be applied to row (to position it)
     }) => {
         return (
-            <CellMeasurer
-                key={key}
-                cache={this.props.cache}
-                parent={parent}
-                columnIndex={0}
-                rowIndex={index}
-            >
+            <CellMeasurer key={key} cache={this.props.cache} parent={parent} columnIndex={0} rowIndex={index}>
                 {({ measure }) => (
                     <div style={style}>
                         <Message

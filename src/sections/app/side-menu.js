@@ -11,12 +11,15 @@ import {
     DrawerOverlay,
     DrawerContent,
     DrawerCloseButton,
+    Avatar,
+    // AvatarBadge,
 } from '@chakra-ui/core'
 import { useHistory } from 'react-router-dom'
 import { useMediaQuery } from 'react-responsive'
 import { useDisclosure } from '@chakra-ui/core'
 import { useGlobal } from '../../context/global-context'
 import { useAuth0 } from '../../react-auth0-spa'
+import { PopoverBubble } from '../../components/general/popover-bubble'
 
 const Aside = styled.aside`
     min-width: 275px;
@@ -74,34 +77,106 @@ const GroupNameHeading = styled(Heading)`
         cursor: pointer;
     }
 `
+const GroupAvatars = ({ onClose }) => {
+    const { group_members } = useGlobal()
+    const history = useHistory()
+
+    let show_more, more_members
+    if (group_members.length > 12) {
+        show_more = true
+        more_members = group_members.length - 12
+    }
+
+    return (
+        <>
+            <div>
+                <Stack
+                    align="center"
+                    isInline
+                    marginLeft="8px"
+                    flexWrap="wrap"
+                    maxWidth="250px"
+                    maxHeight="250px"
+                    overflow="scroll"
+                >
+                    {group_members.slice(0, 12).map(m => (
+                        <PopoverBubble key={m.user_id} text={<Text>{m.nickname}</Text>}>
+                            <Avatar margin="2px" src={m.picture} size="sm">
+                                {/* <AvatarBadge border="0.1em solid" borderColor="papayawhip" bg="green.400" size="1em" /> */}
+                            </Avatar>
+                        </PopoverBubble>
+                    ))}
+                    {show_more && (
+                        <Text fontSize="12px" margin="2px" color="#fff">
+                            ...and {more_members} more
+                        </Text>
+                    )}
+                </Stack>
+            </div>
+            <Button
+                onClick={() => {
+                    if (onClose) onClose()
+                    history.push('/invite')
+                }}
+                size="xs"
+                variantColor="teal"
+                marginTop="16px"
+                marginLeft="8px"
+                width="100px"
+            >
+                Add members
+            </Button>
+        </>
+    )
+}
 
 const SideContent = ({ onClose }) => {
     const history = useHistory()
     const path_name = history.location.pathname
-    const { active_group } = useGlobal()
+    const { active_group, group_members } = useGlobal()
     const { logout } = useAuth0()
-
+    const has_group = active_group && active_group.name
     return (
         <>
-            {active_group && active_group.name && (
+            {has_group && (
                 <>
                     <GroupNameHeading size="md" onClick={() => history.push('/')}>
                         {active_group.name}
                     </GroupNameHeading>
-                    <Stack justify="center">
-                        <Button
-                            marginLeft="16px"
-                            className="btn-primary"
-                            width="150px"
-                            onClick={() => {
-                                if (onClose) onClose()
-                                history.push('/invite')
-                            }}
-                        >
-                            Invite Friends
-                        </Button>
-                    </Stack>
+                    {group_members.length === 1 && (
+                        <Stack justify="center">
+                            <Button
+                                marginLeft="16px"
+                                className="btn-primary"
+                                width="150px"
+                                onClick={() => {
+                                    if (onClose) onClose()
+                                    history.push('/invite')
+                                }}
+                            >
+                                Invite Friends
+                            </Button>
+                            }
+                        </Stack>
+                    )}
+                    {group_members.length > 1 && <GroupAvatars onClose={onClose} />}
                 </>
+            )}
+            {!has_group && (
+                <Stack justify="center">
+                    <Button
+                        marginTop="16px"
+                        marginLeft="16px"
+                        className="btn-primary"
+                        width="150px"
+                        onClick={() => {
+                            if (onClose) onClose()
+                            history.push('/new-group')
+                        }}
+                    >
+                        Make a group
+                    </Button>
+                </Stack>
             )}
             <Stack spacing={2} paddingLeft="16px">
                 <SectionHeader>Group</SectionHeader>
@@ -141,7 +216,7 @@ const SideContent = ({ onClose }) => {
                         </Stack>
                     </Link>
                 </ItemWrapper>
-                <ItemWrapper isInline align="center" isActive={path_name === '/expenses'}>
+                {/* <ItemWrapper isInline align="center" isActive={path_name === '/expenses'}>
                     <Link to="/expenses">
                         <Stack isInline align="center">
                             <Text>
@@ -152,7 +227,7 @@ const SideContent = ({ onClose }) => {
                             </Text>
                         </Stack>
                     </Link>
-                </ItemWrapper>
+                </ItemWrapper> */}
                 {/* Travel bucket list, new resolutions, new goals, restaurants to try this month, movies to watch */}
                 <SectionHeader>Personal</SectionHeader>
                 <ItemWrapper isInline align="center" isActive={path_name === '/profile'}>

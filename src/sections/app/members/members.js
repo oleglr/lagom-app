@@ -1,5 +1,6 @@
 import React from 'react'
-import { Heading, Image, Box, Badge, Text, Button, Stack } from '@chakra-ui/core'
+import { useHistory } from 'react-router-dom'
+import { Heading, Image, Box, Badge, Button } from '@chakra-ui/core'
 import moment from 'moment'
 import { Flex } from '../../../components/container'
 import { useGlobal } from '../../../context/global-context'
@@ -7,6 +8,7 @@ import { CreateGroup } from '../../../components/general/create-group'
 
 const Profile = () => {
     const { group_members, active_group } = useGlobal()
+    const history = useHistory()
 
     if (!active_group || !active_group.id) {
         return <CreateGroup />
@@ -59,6 +61,9 @@ const Profile = () => {
                         </Box>
                     ))}
             </Flex>
+            <Button onClick={() => history.push('/invite')} className="btn-primary">
+                Add members
+            </Button>
         </div>
     )
 }

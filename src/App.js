@@ -6,6 +6,7 @@ import { Router, Route, Switch } from 'react-router-dom'
 import history from './utils/history'
 import Profile from './components/general/profile'
 import Members from './sections/app/members/members'
+import Media from './sections/app/media/media'
 import PrivateRoute from './components/general/private-route'
 import { useAuth0 } from './react-auth0-spa'
 import { GlobalContextProvider } from './context/global-context'
@@ -155,7 +156,7 @@ function App() {
 
                                     <PrivateRoute path="/profile" component={Profile} />
                                     <PrivateRoute path="/my-groups" component={Profile} />
-                                    <PrivateRoute path="/media" component={Profile} />
+                                    <PrivateRoute path="/media" component={Media} />
                                     <PrivateRoute path="/members" component={Members} />
                                     <PrivateRoute path="/invite" component={Invite} />
                                     <PrivateRoute path="/expenses" component={Profile} />
