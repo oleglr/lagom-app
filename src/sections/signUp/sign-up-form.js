@@ -1,12 +1,6 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import {
-    FormControl,
-    FormLabel,
-    FormErrorMessage,
-    Input,
-    FormHelperText,
-} from '@chakra-ui/core'
+import { FormControl, FormLabel, FormErrorMessage, Input, FormHelperText } from '@chakra-ui/core'
 import { Heading, Button, Text } from '@chakra-ui/core'
 import { Formik, Form, Field } from 'formik'
 import { Flex, Lottie } from '../../components/container'
@@ -26,7 +20,7 @@ const FormWrapper = styled.div`
     margin: 0 auto;
     max-width: 600px;
     background-color: var(--white);
-    padding: 4rem 16px;
+    padding: 32px 16px;
     border-radius: 0.25rem;
 
     @media (max-width: 600px) {
@@ -73,19 +67,11 @@ export const SignUpForm = () => {
                 </Heading>
                 <Flex mt="8rem" height="0" column>
                     <div>
-                        <Lottie
-                            animationData={celebrateAnimation}
-                            height={200}
-                            width={200}
-                            loop={false}
-                        />
+                        <Lottie animationData={celebrateAnimation} height={200} width={200} loop={false} />
                     </div>
                     <div>
                         <Flex mt="2rem">
-                            <Button
-                                className="btn-primary"
-                                onClick={() => loginWithRedirect({})}
-                            >
+                            <Button className="btn-primary" onClick={() => loginWithRedirect({})}>
                                 Log in
                             </Button>
                         </Flex>
@@ -107,12 +93,11 @@ export const SignUpForm = () => {
                         const errors = {}
                         if (!values.email) {
                             errors.email = 'Required'
-                        } else if (
-                            !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(
-                                values.email
-                            )
-                        ) {
+                        } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)) {
                             errors.email = 'Invalid email address'
+                        }
+                        if (!values.username) {
+                            errors.username = 'Required'
                         }
                         if (!values.password) {
                             errors.password = 'Required'
@@ -129,21 +114,19 @@ export const SignUpForm = () => {
                     }}
                     onSubmit={(values, { setSubmitting }) => {
                         setSubmitting(true)
-                        fetch(
-                            `https://${process.env.REACT_APP_DOMAIN}/dbconnections/signup`,
-                            {
-                                method: 'POST',
-                                body: JSON.stringify({
-                                    client_id: process.env.REACT_APP_CLIENT_ID,
-                                    email: values.email,
-                                    password: values.password,
-                                    connection: 'lagom-test',
-                                }),
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                            }
-                        )
+                        fetch(`https://${process.env.REACT_APP_DOMAIN}/dbconnections/signup`, {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                client_id: process.env.REACT_APP_CLIENT_ID,
+                                nickname: values.username,
+                                email: values.email,
+                                password: values.password,
+                                connection: 'lagom-test',
+                            }),
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                        })
                             .then(data => data.json())
                             .then(res => {
                                 setSubmitting(false)
@@ -156,12 +139,7 @@ export const SignUpForm = () => {
                             <Field
                                 name="email"
                                 render={({ field, form }) => (
-                                    <FormControl
-                                        isInvalid={
-                                            form.errors.email &&
-                                            form.touched.email
-                                        }
-                                    >
+                                    <FormControl isInvalid={form.errors.email && form.touched.email}>
                                         <FormLabel mt={8} htmlFor="email">
                                             Email address
                                         </FormLabel>
@@ -174,32 +152,31 @@ export const SignUpForm = () => {
                                         <FormHelperText id="email-helper-text">
                                             We'll never share your email.
                                         </FormHelperText>
-                                        <FormErrorMessage>
-                                            {form.errors.email}
-                                        </FormErrorMessage>
+                                        <FormErrorMessage>{form.errors.email}</FormErrorMessage>
+                                    </FormControl>
+                                )}
+                            />
+                            <Field
+                                name="username"
+                                render={({ field, form }) => (
+                                    <FormControl isInvalid={form.errors.username && form.touched.username}>
+                                        <FormLabel mt={8} htmlFor="username">
+                                            Username
+                                        </FormLabel>
+                                        <Input {...field} type="text" id="username" aria-describedby="username" />
+                                        <FormErrorMessage>{form.errors.username}</FormErrorMessage>
                                     </FormControl>
                                 )}
                             />
                             <Field
                                 name="password"
                                 render={({ field, form }) => (
-                                    <FormControl
-                                        isInvalid={
-                                            form.errors.password &&
-                                            form.touched.password
-                                        }
-                                    >
+                                    <FormControl isInvalid={form.errors.password && form.touched.password}>
                                         <FormLabel mt={4} htmlFor="password">
                                             Password
                                         </FormLabel>
-                                        <Input
-                                            {...field}
-                                            type="password"
-                                            id="password"
-                                        />
-                                        <FormErrorMessage>
-                                            {form.errors.password}
-                                        </FormErrorMessage>
+                                        <Input {...field} type="password" id="password" />
+                                        <FormErrorMessage>{form.errors.password}</FormErrorMessage>
                                     </FormControl>
                                 )}
                             />
@@ -222,26 +199,14 @@ export const SignUpForm = () => {
                     Or sign up with
                 </Text>
                 <SocialWrapper columnSize="600px">
-                    <Button
-                        variant="outline"
-                        id="fb-btn"
-                        onClick={() =>
-                            // TODO: save group_id, user_id to localstorage
-                            loginWithRedirect({ connection: 'facebook' })
-                        }
-                    >
-                        <FacebookIcon
-                            style={{ height: '28px', paddingRight: '5px' }}
-                        />
+                    <Button variant="outline" id="fb-btn" onClick={() => loginWithRedirect({ connection: 'facebook' })}>
+                        <FacebookIcon style={{ height: '28px', paddingRight: '5px' }} />
                         <Text fontWeight="normal">Sign up with Facebook</Text>
                     </Button>
                     <Button
                         variant="outline"
                         id="google-btn"
-                        onClick={() =>
-                            // TODO: save group_id, user_id to localstorage
-                            loginWithRedirect({ connection: 'google-oauth2' })
-                        }
+                        onClick={() => loginWithRedirect({ connection: 'google-oauth2' })}
                     >
                         <GoogleIcon style={{ height: '32px' }} />
                         <Text fontWeight="normal">Sign up with Google</Text>

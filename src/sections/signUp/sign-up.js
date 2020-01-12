@@ -43,18 +43,12 @@ const SignUp_ = ({ ...props }) => {
             <Hero>
                 <Flex>
                     <HeaderWrapper column>
-                        <Heading
-                            as="h1"
-                            style={{ textAlign: 'left' }}
-                            fontSize="42px"
-                        >
+                        <Heading as="h1" style={{ textAlign: 'left' }} fontSize="42px">
                             Relax and express yourself.
                         </Heading>
                         <Text style={{ margin: '16px 0', textAlign: 'left' }}>
-                            A small group based social media, connect with
-                            family and close friends. Imagine a whatsapp group
-                            with features such as photo albums, plan group
-                            activities, split bills.
+                            A small group based social media, connect with family and close friends. Imagine a whatsapp
+                            group with features such as photo albums, plan group activities, split bills.
                         </Text>
                         <Flex justify="unset">
                             <Button
@@ -64,10 +58,7 @@ const SignUp_ = ({ ...props }) => {
                             >
                                 Sign up
                             </Button>
-                            <Button
-                                onClick={() => loginWithRedirect({})}
-                                variant="outline"
-                            >
+                            <Button onClick={() => loginWithRedirect({})} variant="outline">
                                 Login
                             </Button>
                         </Flex>
@@ -79,11 +70,7 @@ const SignUp_ = ({ ...props }) => {
                                 paddingRight: '10rem',
                             }}
                         >
-                            <Lottie
-                                animationData={legoAnimation}
-                                height={500}
-                                width={300}
-                            />
+                            <Lottie animationData={legoAnimation} height={500} width={300} />
                         </div>
                     </LandingImageWrapper>
                 </Flex>

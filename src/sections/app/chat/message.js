@@ -55,32 +55,14 @@ const HoverWrapper = styled.span`
 `
 const LAGOMBOT = 'Lagom Robot'
 
-export const Message = React.memo(function({
-    message,
-    idx,
-    measure,
-    is_thread,
-}) {
+export const Message = React.memo(function({ message, idx, measure, is_thread }) {
     const [show_menu, setShowMenu] = React.useState(false)
 
     return (
-        <ChatContainer
-            justify="start"
-            onMouseEnter={() => setShowMenu(true)}
-            onMouseLeave={() => setShowMenu(false)}
-        >
-            <ChatMessage
-                is_thread={is_thread}
-                message={message}
-                idx={idx}
-                measure={measure}
-            />
+        <ChatContainer justify="start" onMouseEnter={() => setShowMenu(true)} onMouseLeave={() => setShowMenu(false)}>
+            <ChatMessage is_thread={is_thread} message={message} idx={idx} measure={measure} />
             <HoverWrapper show_menu={show_menu}>
-                <HoverMenu
-                    message_idx={idx}
-                    message={message}
-                    is_thread={is_thread}
-                />
+                <HoverMenu message_idx={idx} message={message} is_thread={is_thread} />
             </HoverWrapper>
         </ChatContainer>
     )
@@ -88,17 +70,12 @@ export const Message = React.memo(function({
 
 const getUser = (message, members) => {
     const user = members.find(u => u.user_id === message.user)
-    if (user) return { name: user.name, img: user.picture }
+    if (user) return { name: user.nickname, img: user.picture }
     if (message.user === LAGOMBOT) return { name: LAGOMBOT, img: LagomRobotImg }
     return { name: 'unkown user', img: LagomRobotImg }
 }
 
-export const ChatMessage = React.memo(function({
-    message,
-    idx,
-    measure,
-    is_thread,
-}) {
+export const ChatMessage = React.memo(function({ message, idx, measure, is_thread }) {
     const { group_members } = useGlobal()
     const { setThreadMessage } = React.useContext(ChatContext)
     const reply_length = message.replies && message.replies.length
@@ -112,6 +89,7 @@ export const ChatMessage = React.memo(function({
                 style={{
                     borderRadius: '5px',
                     maxHeight: '45px',
+                    maxWidth: '45px',
                     marginTop: '4px',
                     backgroundColor: 'coral',
                 }}
@@ -123,11 +101,7 @@ export const ChatMessage = React.memo(function({
                         {moment(message.createdAt).format('LT')}
                     </span>
                 </Text>
-                <Content
-                    message={message}
-                    measure={measure}
-                    is_thread={is_thread}
-                />
+                <Content message={message} measure={measure} is_thread={is_thread} />
                 {!!message.reactions.length && (
                     <Reaction
                         is_thread={is_thread}
