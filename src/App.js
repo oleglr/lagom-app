@@ -5,6 +5,7 @@ import { Router, Route, Switch } from 'react-router-dom'
 // internal
 import history from './utils/history'
 import Profile from './components/general/profile'
+import Members from './sections/app/members/members'
 import PrivateRoute from './components/general/private-route'
 import { useAuth0 } from './react-auth0-spa'
 import { GlobalContextProvider } from './context/global-context'
@@ -39,6 +40,7 @@ function MainApp() {
 const MainContent = styled.div`
     height: 100%;
     display: flex;
+    overflow: scroll;
 `
 
 function App() {
@@ -52,15 +54,10 @@ function App() {
         async function getLoginAndInitSocket() {
             try {
                 const is_invited_and_just_signed_up =
-                    localStorage.getItem('signup_group_id') &&
-                    localStorage.getItem('signup_inviter_id')
+                    localStorage.getItem('signup_group_id') && localStorage.getItem('signup_inviter_id')
 
-                const user_metadata =
-                    user['http://localhost:3001/user_metadata']
-                const has_group =
-                    user_metadata &&
-                    user_metadata.group &&
-                    user_metadata.group.id
+                const user_metadata = user['http://localhost:3001/user_metadata']
+                const has_group = user_metadata && user_metadata.group && user_metadata.group.id
 
                 if (is_invited_and_just_signed_up && !has_group) {
                     const temp_token = await getTokenSilently()
@@ -73,15 +70,15 @@ function App() {
                     setSocketStatus(APP_STATUS.NO_GROUP)
                     return
                 }
-
-                setActiveGroup({
-                    name: user_metadata.group.name,
-                    id: user_metadata.group.id,
-                })
                 // 1. get group
                 const res_group = await initSocket({
                     group_id: user_metadata.group.id,
                     user_id: user.sub,
+                })
+                setActiveGroup({
+                    name: res_group.group.name,
+                    id: res_group.group._id,
+                    admin: res_group.group.admin.id,
                 })
                 setGroupMembers(res_group.users)
                 setSocketStatus('')
@@ -138,10 +135,7 @@ function App() {
     }
 
     //  not coming from invite link
-    if (
-        socket_status === APP_STATUS.NO_GROUP &&
-        !/external-invite/.test(window.location.pathname)
-    ) {
+    if (socket_status === APP_STATUS.NO_GROUP && !/external-invite/.test(window.location.pathname)) {
         history.push('/new-group')
     }
 
@@ -149,50 +143,25 @@ function App() {
         <ThemeProvider>
             <CSSReset />
             <main className="App">
-                <GlobalContextProvider
-                    activeGroup={activeGroup}
-                    groupMembers={groupMembers}
-                >
+                <GlobalContextProvider activeGroup={activeGroup} groupMembers={groupMembers}>
                     <Router history={history}>
                         <MainContent>
                             {isAuthenticated && <SideMenu />}
-                            <Switch>
-                                <Route path="/" exact component={MainApp} />
-                                <Route path="/sign-up" component={SignUpForm} />
-                                <Route
-                                    path="/external-invite"
-                                    component={ExternalInvite}
-                                />
+                            <div style={{ overflow: 'scroll', height: '100%', width: '100%' }}>
+                                <Switch>
+                                    <Route path="/" exact component={MainApp} />
+                                    <Route path="/sign-up" component={SignUpForm} />
+                                    <Route path="/external-invite" component={ExternalInvite} />
 
-                                <PrivateRoute
-                                    path="/profile"
-                                    component={Profile}
-                                />
-                                <PrivateRoute
-                                    path="/my-groups"
-                                    component={Profile}
-                                />
-                                <PrivateRoute
-                                    path="/media"
-                                    component={Profile}
-                                />
-                                <PrivateRoute
-                                    path="/members"
-                                    component={Profile}
-                                />
-                                <PrivateRoute
-                                    path="/invite"
-                                    component={Invite}
-                                />
-                                <PrivateRoute
-                                    path="/expenses"
-                                    component={Profile}
-                                />
-                                <PrivateRoute
-                                    path="/new-group"
-                                    component={NewGroup}
-                                />
-                            </Switch>
+                                    <PrivateRoute path="/profile" component={Profile} />
+                                    <PrivateRoute path="/my-groups" component={Profile} />
+                                    <PrivateRoute path="/media" component={Profile} />
+                                    <PrivateRoute path="/members" component={Members} />
+                                    <PrivateRoute path="/invite" component={Invite} />
+                                    <PrivateRoute path="/expenses" component={Profile} />
+                                    <PrivateRoute path="/new-group" component={NewGroup} />
+                                </Switch>
+                            </div>
                         </MainContent>
                     </Router>
                 </GlobalContextProvider>

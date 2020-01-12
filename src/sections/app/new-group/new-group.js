@@ -1,15 +1,5 @@
 import React from 'react'
-import {
-    Button,
-    Heading,
-    FormControl,
-    FormErrorMessage,
-    Input,
-    Spinner,
-    Text,
-    Stack,
-    Icon,
-} from '@chakra-ui/core'
+import { Button, Heading, FormControl, FormErrorMessage, Input, Spinner, Text, Stack, Icon } from '@chakra-ui/core'
 import { Formik, Form, Field } from 'formik'
 import { Flex, MainSection, FormWrapper } from '../../../components/container'
 import { useAuth0 } from '../../../react-auth0-spa'
@@ -24,8 +14,8 @@ export const NewGroup = () => {
 
     const { getTokenSilently, user } = useAuth0()
 
-    const setNewGroup = (group, cb) => {
-        setActiveGroup({ name: group.group_name, id: group.group_id })
+    const setNewGroup = (group, admin_id) => {
+        setActiveGroup({ name: group.group_name, id: group.group_id, admin: admin_id })
         setFormStatus('invite_form')
     }
 
@@ -102,7 +92,7 @@ export const NewGroup = () => {
                                     group_id: res.group_id,
                                     user_id: user.sub,
                                 })
-                                setNewGroup(res)
+                                setNewGroup(res, res_group.group.admin.id)
                             })
                     }}
                 >
@@ -111,17 +101,8 @@ export const NewGroup = () => {
                             <Field
                                 name="group_name"
                                 render={({ field, form }) => (
-                                    <FormControl
-                                        isInvalid={
-                                            form.errors.group_name &&
-                                            form.touched.group_name
-                                        }
-                                    >
-                                        <Heading
-                                            size="lg"
-                                            mb={4}
-                                            htmlFor="group-name"
-                                        >
+                                    <FormControl isInvalid={form.errors.group_name && form.touched.group_name}>
+                                        <Heading size="lg" mb={4} htmlFor="group-name">
                                             What's the name of your group?
                                         </Heading>
                                         <Input
@@ -131,20 +112,11 @@ export const NewGroup = () => {
                                             placeholder="E.g. The ones who knock"
                                             data-lpignore="true"
                                         />
-                                        <FormErrorMessage>
-                                            {form.errors.group_name}
-                                        </FormErrorMessage>
+                                        <FormErrorMessage>{form.errors.group_name}</FormErrorMessage>
                                         {status && status.msg && (
                                             <Stack isInline align="center">
-                                                <Icon
-                                                    color="red.500"
-                                                    name="warning"
-                                                    size="18px"
-                                                />
-                                                <Text>
-                                                    Server error {status.msg},
-                                                    please try again
-                                                </Text>
+                                                <Icon color="red.500" name="warning" size="18px" />
+                                                <Text>Server error {status.msg}, please try again</Text>
                                             </Stack>
                                         )}
                                     </FormControl>
@@ -158,11 +130,7 @@ export const NewGroup = () => {
                                     id="form-submit-btn"
                                     disabled={isSubmitting}
                                 >
-                                    {form_status === 'loading_new_group' ? (
-                                        <Spinner />
-                                    ) : (
-                                        'Create group'
-                                    )}
+                                    {form_status === 'loading_new_group' ? <Spinner /> : 'Create group'}
                                 </Button>
                             </Flex>
                         </Form>
