@@ -31,7 +31,7 @@ const MediaCard = ({ message, measure }) => {
             borderWidth="1px"
             rounded="lg"
             overflow="hidden"
-            margin="12px"
+            margin="5px"
             height="fit-content"
         >
             <ImagePreview img_source={message.image_url}>
@@ -43,7 +43,7 @@ const MediaCard = ({ message, measure }) => {
                     alt={message.action}
                     src={message.image_url}
                 />
-                <Box p={'2'} maxHeight="98px">
+                <Box p="5px" maxHeight="98px">
                     <Stack isInline align="center" maxWidth="180px">
                         <img
                             src={user.img}
@@ -57,7 +57,7 @@ const MediaCard = ({ message, measure }) => {
                             }}
                             onLoad={measure}
                         />
-                        <Box mt="1" marginLeft="5px" fontWeight="semibold" as="h4" lineHeight="tight" isTruncated>
+                        <Box mt="1" marginLeft="5px" fontSize="12px" fontWeight="semibold" as="h4" isTruncated>
                             {user.name}
                         </Box>
                     </Stack>
@@ -75,7 +75,7 @@ class MediaList extends React.Component {
             <AutoSizer>
                 {({ height, width }) => {
                     const item_size = 200
-                    const row_height = 225
+                    const row_height = 200
 
                     const itemsPerRow = Math.floor(width / item_size)
 

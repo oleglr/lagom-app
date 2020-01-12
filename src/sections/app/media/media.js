@@ -40,14 +40,14 @@ const MediaListContainer = () => {
     if (loading) return <div>loading...</div>
 
     return (
-        <div style={{ margin: '2rem 0 0 2rem', height: '100%' }}>
-            <Heading size="xl" marginBottom="16px">
+        <div style={{ height: '100%' }}>
+            <Heading marginLeft="2rem" marginTop="2rem" size="xl" marginBottom="16px">
                 Media:
             </Heading>
             <div style={{ height: '100%' }}>
                 {!!data.images.length && <MediaList items={data.images} />}
                 {!!!data.images.length && (
-                    <Stack spacing={8} maxW="400px" marginRight="2rem">
+                    <Stack marginLeft="2rem" spacing={8} maxW="400px" marginRight="2rem">
                         <Feature title="Don't lose any memories" />
                     </Stack>
                 )}
