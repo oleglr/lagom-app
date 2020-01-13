@@ -42,6 +42,12 @@ const SocialWrapper = styled(Flex)`
     }
 `
 
+const LinkText = styled(Text)`
+    &:hover {
+        text-decoration: underline;
+    }
+`
+
 function hasLowerCase(str) {
     return /[a-z]/.test(str)
 }
@@ -140,8 +146,8 @@ export const SignUpForm = () => {
                                 name="email"
                                 render={({ field, form }) => (
                                     <FormControl isInvalid={form.errors.email && form.touched.email}>
-                                        <FormLabel mt={8} htmlFor="email">
-                                            Email address
+                                        <FormLabel mt={4} htmlFor="email">
+                                            Email
                                         </FormLabel>
                                         <Input
                                             {...field}
@@ -160,7 +166,7 @@ export const SignUpForm = () => {
                                 name="username"
                                 render={({ field, form }) => (
                                     <FormControl isInvalid={form.errors.username && form.touched.username}>
-                                        <FormLabel mt={8} htmlFor="username">
+                                        <FormLabel mt={4} htmlFor="username">
                                             Username
                                         </FormLabel>
                                         <Input {...field} type="text" id="username" aria-describedby="username" />
@@ -183,7 +189,7 @@ export const SignUpForm = () => {
                             <Flex justify="flex-end">
                                 <Button
                                     width="100px"
-                                    mt={8}
+                                    mt={4}
                                     className="btn-primary"
                                     type="submit"
                                     id="form-submit-btn"
@@ -195,7 +201,7 @@ export const SignUpForm = () => {
                         </Form>
                     )}
                 </Formik>
-                <Text mt={4} mb={4} textAlign="center" color="var(--grey)">
+                <Text mb={4} textAlign="center" color="var(--grey)">
                     Or sign up with
                 </Text>
                 <SocialWrapper columnSize="600px">
@@ -212,6 +218,9 @@ export const SignUpForm = () => {
                         <Text fontWeight="normal">Sign up with Google</Text>
                     </Button>
                 </SocialWrapper>
+                <LinkText mt={4} textAlign="center" color="var(--grey)" onClick={() => loginWithRedirect({})}>
+                    Have an account already? Login
+                </LinkText>
             </FormWrapper>
         </MainSection>
     )
