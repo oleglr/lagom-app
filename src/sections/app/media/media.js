@@ -1,5 +1,6 @@
 import React from 'react'
 import { Heading, Stack, Box, List, ListIcon, ListItem } from '@chakra-ui/core'
+import { Loader } from '../../../components/elements'
 import { useGlobal } from '../../../context/global-context'
 import { CreateGroup } from '../../../components/general/create-group'
 import { useFetch } from '../../../components/hooks/fetch-data'
@@ -37,7 +38,7 @@ const MediaListContainer = () => {
         return <CreateGroup />
     }
 
-    if (loading) return <div>loading...</div>
+    if (loading) return <Loader />
 
     return (
         <div style={{ height: '100%' }}>

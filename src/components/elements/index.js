@@ -1,4 +1,4 @@
-import { Loader } from './loader'
+import { Loader, BouncingLoader } from './loader'
 import { Error } from './error'
 
-export { Error, Loader }
+export { Error, Loader, BouncingLoader }

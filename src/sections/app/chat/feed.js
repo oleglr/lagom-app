@@ -5,6 +5,7 @@ import { VirtualizedList } from './virtualized-list'
 import { useFetch } from '../../../components/hooks/fetch-data'
 import { getSocket as socket } from '../../../api/socket'
 import { useGlobal } from '../../../context/global-context'
+import { Loader } from '../../../components/elements'
 
 const cache = new CellMeasurerCache({
     fixedWidth: true,
@@ -13,11 +14,9 @@ const cache = new CellMeasurerCache({
 
 export const ChatFeed = () => {
     const { active_group } = useGlobal()
-    const [data, loading] = useFetch(
-        `http://localhost:3000/chat-history?groupId=${active_group.id}`
-    )
+    const [data, loading] = useFetch(`http://localhost:3000/chat-history?groupId=${active_group.id}`)
 
-    if (loading) return <div>loading...</div>
+    if (loading) return <Loader />
 
     return <ChatFeedSocket message_history={data.chat} />
 }

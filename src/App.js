@@ -15,7 +15,7 @@ import { SignUp } from './sections/signUp/sign-up'
 import { SignUpForm } from './sections/signUp/sign-up-form'
 import { ExternalInvite } from './sections/invite/external_invite'
 import { NewGroup } from './sections/app/new-group/new-group'
-import { Loader, Error } from './components/elements'
+import { BouncingLoader, Error } from './components/elements'
 import { initSocket } from './api/socket'
 import { SideMenu } from './sections/app/side-menu'
 import { Invite } from './sections/app/new-group/invite'
@@ -100,7 +100,7 @@ function App() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user, isAuthenticated, loading])
 
-    if (loading || socket_status === 'loading') return <Loader />
+    if (loading || socket_status === 'loading') return <BouncingLoader />
 
     if (socket_status === APP_STATUS.SOCKET_CONNECTION_ERROR) {
         return <Error text="Please refresh couldn't establish a connection" />
@@ -132,7 +132,7 @@ function App() {
                 localStorage.removeItem('signup_inviter_id')
                 window.location.replace('http://localhost:3001/')
             })
-        return <Loader />
+        return <BouncingLoader />
     }
 
     //  not coming from invite link
