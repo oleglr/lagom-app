@@ -9,7 +9,6 @@ import { ChatContext } from './chat-context'
 import { HoverMenu } from './hover-menu'
 import { Reaction } from './reaction'
 import { Quote } from './quote'
-import LagomRobotImg from '../../../assets/images/lagom_robot.png'
 
 const ChatContainer = styled(Flex)`
     margin-left: 15px;
@@ -53,7 +52,6 @@ const LinkText = styled(Text)`
 const HoverWrapper = styled.span`
     visibility: ${props => (props.show_menu ? 'visible' : 'hidden')};
 `
-const LAGOMBOT = 'Lagom Robot'
 
 export const Message = React.memo(function({ message, idx, measure, is_thread }) {
     const [show_menu, setShowMenu] = React.useState(false)
@@ -68,18 +66,11 @@ export const Message = React.memo(function({ message, idx, measure, is_thread })
     )
 })
 
-const getUser = (message, members) => {
-    const user = members.find(u => u.user_id === message.user)
-    if (user) return { name: user.nickname, img: user.picture }
-    if (message.user === LAGOMBOT) return { name: LAGOMBOT, img: LagomRobotImg }
-    return { name: 'unkown user', img: LagomRobotImg }
-}
-
 export const ChatMessage = React.memo(function({ message, idx, measure, is_thread }) {
-    const { group_members } = useGlobal()
+    const { getUser } = useGlobal()
     const { setThreadMessage } = React.useContext(ChatContext)
     const reply_length = message.replies && message.replies.length
-    const user = getUser(message, group_members)
+    const user = getUser(message.user)
 
     return (
         <>
