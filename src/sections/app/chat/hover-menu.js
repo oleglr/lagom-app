@@ -40,7 +40,7 @@ export const HoverMenu = ({ message_idx, message, is_thread }) => {
     const { user } = useAuth0()
     const { active_group } = useGlobal()
 
-    const onAddReaction = ({ native: emoji }) => {
+    const onAddReaction = ({ native: emoji, colons: emoji_code }) => {
         const { _id: ref } = message
         if (is_thread) {
             let thread_ref = thread_message._id
@@ -52,7 +52,7 @@ export const HoverMenu = ({ message_idx, message, is_thread }) => {
                 group_id: active_group.id,
             })
         } else {
-            addReaction({ emoji, ref, group_id: active_group.id, user_id: user.sub })
+            addReaction({ emoji, emoji_code, ref, group_id: active_group.id, user_id: user.sub })
         }
         togglePicker(false)
     }

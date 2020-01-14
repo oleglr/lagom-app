@@ -1,7 +1,7 @@
 import { getSocket as socket } from '../../../api/socket'
 
-export const addReaction = ({ emoji, ref, group_id, user_id }) => {
-    emitReaction({ emoji, ref, group_id, user_id })
+export const addReaction = ({ emoji, emoji_code, ref, group_id, user_id }) => {
+    emitReaction({ emoji, emoji_code, ref, group_id, user_id })
 }
 
 export const addThreadReaction = ({ emoji, ref, thread_ref, group_id }) => {
@@ -22,12 +22,13 @@ export const removeReaction = ({ message_id, reaction_id, group_id, is_thread, t
     )
 }
 
-const emitReaction = ({ emoji, ref, is_thread = false, thread_ref, group_id, user_id }) => {
+const emitReaction = ({ emoji, emoji_code, ref, is_thread = false, thread_ref, group_id, user_id }) => {
     socket().emit(
         'add reaction',
         {
             user_id,
             emoji,
+            emoji_code,
             ref,
             is_thread,
             thread_ref,

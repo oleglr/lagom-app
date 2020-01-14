@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from '@emotion/styled'
 import Popover from 'react-tiny-popover'
-import { Icon, Text } from '@chakra-ui/core'
+import { Text } from '@chakra-ui/core'
 import { Flex } from '../../../components/container'
 import { EmojiPicker } from './emoji-picker'
 import { PopoverBubble } from '../../../components/general/popover-bubble'
@@ -9,6 +9,7 @@ import { ChatContext } from './chat-context'
 import { addReaction, removeReaction, addThreadReaction } from './socket-methods'
 import { useGlobal } from '../../../context/global-context'
 import { useAuth0 } from '../../../react-auth0-spa'
+import { ReactComponent as SmilePlus } from '../../../assets/svgs/smile-plus.svg'
 
 const ReactionWrapper = styled(Flex)`
     padding-top: 3px;
@@ -26,8 +27,8 @@ const ReactionsBox = styled.div`
     align-items: center;
     font-weight: bold;
 
-    background-color: ${props => (props.has_user ? '#8569ff14' : '#f3f3f3')};
-    border: ${props => (props.has_user ? '2px solid var(--moon-blue)' : '2px solid #f3f3f3')};
+    background-color: ${props => (props.has_user ? 'var(light-purple)' : 'var(--grey-3)')};
+    border: ${props => (props.has_user ? '2px solid var(--moon-blue)' : '2px solid var(--grey-3)')};
 
     transition: border 0.2s;
     &:hover {
@@ -91,7 +92,7 @@ export const Reaction = React.memo(function({ reactions, message_idx, message_re
     const { user } = useAuth0()
     const sorted_reactions = sortEmojis(reactions)
 
-    const onAddReaction = ({ native: emoji }) => {
+    const onAddReaction = ({ native: emoji, colons: emoji_code }) => {
         if (is_thread) {
             let thread_ref = thread_message._id
             addThreadReaction({
@@ -101,19 +102,19 @@ export const Reaction = React.memo(function({ reactions, message_idx, message_re
                 group_id: active_group.id,
             })
         } else {
-            addReaction({ emoji, ref: message_ref, group_id: active_group.id, user_id: user.sub })
+            addReaction({ emoji, emoji_code, ref: message_ref, group_id: active_group.id, user_id: user.sub })
         }
         togglePicker(false)
     }
 
-    const handleClickReaction = (has_user, emoji) => {
+    const handleClickReaction = (has_user, emoji, emoji_code) => {
         if (has_user) {
             const found_reaction = reactions.find(r => r.user === user.sub && r.emoji === emoji)
             if (found_reaction) {
                 removeReaction({ message_id: message_ref, group_id: active_group.id, reaction_id: found_reaction._id })
             }
         } else {
-            addReaction({ emoji, ref: message_ref, group_id: active_group.id, user_id: user.sub })
+            addReaction({ emoji, emoji_code, ref: message_ref, group_id: active_group.id, user_id: user.sub })
         }
     }
 
@@ -130,11 +131,14 @@ export const Reaction = React.memo(function({ reactions, message_idx, message_re
                         key={r._id}
                         text={
                             <Text>
-                                {text} <span>reacted with :emoji_code:</span>
+                                {text} <span>reacted with {r.emoji_code}</span>
                             </Text>
                         }
                     >
-                        <ReactionsBox has_user={has_user} onClick={() => handleClickReaction(has_user, r.emoji)}>
+                        <ReactionsBox
+                            has_user={has_user}
+                            onClick={() => handleClickReaction(has_user, r.emoji, r.emoji_code)}
+                        >
                             {r.emoji} <span style={{ fontSize: '12px' }}>{r.users.length}</span>
                         </ReactionsBox>
                     </PopoverBubble>
@@ -152,7 +156,12 @@ export const Reaction = React.memo(function({ reactions, message_idx, message_re
                 }
             >
                 <PopoverBubble text={<Text>Add reaction</Text>}>
-                    <Icon onClick={() => togglePicker(!showPicker)} name="add" size="16px" />
+                    <ReactionsBox style={{ width: '35px', height: '28px' }}>
+                        <SmilePlus
+                            style={{ height: '29px', marginTop: '-3px' }}
+                            onClick={() => togglePicker(!showPicker)}
+                        />
+                    </ReactionsBox>
                 </PopoverBubble>
             </Popover>
         </ReactionWrapper>
