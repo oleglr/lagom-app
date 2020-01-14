@@ -2,6 +2,7 @@ import React from 'react'
 import styled from '@emotion/styled'
 import { Text } from '@chakra-ui/core'
 import { Flex } from '../../../components/container'
+import { useGlobal } from '../../../context/global-context'
 
 const QuoteStyle = styled.div`
     text-align: left;
@@ -21,30 +22,25 @@ const StyledImage = styled.img`
     margin: ${props => (props.m ? props.m : '')};
 `
 
-export const Quote = ({ user, text, image_url, time, action, w, measure }) => {
+export const Quote = ({ user: user_id, text, image_url, time, action, w, measure }) => {
+    const { getUser } = useGlobal()
     const is_image = action === 'image'
     const is_multiple_image = action === 'multiple_image'
+    const user = getUser(user_id)
+
     let img_arr
     if (is_multiple_image) {
         img_arr = image_url.split(',')
     }
     return (
         <QuoteStyle w={w}>
-            <Text fontWeight="bold">{user}</Text>
+            <Text fontWeight="bold">{user.name}</Text>
             {text && <Text>{text}</Text>}
-            {is_image && (
-                <StyledImage src={image_url} alt="reply" onLoad={measure} />
-            )}
+            {is_image && <StyledImage src={image_url} alt="reply" onLoad={measure} />}
             {is_multiple_image && (
                 <Flex justify="unset" wrap="wrap" height="unset">
                     {img_arr.map((url, idx) => (
-                        <StyledImage
-                            m="10px"
-                            alt="reply"
-                            src={url}
-                            key={url}
-                            onLoad={measure}
-                        />
+                        <StyledImage m="10px" alt="reply" src={url} key={url} onLoad={measure} />
                     ))}
                 </Flex>
             )}

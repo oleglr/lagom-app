@@ -46,21 +46,15 @@ const SectionHeader = styled(Text)`
 `
 const ItemWrapper = styled(Stack)`
     transition: all 0.2s;
-    color: ${props => (props.isActive ? 'var(--primary)' : '#fff')};
+    color: #fff;
+    padding-left: ${props => (props.isActive ? '12px' : '16px')};
+    border-left: ${props => (props.isActive ? '4px solid var(--primary)' : '')};
+    font-weight: ${props => (props.isActive ? 'bold' : '')};
+    opacity: 0.9;
 
-    svg {
-        height: 16px;
-        padding-right: 5px;
-    }
     &:hover {
+        opacity: 1;
         cursor: pointer;
-        color: var(--primary);
-
-        svg {
-            g {
-                fill: var(--primary);
-            }
-        }
     }
 `
 
@@ -178,7 +172,7 @@ const SideContent = ({ onClose }) => {
                     </Button>
                 </Stack>
             )}
-            <Stack spacing={2} paddingLeft="16px">
+            <Stack spacing={2}>
                 <SectionHeader>Group</SectionHeader>
                 <ItemWrapper isActive={path_name === '/'}>
                     <Link to="/">

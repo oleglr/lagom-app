@@ -1,6 +1,6 @@
 :root {
     --primary: #ff0083;
-    --secondary: #161930;
+    --secondary: #222427;
     --text-on-secondary: #9ebdfb;
     --rose-red: #aa1945;
     --white: #fff;
@@ -10,6 +10,8 @@
     --grey-hover: #f2f3f5;
     --moon-blue: #8569ff;
     --champagne: #ebe0d0;
+    /* to consider: #222427 */
+    /* to consider: #161930 */
 }
 
 html {

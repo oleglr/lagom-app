@@ -6,11 +6,6 @@ import { List, AutoSizer } from 'react-virtualized'
 import { ImagePreview } from '../../../components/general/image'
 import { useGlobal } from '../../../context/global-context'
 
-const getUser = (message, members) => {
-    const user = members.find(u => u.user_id === message.user)
-    if (user) return { name: user.nickname, img: user.picture }
-}
-
 const ImageCard = styled(Box)`
     &:hover {
         cursor: pointer;
@@ -21,8 +16,8 @@ const ImageCard = styled(Box)`
 `
 
 const MediaCard = ({ message, measure }) => {
-    const { group_members } = useGlobal()
-    const user = getUser(message, group_members)
+    const { getUser } = useGlobal()
+    const user = getUser(message.user)
 
     return (
         <ImageCard

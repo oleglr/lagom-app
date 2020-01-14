@@ -32,6 +32,9 @@ const Profile = () => {
                             overflow="hidden"
                             margin="12px"
                             height="fit-content"
+                            style={{
+                                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                            }}
                         >
                             <Image size="200px" objectFit="cover" src={member.picture} alt={member.nickname} />
 
@@ -61,7 +64,7 @@ const Profile = () => {
                         </Box>
                     ))}
             </Flex>
-            <Button onClick={() => history.push('/invite')} className="btn-primary">
+            <Button onClick={() => history.push('/invite')} className="btn-primary" marginLeft="12px" marginTop="16px">
                 Add members
             </Button>
         </div>

@@ -45,13 +45,22 @@ export class ChatFeedSocket extends React.Component {
 
         const new_data = [...this.state.messages]
         new_data[msg_idx] = msg
+        this.setState({ messages: new_data, sortBy: this.state.sortBy + 1 })
+    }
 
+    removeReaction = msg => {
+        const msg_idx = this.state.messages.findIndex(m => m._id === msg._id)
+        cache.clear(msg_idx)
+
+        const new_data = [...this.state.messages]
+        new_data[msg_idx] = msg
         this.setState({ messages: new_data, sortBy: this.state.sortBy + 1 })
     }
 
     componentDidMount() {
         socket().on('message', this.newMessage)
         socket().on('added reaction', this.newReaction)
+        socket().on('removed reaction', this.removeReaction)
         this.setState({ t: 'now' })
     }
 
