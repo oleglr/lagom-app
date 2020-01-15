@@ -32,7 +32,7 @@ function Feature({ title, desc, ...rest }) {
 
 const MediaListContainer = () => {
     const { active_group } = useGlobal()
-    const [data, loading] = useFetch(`http://localhost:3000/media?groupId=${active_group.id}`)
+    const [data, loading] = useFetch(`${process.env.REACT_APP_API}/media?groupId=${active_group.id}`)
 
     if (!active_group || !active_group.id) {
         return <CreateGroup />

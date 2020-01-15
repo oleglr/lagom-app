@@ -166,7 +166,7 @@ const Profile = () => {
                                 formData.append('user_id', user.sub)
                                 formData.append('nickname', values.nickname)
                                 formData.append('chatfile', files.blob)
-                                fetch(`http://localhost:3000/update-profile-img`, {
+                                fetch(`${process.env.REACT_APP_API}/update-profile-img`, {
                                     method: 'POST',
                                     body: formData,
                                     headers: {
@@ -184,7 +184,7 @@ const Profile = () => {
                                         window.location.reload()
                                     })
                             } else {
-                                fetch(`http://localhost:3000/update-profile`, {
+                                fetch(`${process.env.REACT_APP_API}/update-profile`, {
                                     method: 'POST',
                                     body: JSON.stringify({
                                         user_id: user.sub,

@@ -17,7 +17,7 @@ export const ExternalInvite = ({ ...props }) => {
 
     React.useEffect(() => {
         async function fetchGroupDetails({ group_id, user_id }) {
-            fetch(`http://localhost:3000/group-invite-details`, {
+            fetch(`${process.env.REACT_APP_API}/group-invite-details`, {
                 method: 'POST',
                 body: JSON.stringify({
                     group_id: group_id,
@@ -55,7 +55,7 @@ export const ExternalInvite = ({ ...props }) => {
         // add user to existing group
         const token = await getTokenSilently()
 
-        fetch(`http://localhost:3000/new-group-member`, {
+        fetch(`${process.env.REACT_APP_API}/new-group-member`, {
             method: 'POST',
             body: JSON.stringify({
                 group_id: group_res.group_id,
@@ -100,49 +100,21 @@ export const ExternalInvite = ({ ...props }) => {
                 {status === 'has_group_details' && (
                     <Stack>
                         <Heading size="lg" textAlign="center">
-                            {group_res.inviter} has invited you to join the
-                            group {group_res.group_name} on lagom
+                            {group_res.inviter} has invited you to join the group {group_res.group_name} on lagom
                         </Heading>
-                        <Lottie
-                            animationData={tadaAnimation}
-                            height={200}
-                            width={200}
-                            loop={true}
-                        />
+                        <Lottie animationData={tadaAnimation} height={200} width={200} loop={true} />
                         {isAuthenticated && (
-                            <Stack
-                                isInline
-                                marginTop="16px"
-                                justify="center"
-                                spacing={4}
-                            >
+                            <Stack isInline marginTop="16px" justify="center" spacing={4}>
                                 <Button>Decline</Button>
-                                <Button
-                                    onClick={() => joinGroup()}
-                                    variantColor="teal"
-                                >
-                                    {form_status === 'loading' ? (
-                                        <Spinner />
-                                    ) : (
-                                        'Accept'
-                                    )}
+                                <Button onClick={() => joinGroup()} variantColor="teal">
+                                    {form_status === 'loading' ? <Spinner /> : 'Accept'}
                                 </Button>
                             </Stack>
                         )}
                         {!isAuthenticated && (
-                            <Stack
-                                isInline
-                                marginTop="16px"
-                                justify="center"
-                                spacing={4}
-                            >
-                                <Button onClick={() => history.push('/')}>
-                                    Decline
-                                </Button>
-                                <Button
-                                    onClick={() => redirectToSignup()}
-                                    variantColor="teal"
-                                >
+                            <Stack isInline marginTop="16px" justify="center" spacing={4}>
+                                <Button onClick={() => history.push('/')}>Decline</Button>
+                                <Button onClick={() => redirectToSignup()} variantColor="teal">
                                     Sign me up!
                                 </Button>
                             </Stack>

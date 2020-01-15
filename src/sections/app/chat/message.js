@@ -56,6 +56,8 @@ const HoverWrapper = styled.span`
 export const Message = React.memo(function({ message, idx, measure, is_thread }) {
     const [show_menu, setShowMenu] = React.useState(false)
 
+    if (message.date) return <div>{message.date}</div>
+
     return (
         <ChatContainer justify="start" onMouseEnter={() => setShowMenu(true)} onMouseLeave={() => setShowMenu(false)}>
             <ChatMessage is_thread={is_thread} message={message} idx={idx} measure={measure} />

@@ -128,7 +128,7 @@ export const Upload = ({ is_thread, thread_message_id }) => {
         const type = files.length > 1 ? 'upload-multiple' : 'upload'
         const endpoint = is_thread ? type + '-thread' : type
 
-        fetch(`http://localhost:3000/${endpoint}`, {
+        fetch(`${process.env.REACT_APP_API}/${endpoint}`, {
             method: 'POST',
             body: formData,
             headers: {

@@ -1,14 +1,6 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import {
-    Button,
-    Heading,
-    Input,
-    Spinner,
-    Text,
-    Stack,
-    Icon,
-} from '@chakra-ui/core'
+import { Button, Heading, Input, Spinner, Text, Stack, Icon } from '@chakra-ui/core'
 import { useAuth0 } from '../../../react-auth0-spa'
 import { useGlobal } from '../../../context/global-context'
 import Popover, { ArrowContainer } from 'react-tiny-popover'
@@ -51,17 +43,13 @@ export const InviteForm = ({ has_skip = false, onSuccess, onSkip }) => {
             setInviteStatus('missing_inputs')
             return
         }
-        if (
-            !email_list.filter(
-                v => !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(v)
-            ).length
-        ) {
+        if (!email_list.filter(v => !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(v)).length) {
             setInviteStatus('incorrect email')
         }
         setInviteStatus('sending')
         const token = await getTokenSilently()
 
-        fetch(`http://localhost:3000/invite-to-group`, {
+        fetch(`${process.env.REACT_APP_API}/invite-to-group`, {
             method: 'POST',
             body: JSON.stringify({
                 group_id: active_group.id,
@@ -121,9 +109,7 @@ export const InviteForm = ({ has_skip = false, onSuccess, onSkip }) => {
                     {invite_status === 'incorrect_email' && (
                         <Stack isInline align="center">
                             <Icon color="red.500" name="warning" size="18px" />
-                            <Text>
-                                Emails should be in the format name@email.com
-                            </Text>
+                            <Text>Emails should be in the format name@email.com</Text>
                         </Stack>
                     )}
                     {invite_status === 'api_error' && (
@@ -132,17 +118,8 @@ export const InviteForm = ({ has_skip = false, onSuccess, onSkip }) => {
                             <Text>Server error, please try again</Text>
                         </Stack>
                     )}
-                    <Button
-                        className="btn-primary"
-                        type="submit"
-                        width="150px"
-                        alignSelf="flex-end"
-                    >
-                        {invite_status === 'sending' ? (
-                            <Spinner />
-                        ) : (
-                            'Send invite'
-                        )}
+                    <Button className="btn-primary" type="submit" width="150px" alignSelf="flex-end">
+                        {invite_status === 'sending' ? <Spinner /> : 'Send invite'}
                     </Button>
                 </Stack>
             </form>
@@ -179,7 +156,7 @@ const SharableLink = () => {
     const getSharableLink = async () => {
         setStatus('sending')
         const token = await getTokenSilently()
-        fetch(`http://localhost:3000/sharable-link`, {
+        fetch(`${process.env.REACT_APP_API}/sharable-link`, {
             method: 'POST',
             body: JSON.stringify({
                 group_id: active_group.id,
@@ -221,9 +198,7 @@ const SharableLink = () => {
                                 padding="5px"
                                 onClick={() => {
                                     if (status === 'sending') return
-                                    var copyText = document.querySelector(
-                                        '#input'
-                                    )
+                                    var copyText = document.querySelector('#input')
                                     copyText.select()
                                     document.execCommand('copy')
                                     toast({
@@ -238,10 +213,7 @@ const SharableLink = () => {
                                 {status === 'sending' && <Spinner />}
                                 {status === 'res_success' && (
                                     <>
-                                        <form
-                                            spellCheck="false"
-                                            style={{ width: '100%' }}
-                                        >
+                                        <form spellCheck="false" style={{ width: '100%' }}>
                                             <Stack isInline align="center">
                                                 <StyledInput
                                                     fontSize="13px"
@@ -250,11 +222,7 @@ const SharableLink = () => {
                                                     color="black"
                                                     id="input"
                                                 />
-                                                <Icon
-                                                    marginLeft="8px"
-                                                    name="copy"
-                                                    size="16px"
-                                                />
+                                                <Icon marginLeft="8px" name="copy" size="16px" />
                                             </Stack>
                                         </form>
                                     </>

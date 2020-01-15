@@ -7,7 +7,7 @@ export const initSocket = ({ token, group_id, user_id }) => {
     if (socket) return socket
 
     return new Promise((resolve, reject) => {
-        socket = io.connect('http://localhost:3000', {
+        socket = io.connect(process.env.REACT_APP_API, {
             query: { token },
         })
         socket.on('connect', () => {

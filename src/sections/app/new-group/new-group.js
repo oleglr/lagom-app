@@ -70,7 +70,7 @@ export const NewGroup = () => {
 
                         const token = await getTokenSilently()
 
-                        fetch(`http://localhost:3000/new-group`, {
+                        fetch(`${process.env.REACT_APP_API}/new-group`, {
                             method: 'POST',
                             body: JSON.stringify({
                                 group_name: values.group_name,

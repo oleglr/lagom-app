@@ -110,7 +110,7 @@ function App() {
     }
 
     if (socket_status === APP_STATUS.ADDING_USER_TO_GROUP) {
-        fetch(`http://localhost:3000/new-group-member`, {
+        fetch(`${process.env.REACT_APP_API}/new-group-member`, {
             method: 'POST',
             body: JSON.stringify({
                 group_id: localStorage.getItem('signup_group_id'),

@@ -43,6 +43,7 @@ const SectionHeader = styled(Text)`
     color: var(--text-on-secondary);
     font-size: 14px;
     margin-top: 16px;
+    margin-left: 16px;
 `
 const ItemWrapper = styled(Stack)`
     transition: all 0.2s;
@@ -228,8 +229,8 @@ const SideContent = ({ onClose }) => {
                     <Link to="/profile">
                         <Stack isInline align="center">
                             <Text>
-                                <span aria-label="balloon" role="img">
-                                    😄
+                                <span aria-label="unicorn" role="img">
+                                    🦄
                                 </span>{' '}
                                 Profile
                             </Text>

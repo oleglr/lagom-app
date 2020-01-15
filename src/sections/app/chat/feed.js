@@ -1,11 +1,11 @@
 import React from 'react'
 import { CellMeasurerCache } from 'react-virtualized'
 import { VirtualizedList } from './virtualized-list'
-// import { useGlobal } from '../../../context/global-context'
 import { useFetch } from '../../../components/hooks/fetch-data'
 import { getSocket as socket } from '../../../api/socket'
 import { useGlobal } from '../../../context/global-context'
 import { Loader } from '../../../components/elements'
+import moment from 'moment'
 
 const cache = new CellMeasurerCache({
     fixedWidth: true,
@@ -14,11 +14,32 @@ const cache = new CellMeasurerCache({
 
 export const ChatFeed = () => {
     const { active_group } = useGlobal()
-    const [data, loading] = useFetch(`http://localhost:3000/chat-history?groupId=${active_group.id}`)
+    const [data, loading] = useFetch(`${process.env.REACT_APP_API}/chat-history?groupId=${active_group.id}`)
 
     if (loading) return <Loader />
 
-    return <ChatFeedSocket message_history={data.chat} />
+    // const new_data = []
+    // if (data && data.chat && data.chat.length) {
+    //     const data_reverse = data.chat.reverse()
+    //     let day
+
+    //     data_reverse.forEach((m, idx) => {
+    //         const createdAt_moment = moment(m.createdAt)
+    //         const day_moment = moment(day)
+
+    //         if (createdAt_moment.isSame(day_moment, 'day')) {
+    //             new_data.push(m)
+    //         } else {
+    //             new_data.push({
+    //                 date: day_moment.format('ll'),
+    //             })
+    //             new_data.push(m)
+    //             day = m.createdAt
+    //         }
+    //     })
+    // }
+
+    return <ChatFeedSocket message_history={data.chat.reverse()} />
 }
 
 export class ChatFeedSocket extends React.Component {
@@ -26,7 +47,7 @@ export class ChatFeedSocket extends React.Component {
         super(props)
         this.list_ref = React.createRef()
         this.state = {
-            messages: props.message_history.reverse(),
+            messages: props.message_history,
             sortBy: 0,
             t: '',
         }
