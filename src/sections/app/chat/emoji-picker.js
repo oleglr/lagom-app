@@ -1,15 +1,15 @@
 import React from 'react'
 import { Picker } from 'emoji-mart'
 import { useOutsideClick } from '../../../components/hooks/outside-click'
+import { useKeyDown } from '../../../components/hooks/keydown'
 
 import 'emoji-mart/css/emoji-mart.css'
 
 export const EmojiPicker = ({ closePicker, onSelectEmoji, showPicker }) => {
     const ref = React.useRef()
 
-    useOutsideClick(ref, () => {
-        closePicker()
-    })
+    useOutsideClick(ref, closePicker)
+    useKeyDown(ref, closePicker, 27)
 
     return (
         <div ref={ref}>
@@ -17,21 +17,12 @@ export const EmojiPicker = ({ closePicker, onSelectEmoji, showPicker }) => {
                 <Picker
                     native
                     onSelect={onSelectEmoji}
-                    darkMode={false}
+                    darkMode={true}
+                    autoFocus
                     title="Pick your emoji…"
                     emoji="point_up"
                     exclude={['foods', 'objects']}
-                    include={[
-                        'recent',
-                        'custom',
-                        'people',
-                        'food',
-                        'nature',
-                        'activity',
-                        'places',
-                        'symbols',
-                        'flags',
-                    ]}
+                    include={['recent', 'custom', 'people', 'food', 'nature', 'activity', 'places', 'symbols', 'flags']}
                 />
             )}
         </div>

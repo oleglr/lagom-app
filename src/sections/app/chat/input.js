@@ -150,7 +150,10 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
                                 <EmojiPicker
                                     showPicker={showEmojiBox}
                                     onSelectEmoji={addEmojiToText}
-                                    closePicker={() => setShowEmojiPicker(false)}
+                                    closePicker={() => {
+                                        setShowEmojiPicker(false)
+                                        document.getElementById('main-input').focus()
+                                    }}
                                 />
                             </EmojiBoxWrapper>
                         )}
