@@ -2,6 +2,7 @@ import React from 'react'
 import styled from '@emotion/styled'
 import { ThemeProvider, CSSReset } from '@chakra-ui/core'
 import { Router, Route, Switch } from 'react-router-dom'
+import { useMediaQuery } from 'react-responsive'
 // internal
 import history from './utils/history'
 import Profile from './components/general/profile'
@@ -42,12 +43,14 @@ const MainContent = styled.div`
     height: 100%;
     display: flex;
     overflow: scroll;
+    flex-direction: ${props => (props.isTabletOrMobile ? 'column-reverse' : 'row')};
 `
 
 function App() {
     const { loading, isAuthenticated, user, getTokenSilently } = useAuth0()
     const [socket_status, setSocketStatus] = React.useState(APP_STATUS.LOADING)
     const [token, setToken] = React.useState(APP_STATUS.LOADING)
+    const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1000px)' })
     const [activeGroup, setActiveGroup] = React.useState()
     const [groupMembers, setGroupMembers] = React.useState()
 
@@ -146,7 +149,7 @@ function App() {
             <main className="App">
                 <GlobalContextProvider activeGroup={activeGroup} groupMembers={groupMembers}>
                     <Router history={history}>
-                        <MainContent>
+                        <MainContent isTabletOrMobile={isTabletOrMobile}>
                             {isAuthenticated && <SideMenu />}
                             <div style={{ overflow: 'scroll', height: '100%', width: '100%' }}>
                                 <Switch>

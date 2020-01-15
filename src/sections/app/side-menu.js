@@ -258,7 +258,7 @@ const SideContent = ({ onClose }) => {
                 onClick={() => logout()}
                 variant="link"
                 color="white"
-                marginTop="auto"
+                marginTop="32px"
                 marginBottom="16px"
                 marginLeft="16px"
             >
@@ -276,7 +276,7 @@ export const SideMenu = () => {
         return (
             <>
                 <Stack backgroundColor="var(--secondary)">
-                    <Button marginTop="8px" ref={btnRef} backgroundColor="transparent" onClick={onOpen}>
+                    <Button width="50px" marginTop="8px" ref={btnRef} backgroundColor="transparent" onClick={onOpen}>
                         <Icon name="arrow-right" color="#fff" />
                     </Button>
                 </Stack>
