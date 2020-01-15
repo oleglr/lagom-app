@@ -61,6 +61,7 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
             }
         }
         window.addEventListener('keydown', handleUserKeyPress)
+        document.getElementById('main-input').focus()
 
         return () => {
             window.removeEventListener('keydown', handleUserKeyPress)
@@ -100,11 +101,7 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
         <>
             <FormControl width="100%" mr="10px">
                 {quoted_message && (
-                    <QuoteContainer
-                        justify="unset"
-                        height="unset"
-                        align="center"
-                    >
+                    <QuoteContainer justify="unset" height="unset" align="center">
                         <Quote
                             w="89%"
                             action={quoted_message.action}
@@ -118,10 +115,7 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
                     </QuoteContainer>
                 )}
                 <InputContainer is_thread={is_thread}>
-                    <Upload
-                        is_thread={is_thread}
-                        thread_message_id={thread_message_id}
-                    />
+                    <Upload is_thread={is_thread} thread_message_id={thread_message_id} />
                     <form onSubmit={onSubmit}>
                         <Input
                             data-lpignore="true"
@@ -140,13 +134,7 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
                         <EmojiWrapper
                             onMouseEnter={() => {
                                 if (showEmojiBox) return
-                                setEmoji(
-                                    emoji_array[
-                                        Math.floor(
-                                            Math.random() * emoji_array.length
-                                        )
-                                    ]
-                                )
+                                setEmoji(emoji_array[Math.floor(Math.random() * emoji_array.length)])
                             }}
                             is_active={showEmojiBox}
                             onClick={() => {
@@ -162,9 +150,7 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
                                 <EmojiPicker
                                     showPicker={showEmojiBox}
                                     onSelectEmoji={addEmojiToText}
-                                    closePicker={() =>
-                                        setShowEmojiPicker(false)
-                                    }
+                                    closePicker={() => setShowEmojiPicker(false)}
                                 />
                             </EmojiBoxWrapper>
                         )}

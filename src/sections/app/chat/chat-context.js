@@ -12,7 +12,6 @@ export const ChatContextProvider = props => {
     const [thread_message, setThread] = React.useState()
     const setQuotedMessage = m => {
         setQuote(m)
-        document.getElementById('main-input').focus()
     }
 
     const setThreadMessage = m => {
