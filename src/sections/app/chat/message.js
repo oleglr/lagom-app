@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { Text } from '@chakra-ui/core'
+import { Text, Stack } from '@chakra-ui/core'
 import moment from 'moment'
 import { Flex } from '../../../components/container'
 import { ImagePreview } from '../../../components/general/image'
@@ -52,11 +52,24 @@ const LinkText = styled(Text)`
 const HoverWrapper = styled.span`
     visibility: ${props => (props.show_menu ? 'visible' : 'hidden')};
 `
-
+const Divider = styled.div`
+    width: 45%;
+    height: 1px;
+    background-color: #dddddd;
+`
 export const Message = React.memo(function({ message, idx, measure, is_thread }) {
     const [show_menu, setShowMenu] = React.useState(false)
 
-    if (message.date) return <div>{message.date}</div>
+    if (message.date)
+        return (
+            <Stack isInline align="center">
+                <Divider />
+                <Text textAlign="center" fontSize="14px" fontWeight="500" width="10%">
+                    {message.date}
+                </Text>
+                <Divider />
+            </Stack>
+        )
 
     return (
         <ChatContainer justify="start" onMouseEnter={() => setShowMenu(true)} onMouseLeave={() => setShowMenu(false)}>

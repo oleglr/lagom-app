@@ -12,34 +12,53 @@ const cache = new CellMeasurerCache({
     defaultHeight: 60,
 })
 
+const formatDate = date => {
+    const is_today = moment().isSame(date, 'day')
+    if (is_today) return 'Today'
+
+    const is_yesterday = moment()
+        .subtract(1, 'days')
+        .isSame(date, 'day')
+    if (is_yesterday) return 'Yesterday'
+    else return date.format('ll')
+}
+
 export const ChatFeed = () => {
     const { active_group } = useGlobal()
     const [data, loading] = useFetch(`${process.env.REACT_APP_API}/chat-history?groupId=${active_group.id}`)
 
     if (loading) return <Loader />
 
-    // const new_data = []
-    // if (data && data.chat && data.chat.length) {
-    //     const data_reverse = data.chat.reverse()
-    //     let day
+    const new_data = []
+    if (data && data.chat && data.chat.length) {
+        // data[0] = most recent
+        let day = data.chat[0].createdAt
 
-    //     data_reverse.forEach((m, idx) => {
-    //         const createdAt_moment = moment(m.createdAt)
-    //         const day_moment = moment(day)
+        data.chat.forEach((m, idx) => {
+            const createdAt_moment = moment(m.createdAt)
+            const day_moment = moment(day)
 
-    //         if (createdAt_moment.isSame(day_moment, 'day')) {
-    //             new_data.push(m)
-    //         } else {
-    //             new_data.push({
-    //                 date: day_moment.format('ll'),
-    //             })
-    //             new_data.push(m)
-    //             day = m.createdAt
-    //         }
-    //     })
-    // }
+            // if same day as most recent add to array
+            if (createdAt_moment.isSame(day_moment, 'day')) {
+                new_data.push(m)
+            } else {
+                // different day --> add day label
+                new_data.push({
+                    date: formatDate(day_moment),
+                })
+                new_data.push(m)
+                day = m.createdAt
+            }
+            // add first label
+            if (idx === data.chat.length - 1) {
+                new_data.push({
+                    date: formatDate(day_moment),
+                })
+            }
+        })
+    }
 
-    return <ChatFeedSocket message_history={data.chat.reverse()} />
+    return <ChatFeedSocket message_history={new_data.reverse()} />
 }
 
 export class ChatFeedSocket extends React.Component {

@@ -20,8 +20,8 @@ const Profile = () => {
                 Members:
             </Heading>
             <Flex wrap="wrap" justify="flex-start">
-                {group_members &&
-                    group_members.length &&
+                {!!group_members &&
+                    !!group_members.length &&
                     group_members.map(member => (
                         <Box
                             key={member.user_id}
