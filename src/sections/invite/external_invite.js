@@ -78,7 +78,7 @@ export const ExternalInvite = ({ ...props }) => {
                 // TODO ==:
                 // added to group ---> update user + active id
                 // for now:
-                window.location.replace('http://localhost:3001/')
+                window.location.replace(process.env.REACT_APP_META_KEY)
                 // setGroupRes(res)
                 // setStatus('added_to_g')
             })

@@ -2,6 +2,7 @@ import React from 'react'
 import styled from '@emotion/styled'
 import { Text, Stack } from '@chakra-ui/core'
 import moment from 'moment'
+import Hammer from 'react-hammerjs'
 import { Flex } from '../../../components/container'
 import { ImagePreview } from '../../../components/general/image'
 import { useGlobal } from '../../../context/global-context'
@@ -73,7 +74,14 @@ export const Message = React.memo(function({ message, idx, measure, is_thread })
 
     return (
         <ChatContainer justify="start" onMouseEnter={() => setShowMenu(true)} onMouseLeave={() => setShowMenu(false)}>
-            <ChatMessage is_thread={is_thread} message={message} idx={idx} measure={measure} />
+            <ChatMessage
+                showMenu={setShowMenu}
+                show_menu={show_menu}
+                is_thread={is_thread}
+                message={message}
+                idx={idx}
+                measure={measure}
+            />
             <HoverWrapper show_menu={show_menu}>
                 <HoverMenu message_idx={idx} message={message} is_thread={is_thread} />
             </HoverWrapper>
@@ -81,11 +89,15 @@ export const Message = React.memo(function({ message, idx, measure, is_thread })
     )
 })
 
-export const ChatMessage = React.memo(function({ message, idx, measure, is_thread }) {
+export const ChatMessage = React.memo(function({ showMenu, show_menu, message, idx, measure, is_thread }) {
     const { getUser } = useGlobal()
     const { setThreadMessage } = React.useContext(ChatContext)
     const reply_length = message.replies && message.replies.length
     const user = getUser(message.user)
+
+    const handlePress = () => {
+        showMenu(!show_menu)
+    }
 
     return (
         <>
@@ -100,28 +112,30 @@ export const ChatMessage = React.memo(function({ message, idx, measure, is_threa
                     backgroundColor: 'coral',
                 }}
             />
-            <Flex column align="flex-start" justify="flex-start" pl="5px">
-                <Text>
-                    <Name className="bold">{user.name}</Name>{' '}
-                    <span style={{ fontSize: '12px', color: 'var(--grey)' }}>
-                        {moment(message.createdAt).format('LT')}
-                    </span>
-                </Text>
-                <Content message={message} measure={measure} is_thread={is_thread} />
-                {!!message.reactions.length && (
-                    <Reaction
-                        is_thread={is_thread}
-                        reactions={message.reactions}
-                        message_idx={idx}
-                        message_ref={message._id}
-                    />
-                )}
-                {!!reply_length && !is_thread && (
-                    <LinkText onClick={() => setThreadMessage(message)}>
-                        {reply_length} {reply_length > 1 ? 'replies' : 'reply'}
-                    </LinkText>
-                )}
-            </Flex>
+            <Hammer onPress={handlePress}>
+                <Flex column align="flex-start" justify="flex-start" pl="5px">
+                    <Text>
+                        <Name className="bold">{user.name}</Name>{' '}
+                        <span style={{ fontSize: '12px', color: 'var(--grey)' }}>
+                            {moment(message.createdAt).format('LT')}
+                        </span>
+                    </Text>
+                    <Content message={message} measure={measure} is_thread={is_thread} />
+                    {!!message.reactions.length && (
+                        <Reaction
+                            is_thread={is_thread}
+                            reactions={message.reactions}
+                            message_idx={idx}
+                            message_ref={message._id}
+                        />
+                    )}
+                    {!!reply_length && !is_thread && (
+                        <LinkText onClick={() => setThreadMessage(message)}>
+                            {reply_length} {reply_length > 1 ? 'replies' : 'reply'}
+                        </LinkText>
+                    )}
+                </Flex>
+            </Hammer>
         </>
     )
 })

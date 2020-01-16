@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from '@emotion/styled'
+import Hammer from 'react-hammerjs'
 import { ThemeProvider, CSSReset } from '@chakra-ui/core'
 import { Router, Route, Switch } from 'react-router-dom'
 import { useMediaQuery } from 'react-responsive'
@@ -39,7 +40,19 @@ function MainApp() {
     )
 }
 
-const MainContent = styled.div`
+const MainContent = ({ children, isTabletOrMobile }) => {
+    const onSwipeRight = () => {
+        console.log('onSwiperight')
+    }
+
+    return (
+        <Hammer onSwipeRight={onSwipeRight}>
+            <MainContentStyle isTabletOrMobile={isTabletOrMobile}>{children}</MainContentStyle>
+        </Hammer>
+    )
+}
+
+const MainContentStyle = styled.div`
     height: 100%;
     display: flex;
     overflow: scroll;
@@ -59,8 +72,7 @@ function App() {
             try {
                 const is_invited_and_just_signed_up =
                     localStorage.getItem('signup_group_id') && localStorage.getItem('signup_inviter_id')
-
-                const user_metadata = user['http://localhost:3001/user_metadata']
+                const user_metadata = user[`${process.env.REACT_APP_META_KEY}/user_metadata`]
                 const has_group = user_metadata && user_metadata.group && user_metadata.group.id
 
                 if (is_invited_and_just_signed_up && !has_group) {
@@ -133,7 +145,7 @@ function App() {
                 // for now:
                 localStorage.removeItem('signup_group_id')
                 localStorage.removeItem('signup_inviter_id')
-                window.location.replace('http://localhost:3001/')
+                window.location.replace(process.env.REACT_APP_META_KEY)
             })
         return <BouncingLoader />
     }
