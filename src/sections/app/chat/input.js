@@ -51,7 +51,7 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
     const [emoji, setEmoji] = React.useState('😀')
     const [showEmojiBox, setShowEmojiBox] = React.useState(false)
     const [message, setMessage] = React.useState('')
-
+    const [paste_file, setPasteFile] = React.useState('')
     const { quoted_message, setQuotedMessage } = React.useContext(ChatContext)
 
     React.useEffect(() => {
@@ -93,9 +93,14 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
         onSend({ message, action, ref })
         setMessage('')
     }
-    const setShowEmojiPicker = show => {
-        setShowEmojiBox(show)
+
+    const onPaste = e => {
+        if (e.clipboardData.files.length) {
+            setPasteFile(e.clipboardData.files)
+        }
     }
+
+    const setShowEmojiPicker = show => setShowEmojiBox(show)
 
     return (
         <>
@@ -115,12 +120,13 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
                     </QuoteContainer>
                 )}
                 <InputContainer is_thread={is_thread}>
-                    <Upload is_thread={is_thread} thread_message_id={thread_message_id} />
+                    <Upload paste_file={paste_file} is_thread={is_thread} thread_message_id={thread_message_id} />
                     <form onSubmit={onSubmit}>
                         <Input
                             data-lpignore="true"
                             value={message}
                             onChange={onWriteMessage}
+                            onPaste={onPaste}
                             aria-label="Message input"
                             placeholder="Message SJ friends"
                             type="text"

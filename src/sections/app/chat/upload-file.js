@@ -79,7 +79,7 @@ const IconCloseWrapper = styled.div`
 `
 const MAX_FILE_SIZE = 5000000
 
-export const Upload = ({ is_thread, thread_message_id }) => {
+export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
     const [files, setFiles] = React.useState([])
     const [preview, setPreview] = React.useState([])
     const [status, setStatus] = React.useState('')
@@ -102,6 +102,11 @@ export const Upload = ({ is_thread, thread_message_id }) => {
         setStatus('')
         setFiles(Array.from(file))
     }
+
+    React.useEffect(() => {
+        if (!paste_file) return
+        setFiles(Array.from(paste_file))
+    }, [paste_file])
 
     const sendFiles = async e => {
         if (!files.length) return

@@ -211,6 +211,22 @@ const SideContent = ({ onClose }) => {
                         </Stack>
                     </Link>
                 </ItemWrapper>
+                {/* <ItemWrapper
+                    isInline
+                    align="center"
+                    isActive={path_name === '/my-groups'}
+                >
+                    <Link to="my-groups">
+                        <Stack isInline align="center">
+                            <Text>
+                                <span aria-label="balloon" role="img">
+                                    🎈
+                                </span>{' '}
+                                Groups
+                            </Text>
+                        </Stack>
+                    </Link>
+                </ItemWrapper> */}
                 {/* <ItemWrapper isInline align="center" isActive={path_name === '/expenses'}>
                     <Link to="/expenses">
                         <Stack isInline align="center">

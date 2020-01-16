@@ -27,6 +27,11 @@ html {
     height: 100%;
 }
 
+html,
+body {
+    overscroll-behavior: none;
+}
+
 .btn-primary {
     background-color: var(--primary) !important;
     color: var(--white) !important;
