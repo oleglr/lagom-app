@@ -15,7 +15,6 @@ const ChatContainer = styled(Flex)`
     margin-left: 15px;
     padding: 5px 15px 5px 5px;
     transition: 0.1s;
-    height: unset;
     min-width: 100%;
 
     &:hover {
