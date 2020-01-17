@@ -54,7 +54,7 @@ const HoverWrapper = styled.span`
     visibility: ${props => (props.show_menu ? 'visible' : 'hidden')};
 `
 const Divider = styled.div`
-    width: 45%;
+    width: 100%;
     height: 1px;
     background-color: #dddddd;
 `
@@ -65,7 +65,7 @@ export const Message = React.memo(function({ message, idx, measure, is_thread })
         return (
             <Stack isInline align="center">
                 <Divider />
-                <Text textAlign="center" fontSize="14px" fontWeight="500" width="10%">
+                <Text textAlign="center" fontSize="14px" fontWeight="500" minWidth="fit-content">
                     {message.date}
                 </Text>
                 <Divider />
@@ -121,14 +121,12 @@ export const ChatMessage = React.memo(function({ showMenu, show_menu, message, i
                         </span>
                     </Text>
                     <Content message={message} measure={measure} is_thread={is_thread} />
-                    {!!message.reactions.length && (
-                        <Reaction
-                            is_thread={is_thread}
-                            reactions={message.reactions}
-                            message_idx={idx}
-                            message_ref={message._id}
-                        />
-                    )}
+                    <Reaction
+                        is_thread={is_thread}
+                        reactions={message.reactions}
+                        message_idx={idx}
+                        message_ref={message._id}
+                    />
                     {!!reply_length && !is_thread && (
                         <LinkText onClick={() => setThreadMessage(message)}>
                             {reply_length} {reply_length > 1 ? 'replies' : 'reply'}

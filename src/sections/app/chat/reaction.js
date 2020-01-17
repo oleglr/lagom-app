@@ -144,26 +144,28 @@ export const Reaction = React.memo(function({ reactions, message_idx, message_re
                     </PopoverBubble>
                 )
             })}
-            <Popover
-                isOpen={showPicker}
-                position={'top'} // preferred position
-                content={
-                    <EmojiPicker
-                        onSelectEmoji={onAddReaction}
-                        closePicker={() => togglePicker(false)}
-                        showPicker={showPicker}
-                    />
-                }
-            >
-                <PopoverBubble text={<Text>Add reaction</Text>}>
-                    <ReactionsBox style={{ width: '35px', height: '28px' }}>
-                        <SmilePlus
-                            style={{ height: '29px', marginTop: '-3px' }}
-                            onClick={() => togglePicker(!showPicker)}
+            {!!reactions.length && (
+                <Popover
+                    isOpen={showPicker}
+                    position={'top'} // preferred position
+                    content={
+                        <EmojiPicker
+                            onSelectEmoji={onAddReaction}
+                            closePicker={() => togglePicker(false)}
+                            showPicker={showPicker}
                         />
-                    </ReactionsBox>
-                </PopoverBubble>
-            </Popover>
+                    }
+                >
+                    <PopoverBubble text={<Text>Add reaction</Text>}>
+                        <ReactionsBox style={{ width: '35px', height: '28px' }}>
+                            <SmilePlus
+                                style={{ height: '29px', marginTop: '-3px' }}
+                                onClick={() => togglePicker(!showPicker)}
+                            />
+                        </ReactionsBox>
+                    </PopoverBubble>
+                </Popover>
+            )}
         </ReactionWrapper>
     )
 })
