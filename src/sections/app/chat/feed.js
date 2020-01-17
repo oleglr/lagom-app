@@ -29,36 +29,36 @@ export const ChatFeed = () => {
 
     if (loading) return <Loader />
 
-    const new_data = []
-    if (data && data.chat && data.chat.length) {
-        // data[0] = most recent
-        let day = data.chat[0].createdAt
+    // const new_data = []
+    // if (data && data.chat && data.chat.length) {
+    //     // data[0] = most recent
+    //     let day = data.chat[0].createdAt
 
-        data.chat.forEach((m, idx) => {
-            const createdAt_moment = moment(m.createdAt)
-            const day_moment = moment(day)
+    //     data.chat.forEach((m, idx) => {
+    //         const createdAt_moment = moment(m.createdAt)
+    //         const day_moment = moment(day)
 
-            // if same day as most recent add to array
-            if (createdAt_moment.isSame(day_moment, 'day')) {
-                new_data.push(m)
-            } else {
-                // different day --> add day label
-                new_data.push({
-                    date: formatDate(day_moment),
-                })
-                new_data.push(m)
-                day = m.createdAt
-            }
-            // add first label
-            if (idx === data.chat.length - 1) {
-                new_data.push({
-                    date: formatDate(day_moment),
-                })
-            }
-        })
-    }
+    //         // if same day as most recent add to array
+    //         if (createdAt_moment.isSame(day_moment, 'day')) {
+    //             new_data.push(m)
+    //         } else {
+    //             // different day --> add day label
+    //             new_data.push({
+    //                 date: formatDate(day_moment),
+    //             })
+    //             new_data.push(m)
+    //             day = m.createdAt
+    //         }
+    //         // add first label
+    //         if (idx === data.chat.length - 1) {
+    //             new_data.push({
+    //                 date: formatDate(day_moment),
+    //             })
+    //         }
+    //     })
+    // }
 
-    return <ChatFeedSocket message_history={new_data.reverse()} />
+    return <ChatFeedSocket message_history={data.chat.reverse()} />
 }
 
 export class ChatFeedSocket extends React.Component {
