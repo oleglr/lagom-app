@@ -15,8 +15,9 @@ import {
     // AvatarBadge,
 } from '@chakra-ui/core'
 import { useHistory } from 'react-router-dom'
+import { Swipeable } from 'react-swipeable'
 import { useMediaQuery } from 'react-responsive'
-import { useDisclosure } from '@chakra-ui/core'
+import { useUI } from '../../main-content'
 import { useGlobal } from '../../context/global-context'
 import { useAuth0 } from '../../react-auth0-spa'
 import { PopoverBubble } from '../../components/general/popover-bubble'
@@ -284,25 +285,36 @@ const SideContent = ({ onClose }) => {
         </>
     )
 }
+
 export const SideMenu = () => {
     const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1000px)' })
-    const { isOpen, onOpen, onClose } = useDisclosure()
+    const { is_drawer_open, toggleDrawer } = useUI()
+    const closeDrawer = () => toggleDrawer(false)
+    const openDrawer = () => toggleDrawer(true)
     const btnRef = React.useRef()
 
     if (isTabletOrMobile) {
         return (
             <>
                 <Stack backgroundColor="var(--secondary)">
-                    <Button width="50px" marginTop="8px" ref={btnRef} backgroundColor="transparent" onClick={onOpen}>
+                    <Button
+                        width="50px"
+                        marginTop="8px"
+                        ref={btnRef}
+                        backgroundColor="transparent"
+                        onClick={openDrawer}
+                    >
                         <Icon name="arrow-right" color="#fff" />
                     </Button>
                 </Stack>
-                <Drawer isOpen={isOpen} placement="left" onClose={onClose} finalFocusRef={btnRef}>
-                    <DrawerOverlay />
-                    <StyledDrawerContent>
-                        <DrawerCloseButton color="#fff" />
-                        <SideContent onClose={onClose} />
-                    </StyledDrawerContent>
+                <Drawer isOpen={is_drawer_open} placement="left" onClose={closeDrawer} finalFocusRef={btnRef}>
+                    <Swipeable style={{ height: '100%' }} onSwipedLeft={closeDrawer}>
+                        <DrawerOverlay />
+                        <StyledDrawerContent>
+                            <DrawerCloseButton color="#fff" />
+                            <SideContent onClose={closeDrawer} />
+                        </StyledDrawerContent>
+                    </Swipeable>
                 </Drawer>
             </>
         )

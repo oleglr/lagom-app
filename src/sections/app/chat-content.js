@@ -11,7 +11,7 @@ const ChatSection = styled.section`
     flex-direction: column;
 `
 
-export const AppContent = () => {
+export const ChatContent = () => {
     const { active_group } = useGlobal()
 
     if (!active_group || !active_group.id) {

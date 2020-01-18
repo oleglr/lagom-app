@@ -1,10 +1,9 @@
 import React from 'react'
-import styled from '@emotion/styled'
-import Hammer from 'react-hammerjs'
 import { ThemeProvider, CSSReset } from '@chakra-ui/core'
 import { Router, Route, Switch } from 'react-router-dom'
 import { useMediaQuery } from 'react-responsive'
 // internal
+import { MainContent } from './main-content'
 import history from './utils/history'
 import Profile from './components/general/profile'
 import Members from './sections/app/members/members'
@@ -12,7 +11,7 @@ import Media from './sections/app/media/media'
 import PrivateRoute from './components/general/private-route'
 import { useAuth0 } from './react-auth0-spa'
 import { GlobalContextProvider } from './context/global-context'
-import { AppContent } from './sections/app/app-content'
+import { ChatContent } from './sections/app/chat-content'
 import { SignUp } from './sections/signUp/sign-up'
 import { SignUpForm } from './sections/signUp/sign-up-form'
 import { ExternalInvite } from './sections/invite/external_invite'
@@ -34,30 +33,11 @@ function MainApp() {
     const { isAuthenticated } = useAuth0()
     return (
         <>
-            {isAuthenticated && <AppContent />}
+            {isAuthenticated && <ChatContent />}
             {!isAuthenticated && <SignUp />}
         </>
     )
 }
-
-const MainContent = ({ children, isTabletOrMobile }) => {
-    const onSwipeRight = () => {
-        console.log('onSwiperight')
-    }
-
-    return (
-        <Hammer onSwipeRight={onSwipeRight}>
-            <MainContentStyle isTabletOrMobile={isTabletOrMobile}>{children}</MainContentStyle>
-        </Hammer>
-    )
-}
-
-const MainContentStyle = styled.div`
-    height: 100%;
-    display: flex;
-    overflow: scroll;
-    flex-direction: ${props => (props.isTabletOrMobile ? 'column-reverse' : 'row')};
-`
 
 function App() {
     const { loading, isAuthenticated, user, getTokenSilently } = useAuth0()
