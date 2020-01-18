@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { FormControl, Icon, Input } from '@chakra-ui/core'
+import { FormControl, Icon, Input, Button, Stack } from '@chakra-ui/core'
+import { useMediaQuery } from 'react-responsive'
 import { EmojiPicker } from './emoji-picker'
 import { ChatContext } from './chat-context'
 import { Quote } from './quote'
@@ -8,14 +9,14 @@ import { Upload } from './upload-file'
 import { Flex } from '../../../components/container'
 
 const InputContainer = styled.div`
-    padding-right: ${props => (props.is_thread ? '' : '20px')};
-    margin: ${props => (props.is_thread ? '' : '10px 20px 30px 20px')};
+    padding-right: ${props => (props.is_mobile ? '' : '20px')};
+    margin: ${props => (props.is_mobile ? '5px' : '10px 20px 30px 20px')};
     position: relative;
 `
 
 const EmojiWrapper = styled.span`
     position: absolute;
-    right: ${props => (props.is_thread ? '13px' : '27px')};
+    right: ${props => (props.is_mobile ? '22%' : '35px')};
     top: 11px;
     font-size: 18px;
     transition: all 0.2s ease-in-out;
@@ -52,6 +53,8 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
     const [showEmojiBox, setShowEmojiBox] = React.useState(false)
     const [message, setMessage] = React.useState('')
     const [paste_file, setPasteFile] = React.useState('')
+
+    const is_mobile = useMediaQuery({ query: '(max-width: 1000px)' })
     const { quoted_message, setQuotedMessage } = React.useContext(ChatContext)
 
     React.useEffect(() => {
@@ -92,6 +95,7 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
         }
         onSend({ message, action, ref })
         setMessage('')
+        document.getElementById('main-input').focus()
     }
 
     const onPaste = e => {
@@ -119,38 +123,46 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
                         </QuoteIcon>
                     </QuoteContainer>
                 )}
-                <InputContainer is_thread={is_thread}>
+                <InputContainer is_mobile={is_mobile}>
                     <Upload paste_file={paste_file} is_thread={is_thread} thread_message_id={thread_message_id} />
                     <form onSubmit={onSubmit}>
-                        <Input
-                            data-lpignore="true"
-                            value={message}
-                            onChange={onWriteMessage}
-                            onPaste={onPaste}
-                            aria-label="Message input"
-                            placeholder="Message SJ friends"
-                            type="text"
-                            borderColor="black"
-                            paddingLeft="43px"
-                            paddingRight="43px"
-                            height="3rem"
-                            id="main-input"
-                        />
-                        {/* eslint-disable-next-line jsx-a11y/accessible-emoji */}
-                        <EmojiWrapper
-                            onMouseEnter={() => {
-                                if (showEmojiBox) return
-                                setEmoji(emoji_array[Math.floor(Math.random() * emoji_array.length)])
-                            }}
-                            is_active={showEmojiBox}
-                            onClick={() => {
-                                setShowEmojiPicker(!showEmojiBox)
-                            }}
-                            aria-label="emoji"
-                            role="img"
-                        >
-                            {emoji}
-                        </EmojiWrapper>
+                        <Stack isInline>
+                            <Input
+                                data-lpignore="true"
+                                value={message}
+                                onChange={onWriteMessage}
+                                onPaste={onPaste}
+                                aria-label="Message input"
+                                placeholder="Message SJ friends"
+                                type="text"
+                                borderColor="black"
+                                paddingLeft="43px"
+                                paddingRight="43px"
+                                height="3rem"
+                                id="main-input"
+                            />
+                            {/* eslint-disable-next-line jsx-a11y/accessible-emoji */}
+                            <EmojiWrapper
+                                is_mobile={is_mobile}
+                                onMouseEnter={() => {
+                                    if (showEmojiBox) return
+                                    setEmoji(emoji_array[Math.floor(Math.random() * emoji_array.length)])
+                                }}
+                                is_active={showEmojiBox}
+                                onClick={() => {
+                                    setShowEmojiPicker(!showEmojiBox)
+                                }}
+                                aria-label="emoji"
+                                role="img"
+                            >
+                                {emoji}
+                            </EmojiWrapper>
+                            {is_mobile && (
+                                <Button height="48px" type="submit" variantColor="teal">
+                                    Send
+                                </Button>
+                            )}
+                        </Stack>
                         {showEmojiBox && (
                             <EmojiBoxWrapper>
                                 <EmojiPicker
