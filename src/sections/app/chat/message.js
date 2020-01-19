@@ -52,8 +52,9 @@ const Divider = styled.div`
 `
 export const Message = React.memo(function({ message, idx, measure, is_thread }) {
     const [show_menu, setShowMenu] = React.useState(false)
+    const { is_mobile } = useUI()
 
-    if (message.date)
+    if (message.date) {
         return (
             <Stack isInline align="center">
                 <Divider />
@@ -63,9 +64,19 @@ export const Message = React.memo(function({ message, idx, measure, is_thread })
                 <Divider />
             </Stack>
         )
+    }
+
+    const handleEnter = () => {
+        if (is_mobile) return
+        setShowMenu(true)
+    }
+    const handleLeave = () => {
+        if (is_mobile) return
+        setShowMenu(false)
+    }
 
     return (
-        <ChatContainer justify="start" onMouseEnter={() => setShowMenu(true)} onMouseLeave={() => setShowMenu(false)}>
+        <ChatContainer justify="start" onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
             <ChatMessage
                 showMenu={setShowMenu}
                 show_menu={show_menu}
@@ -95,7 +106,7 @@ export const ChatMessage = React.memo(function({ showMenu, show_menu, message, i
         if (!is_mobile) return
         showMobileMenu(true)
         setSelectedMobileMessage({ onReply: () => setQuotedMessage(message), onAddReaction })
-    }, 500)
+    }, 300)
 
     const message_user = getUser(message.user)
 

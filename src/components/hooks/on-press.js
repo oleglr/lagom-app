@@ -4,12 +4,12 @@ export function useLongPress(callback: (e: MouseEvent | TouchEvent) => void, dur
     // This will be a reference to our `setTimeout` counter, so we can clear it
     // if the user moves or releases their pointer.
     const timeout = useRef(null)
-
     // Create an event handler for mouse down and touch start events. We wrap the
     // handler in the `useCallback` hook and pass `callback` and `duration` as
     // dependencies so it only creates a new callback if either of these changes.
     const onPressStart = useCallback(
         (event: MouseEvent | TouchEvent) => {
+            event.preventDefault()
             // Start a timeout that, after the provided `duration`, will fire the
             // supplied callbacl.
             timeout.current = setTimeout(() => callback(event), duration)
