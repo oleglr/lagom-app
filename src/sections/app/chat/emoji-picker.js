@@ -26,7 +26,7 @@ export const EmojiPicker = ({ closePicker, onSelectEmoji, showPicker, is_mobile 
                     native
                     onSelect={onSelectEmoji}
                     darkMode={true}
-                    autoFocus={!!is_mobile}
+                    autoFocus={!is_mobile}
                     title="Pick your emoji…"
                     emoji="point_up"
                     exclude={['foods', 'objects']}
