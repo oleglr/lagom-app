@@ -66,6 +66,7 @@ const EmojiBubble = styled.div`
     background-color: var(--grey-3);
     display: flex;
     align-items: center;
+    user-select: none;
 `
 const common_emoji_reactions = [
     { id: 'thumbsup', native: '👍', colons: ':+1:' },
