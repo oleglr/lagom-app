@@ -5,10 +5,10 @@ import { Text } from '@chakra-ui/core'
 import { Flex } from '../../../components/container'
 import { EmojiPicker } from './emoji-picker'
 import { PopoverBubble } from '../../../components/general/popover-bubble'
-import { ChatContext } from './chat-context'
-import { addReaction, removeReaction, addThreadReaction } from './socket-methods'
+import { addReaction, removeReaction } from './socket-methods'
 import { useGlobal } from '../../../context/global-context'
 import { useAuth0 } from '../../../react-auth0-spa'
+import { useUI } from '../../../main-content'
 import { ReactComponent as SmilePlus } from '../../../assets/svgs/smile-plus.svg'
 
 const ReactionWrapper = styled(Flex)`
@@ -85,26 +85,17 @@ const makeReactionText = (reaction_users, user_id, group_members) => {
     return [text, has_user]
 }
 
-export const Reaction = React.memo(function({ reactions, message_idx, message_ref, is_thread }) {
+export const Reaction = React.memo(function({ reactions, message_idx, message_ref }) {
     const [showPicker, setShowPicker] = React.useState(false)
-    const { thread_message } = React.useContext(ChatContext)
     const { active_group, group_members } = useGlobal()
+    const { showMobileMenu, setSelectedMobileMessage, is_mobile } = useUI()
     const { user } = useAuth0()
+
     const sorted_reactions = sortEmojis(reactions)
 
     const onAddReaction = ({ native: emoji, colons: emoji_code }) => {
-        if (is_thread) {
-            let thread_ref = thread_message._id
-            addThreadReaction({
-                emoji,
-                thread_ref,
-                ref: message_ref,
-                group_id: active_group.id,
-            })
-        } else {
-            addReaction({ emoji, emoji_code, ref: message_ref, group_id: active_group.id, user_id: user.sub })
-        }
-        togglePicker(false)
+        addReaction({ emoji, emoji_code, ref: message_ref, group_id: active_group.id, user_id: user.sub })
+        setShowPicker(false)
     }
 
     const handleClickReaction = (has_user, emoji, emoji_code) => {
@@ -114,16 +105,21 @@ export const Reaction = React.memo(function({ reactions, message_idx, message_re
                 removeReaction({ message_id: message_ref, group_id: active_group.id, reaction_id: found_reaction._id })
             }
         } else {
-            addReaction({ emoji, emoji_code, ref: message_ref, group_id: active_group.id, user_id: user.sub })
+            onAddReaction({ native: emoji, colons: emoji_code })
         }
     }
 
-    const togglePicker = show => {
-        setShowPicker(show)
+    const openEmojiSelector = () => {
+        if (is_mobile) {
+            showMobileMenu(true)
+            setSelectedMobileMessage({ onAddReaction })
+        } else {
+            setShowPicker(!showPicker)
+        }
     }
 
     return (
-        <ReactionWrapper justify="flex-start" align="center" is_thread={is_thread}>
+        <ReactionWrapper justify="flex-start" align="center">
             {sorted_reactions.map((r, idx) => {
                 const [text, has_user] = makeReactionText(r.users, user.sub, group_members)
                 return (
@@ -151,17 +147,14 @@ export const Reaction = React.memo(function({ reactions, message_idx, message_re
                     content={
                         <EmojiPicker
                             onSelectEmoji={onAddReaction}
-                            closePicker={() => togglePicker(false)}
+                            closePicker={() => setShowPicker(false)}
                             showPicker={showPicker}
                         />
                     }
                 >
                     <PopoverBubble text={<Text>Add reaction</Text>}>
-                        <ReactionsBox style={{ width: '35px', height: '28px' }}>
-                            <SmilePlus
-                                style={{ height: '29px', marginTop: '-3px' }}
-                                onClick={() => togglePicker(!showPicker)}
-                            />
+                        <ReactionsBox style={{ width: is_mobile ? '40px' : '35px', height: '28px' }}>
+                            <SmilePlus style={{ height: '29px', marginTop: '-3px' }} onClick={openEmojiSelector} />
                         </ReactionsBox>
                     </PopoverBubble>
                 </Popover>

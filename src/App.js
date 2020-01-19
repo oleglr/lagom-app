@@ -1,7 +1,6 @@
 import React from 'react'
 import { ThemeProvider, CSSReset } from '@chakra-ui/core'
 import { Router, Route, Switch } from 'react-router-dom'
-import { useMediaQuery } from 'react-responsive'
 // internal
 import { MainContent } from './main-content'
 import history from './utils/history'
@@ -43,7 +42,6 @@ function App() {
     const { loading, isAuthenticated, user, getTokenSilently } = useAuth0()
     const [socket_status, setSocketStatus] = React.useState(APP_STATUS.LOADING)
     const [token, setToken] = React.useState(APP_STATUS.LOADING)
-    const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1000px)' })
     const [activeGroup, setActiveGroup] = React.useState()
     const [groupMembers, setGroupMembers] = React.useState()
 
@@ -141,7 +139,7 @@ function App() {
             <main className="App">
                 <GlobalContextProvider activeGroup={activeGroup} groupMembers={groupMembers}>
                     <Router history={history}>
-                        <MainContent isTabletOrMobile={isTabletOrMobile}>
+                        <MainContent>
                             {isAuthenticated && <SideMenu />}
                             <div style={{ overflow: 'scroll', height: '100%', width: '100%' }}>
                                 <Switch>

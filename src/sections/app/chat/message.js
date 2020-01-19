@@ -2,7 +2,9 @@ import React from 'react'
 import styled from '@emotion/styled'
 import { Text, Stack } from '@chakra-ui/core'
 import moment from 'moment'
-import Hammer from 'react-hammerjs'
+import { useAuth0 } from '../../../react-auth0-spa'
+import { useUI } from '../../../main-content'
+import { useLongPress } from '../../../components/hooks/on-press'
 import { Flex } from '../../../components/container'
 import { ImagePreview } from '../../../components/general/image'
 import { useGlobal } from '../../../context/global-context'
@@ -10,6 +12,7 @@ import { ChatContext } from './chat-context'
 import { HoverMenu } from './hover-menu'
 import { Reaction } from './reaction'
 import { Quote } from './quote'
+import { addReaction } from './socket-methods'
 
 const ChatContainer = styled(Flex)`
     margin-left: 15px;
@@ -37,16 +40,6 @@ const ImageStyled = styled.img`
     &:hover {
         cursor: pointer;
         filter: brightness(0.5);
-    }
-`
-const LinkText = styled(Text)`
-    font-size: 13px;
-    color: var(--rose-red);
-    font-weight: bold;
-
-    &:hover {
-        cursor: pointer;
-        text-decoration: underline;
     }
 `
 const HoverWrapper = styled.span`
@@ -82,26 +75,34 @@ export const Message = React.memo(function({ message, idx, measure, is_thread })
                 measure={measure}
             />
             <HoverWrapper show_menu={show_menu}>
-                <HoverMenu message_idx={idx} message={message} is_thread={is_thread} />
+                <HoverMenu message_idx={idx} message={message} />
             </HoverWrapper>
         </ChatContainer>
     )
 })
 
-export const ChatMessage = React.memo(function({ showMenu, show_menu, message, idx, measure, is_thread }) {
-    const { getUser } = useGlobal()
-    const { setThreadMessage } = React.useContext(ChatContext)
-    const reply_length = message.replies && message.replies.length
-    const user = getUser(message.user)
+export const ChatMessage = React.memo(function({ showMenu, show_menu, message, idx, measure }) {
+    const { getUser, active_group } = useGlobal()
+    const { showMobileMenu, setSelectedMobileMessage, is_mobile } = useUI()
+    const { setQuotedMessage } = React.useContext(ChatContext)
+    const { user } = useAuth0()
 
-    const handlePress = () => {
-        showMenu(!show_menu)
+    const onAddReaction = ({ native: emoji, colons: emoji_code }) => {
+        addReaction({ emoji, emoji_code, ref: message._id, group_id: active_group.id, user_id: user.sub })
     }
+
+    const onPress = useLongPress(() => {
+        if (!is_mobile) return
+        showMobileMenu(true)
+        setSelectedMobileMessage({ onReply: () => setQuotedMessage(message), onAddReaction })
+    }, 500)
+
+    const message_user = getUser(message.user)
 
     return (
         <>
             <img
-                src={user.img}
+                src={message_user.img}
                 alt="Profile"
                 style={{
                     borderRadius: '5px',
@@ -111,28 +112,16 @@ export const ChatMessage = React.memo(function({ showMenu, show_menu, message, i
                     backgroundColor: 'coral',
                 }}
             />
-            <Hammer onPress={handlePress}>
-                <Flex column align="flex-start" justify="flex-start" pl="5px">
-                    <Text>
-                        <Name className="bold">{user.name}</Name>{' '}
-                        <span style={{ fontSize: '12px', color: 'var(--grey)' }}>
-                            {moment(message.createdAt).format('LT')}
-                        </span>
-                    </Text>
-                    <Content message={message} measure={measure} is_thread={is_thread} />
-                    <Reaction
-                        is_thread={is_thread}
-                        reactions={message.reactions}
-                        message_idx={idx}
-                        message_ref={message._id}
-                    />
-                    {!!reply_length && !is_thread && (
-                        <LinkText onClick={() => setThreadMessage(message)}>
-                            {reply_length} {reply_length > 1 ? 'replies' : 'reply'}
-                        </LinkText>
-                    )}
-                </Flex>
-            </Hammer>
+            <Flex {...onPress} column align="flex-start" justify="flex-start" pl="5px">
+                <Text>
+                    <Name className="bold">{message_user.name}</Name>{' '}
+                    <span style={{ fontSize: '12px', color: 'var(--grey)' }}>
+                        {moment(message.createdAt).format('LT')}
+                    </span>
+                </Text>
+                <Content message={message} measure={measure} />
+                <Reaction reactions={message.reactions} message_idx={idx} message_ref={message._id} />
+            </Flex>
         </>
     )
 })

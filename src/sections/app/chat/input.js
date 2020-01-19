@@ -1,12 +1,12 @@
 import React from 'react'
 import styled from '@emotion/styled'
 import { FormControl, Icon, Input, Button, Stack } from '@chakra-ui/core'
-import { useMediaQuery } from 'react-responsive'
 import { EmojiPicker } from './emoji-picker'
 import { ChatContext } from './chat-context'
 import { Quote } from './quote'
 import { Upload } from './upload-file'
 import { Flex } from '../../../components/container'
+import { useUI } from '../../../main-content'
 
 const InputContainer = styled.div`
     padding-right: ${props => (props.is_mobile ? '' : '20px')};
@@ -38,7 +38,7 @@ const EmojiBoxWrapper = styled.div`
 const emoji_array = ['😈', '😇', '😉', '😎', '😓', '😱', '🤢', '🤪', '🧐', '🙄']
 
 const QuoteContainer = styled(Flex)`
-    margin: 5px 30px 0 20px;
+    margin: ${props => (props.is_mobile ? '5px' : '5px 30px 0 20px')};
 `
 const QuoteIcon = styled.div`
     margin-left: 10px;
@@ -54,8 +54,8 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
     const [message, setMessage] = React.useState('')
     const [paste_file, setPasteFile] = React.useState('')
 
-    const is_mobile = useMediaQuery({ query: '(max-width: 1000px)' })
     const { quoted_message, setQuotedMessage } = React.useContext(ChatContext)
+    const { is_mobile } = useUI()
 
     React.useEffect(() => {
         const handleUserKeyPress = e => {
@@ -110,7 +110,7 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
         <>
             <FormControl width="100%" mr="10px">
                 {quoted_message && (
-                    <QuoteContainer justify="unset" height="unset" align="center">
+                    <QuoteContainer is_mobile={is_mobile} justify="unset" height="unset" align="center">
                         <Quote
                             w="89%"
                             action={quoted_message.action}

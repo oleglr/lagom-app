@@ -16,7 +16,6 @@ import {
 } from '@chakra-ui/core'
 import { useHistory } from 'react-router-dom'
 import { Swipeable } from 'react-swipeable'
-import { useMediaQuery } from 'react-responsive'
 import { useUI } from '../../main-content'
 import { useGlobal } from '../../context/global-context'
 import { useAuth0 } from '../../react-auth0-spa'
@@ -287,13 +286,12 @@ const SideContent = ({ onClose }) => {
 }
 
 export const SideMenu = () => {
-    const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1000px)' })
-    const { is_drawer_open, toggleDrawer } = useUI()
+    const { is_drawer_open, toggleDrawer, is_mobile } = useUI()
     const closeDrawer = () => toggleDrawer(false)
     const openDrawer = () => toggleDrawer(true)
     const btnRef = React.useRef()
 
-    if (isTabletOrMobile) {
+    if (is_mobile) {
         return (
             <>
                 <Stack backgroundColor="var(--secondary)">
