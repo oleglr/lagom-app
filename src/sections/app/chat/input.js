@@ -54,6 +54,8 @@ const ChatEditableInput = styled.div`
     padding-right: 38px;
     padding-top: 10px;
     padding-bottom: 10px;
+    margin-bottom: 5px;
+    margin-left: 5px;
     text-align: left;
     word-break: break-word;
     white-space: break-spaces !important;
@@ -68,8 +70,6 @@ const ChatEditableInput = styled.div`
     border-style: solid;
     border-image: initial;
     border-color: rgb(0, 0, 0);
-    margin-bottom: 5px;
-    margin-left: 5px;
 
     &:empty:not(:focus)::before {
         content: attr(data-ph);

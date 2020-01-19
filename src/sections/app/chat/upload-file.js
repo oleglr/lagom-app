@@ -15,7 +15,7 @@ import {
     ModalHeader,
     ModalFooter,
     ModalBody,
-    ModalCloseButton,
+    Stack,
 } from '@chakra-ui/core'
 import { PopoverBubble } from '../../../components/general/popover-bubble'
 import { Flex } from '../../../components/container'
@@ -62,6 +62,16 @@ const ImageWrapper = styled.div`
     margin: 10px;
 `
 
+const CloseModalWrapper = styled.div`
+    padding-right: 24px;
+
+    &:hover {
+        background: black;
+        color: white;
+        cursor: pointer;
+    }
+`
+
 const IconCloseWrapper = styled.div`
     position: absolute;
     z-index: 5;
@@ -72,8 +82,6 @@ const IconCloseWrapper = styled.div`
     transition: background 0.2s;
 
     &:hover {
-        background: black;
-        color: white;
         cursor: pointer;
     }
 `
@@ -96,18 +104,20 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
         e.preventDefault()
         setMessage(e.target.value)
     }
-
-    const uploadFileClient = e => {
-        const file = e.target.files
+    const addSetFile = file => {
         setErrorMsg('')
         setStatus('')
         setMessage('')
         setFiles(Array.from(file))
     }
+    const uploadFileClient = e => {
+        const file = e.target.files
+        addSetFile(file)
+    }
 
     React.useEffect(() => {
         if (!paste_file) return
-        setFiles(Array.from(paste_file))
+        addSetFile(paste_file)
     }, [paste_file])
 
     const sendFiles = async e => {
@@ -208,8 +218,12 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
                 <Modal isOpen={!!files.length} onClose={() => setFiles('')} size={'xl'}>
                     <ModalOverlay zIndex="1400" />
                     <ModalContent borderRadius="5px">
-                        <ModalHeader>Upload a file</ModalHeader>
-                        <ModalCloseButton />
+                        <Stack isInline align="center">
+                            <ModalHeader style={{ marginRight: 'auto' }}>Upload a file</ModalHeader>
+                            <CloseModalWrapper>
+                                <Icon name="close" />
+                            </CloseModalWrapper>
+                        </Stack>
                         <ModalBody>
                             {preview && preview.length === 1 && (
                                 <Flex>
