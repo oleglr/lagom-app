@@ -24,8 +24,8 @@ import { useGlobal } from '../../../context/global-context'
 
 const IconWrapper = styled.span`
     position: absolute;
-    left: 7px;
-    top: 5px;
+    left: 10px;
+    top: 3px;
     height: 80%;
     width: 30px;
     z-index: 1;
@@ -93,6 +93,7 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
     const text_input_ref = React.useRef()
 
     const onWriteMessage = e => {
+        e.preventDefault()
         setMessage(e.target.value)
     }
 
@@ -100,6 +101,7 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
         const file = e.target.files
         setErrorMsg('')
         setStatus('')
+        setMessage('')
         setFiles(Array.from(file))
     }
 
@@ -228,9 +230,9 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
                             </Flex>
                             {!is_thread && (
                                 <div style={{ marginTop: '1rem' }}>
-                                    <FormLabel htmlFor="image message">Add a comment (optional)</FormLabel>
+                                    <FormLabel htmlFor="image_message">Add a comment (optional)</FormLabel>
                                     <Input
-                                        id="image message"
+                                        id="image_message"
                                         type="text"
                                         value={message}
                                         onChange={onWriteMessage}

@@ -104,6 +104,8 @@ export const ChatMessage = React.memo(function({ showMenu, show_menu, message, i
 
     const onPress = useLongPress(() => {
         if (!is_mobile) return
+        showMobileMenu(true)
+        setSelectedMobileMessage({ onReply: () => setQuotedMessage(message), onAddReaction })
     }, 300)
 
     const message_user = getUser(message.user)
@@ -121,16 +123,7 @@ export const ChatMessage = React.memo(function({ showMenu, show_menu, message, i
                     backgroundColor: 'coral',
                 }}
             />
-            <Flex
-                onClick={() => {
-                    showMobileMenu(true)
-                    setSelectedMobileMessage({ onReply: () => setQuotedMessage(message), onAddReaction })
-                }}
-                column
-                align="flex-start"
-                justify="flex-start"
-                pl="5px"
-            >
+            <Flex {...onPress} column align="flex-start" justify="flex-start" pl="5px">
                 <Text>
                     <Name className="bold">{message_user.name}</Name>{' '}
                     <span style={{ fontSize: '12px', color: 'var(--grey)' }}>

@@ -1,22 +1,23 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { FormControl, Icon, Input, Button, Stack } from '@chakra-ui/core'
+import { FormControl, Icon, Button, Stack } from '@chakra-ui/core'
 import { EmojiPicker } from './emoji-picker'
 import { ChatContext } from './chat-context'
 import { Quote } from './quote'
 import { Upload } from './upload-file'
 import { Flex } from '../../../components/container'
 import { useUI } from '../../../main-content'
+import { useKeyDown } from '../../../components/hooks/keydown'
 
 const InputContainer = styled.div`
     padding-right: ${props => (props.is_mobile ? '' : '20px')};
-    margin: ${props => (props.is_mobile ? '5px' : '10px 20px 30px 20px')};
+    margin: ${props => (props.is_mobile ? '' : '10px 20px 30px 20px')};
     position: relative;
 `
 
 const EmojiWrapper = styled.span`
     position: absolute;
-    right: ${props => (props.is_mobile ? '22%' : '35px')};
+    right: ${props => (props.is_mobile ? '17%' : '35px')};
     top: 11px;
     font-size: 18px;
     transition: all 0.2s ease-in-out;
@@ -48,11 +49,42 @@ const QuoteIcon = styled.div`
     }
 `
 
+const ChatEditableInput = styled.div`
+    padding-left: 38px;
+    padding-right: 38px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: left;
+    word-break: break-word;
+    white-space: break-spaces !important;
+    outline: none;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    -webkit-user-modify: read-write-plaintext-only;
+    transition: all 0.2s ease 0s;
+    outline: none;
+    border-radius: 0.25rem;
+    border-width: 1px;
+    border-style: solid;
+    border-image: initial;
+    border-color: rgb(0, 0, 0);
+    margin-bottom: 5px;
+    margin-left: 5px;
+
+    &:focus {
+        box-shadow: rgb(49, 130, 206) 0px 0px 0px 1px;
+        border-color: rgb(49, 130, 206);
+    }
+`
+
 export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
     const [emoji, setEmoji] = React.useState('😀')
     const [showEmojiBox, setShowEmojiBox] = React.useState(false)
     const [message, setMessage] = React.useState('')
     const [paste_file, setPasteFile] = React.useState('')
+    const input_ref = React.useRef()
+
+    useKeyDown(input_ref, onSubmit, 13)
 
     const { quoted_message, setQuotedMessage } = React.useContext(ChatContext)
     const { is_mobile } = useUI()
@@ -71,19 +103,18 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
         }
     }, [setQuotedMessage, is_mobile])
 
-    const onWriteMessage = e => {
-        setMessage(e.target.value)
-    }
-
     const addEmojiToText = emoji => {
         setMessage(message + '' + emoji.native)
         setShowEmojiBox(false)
         document.getElementById('main-input').focus()
     }
 
-    const onSubmit = e => {
-        e.preventDefault()
-        if (!message) return
+    function onSubmit(e) {
+        if (e) e.preventDefault()
+        if (!input_ref || !input_ref.current) return
+
+        const message_to_send = input_ref.current.innerText.trim()
+        if (!message_to_send) return
 
         let action = 'message'
         let ref = null
@@ -93,8 +124,10 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
             action = 'quote'
             ref = quoted_message._id
         }
-        onSend({ message, action, ref })
-        setMessage('')
+
+        onSend({ message: message_to_send, action, ref })
+        input_ref.current.innerHTML = ''
+
         if (!is_mobile) document.getElementById('main-input').focus()
     }
 
@@ -127,20 +160,19 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
                     <Upload paste_file={paste_file} is_thread={is_thread} thread_message_id={thread_message_id} />
                     <form onSubmit={onSubmit}>
                         <Stack isInline>
-                            <Input
-                                data-lpignore="true"
-                                value={message}
-                                onChange={onWriteMessage}
-                                onPaste={onPaste}
-                                aria-label="Message input"
-                                placeholder="Message SJ friends"
-                                type="text"
-                                borderColor="black"
-                                paddingLeft="43px"
-                                paddingRight="43px"
-                                height="3rem"
+                            <ChatEditableInput
+                                style={{ width: '100%' }}
+                                contenteditable="true"
+                                aria-multiline="true"
+                                spellcheck="true"
+                                role="textbox"
                                 id="main-input"
-                            />
+                                data-lpignore="true"
+                                onPaste={onPaste}
+                                ref={input_ref}
+                            >
+                                {message}
+                            </ChatEditableInput>
                             {/* eslint-disable-next-line jsx-a11y/accessible-emoji */}
                             <EmojiWrapper
                                 is_mobile={is_mobile}
@@ -158,9 +190,11 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
                                 {emoji}
                             </EmojiWrapper>
                             {is_mobile && (
-                                <Button height="48px" type="submit" variantColor="teal">
-                                    Send
-                                </Button>
+                                <Stack justify="flex-end" padding="0 5px 5px">
+                                    <Button height="48px" type="submit" variantColor="teal">
+                                        >
+                                    </Button>
+                                </Stack>
                             )}
                         </Stack>
                         {showEmojiBox && (
