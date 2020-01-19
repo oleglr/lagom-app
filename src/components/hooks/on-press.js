@@ -1,6 +1,6 @@
 import { useRef, useCallback } from 'react'
 
-export function useLongPress(callback: (e: MouseEvent | TouchEvent) => void, duration: number = 500) {
+export function useLongPress(callback: (e: MouseEvent | TouchEvent) => void, duration: number = 300) {
     // This will be a reference to our `setTimeout` counter, so we can clear it
     // if the user moves or releases their pointer.
     const timeout = useRef(null)
@@ -12,6 +12,7 @@ export function useLongPress(callback: (e: MouseEvent | TouchEvent) => void, dur
         (event: MouseEvent | TouchEvent) => {
             // Start a timeout that, after the provided `duration`, will fire the
             // supplied callbacl.
+            event.preventDefault()
             timeout.current = setTimeout(() => callback(event), duration)
         },
         [callback, duration]
