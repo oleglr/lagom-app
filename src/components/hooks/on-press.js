@@ -12,7 +12,6 @@ export function useLongPress(callback: (e: MouseEvent | TouchEvent) => void, dur
         (event: MouseEvent | TouchEvent) => {
             // Start a timeout that, after the provided `duration`, will fire the
             // supplied callbacl.
-            event.preventDefault()
             timeout.current = setTimeout(() => callback(event), duration)
         },
         [callback, duration]

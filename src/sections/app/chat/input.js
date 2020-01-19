@@ -69,7 +69,7 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
         return () => {
             window.removeEventListener('keydown', handleUserKeyPress)
         }
-    }, [setQuotedMessage])
+    }, [setQuotedMessage, is_mobile])
 
     const onWriteMessage = e => {
         setMessage(e.target.value)
@@ -95,7 +95,7 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
         }
         onSend({ message, action, ref })
         setMessage('')
-        document.getElementById('main-input').focus()
+        if (!is_mobile) document.getElementById('main-input').focus()
     }
 
     const onPaste = e => {
@@ -170,7 +170,7 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
                                     onSelectEmoji={addEmojiToText}
                                     closePicker={() => {
                                         setShowEmojiPicker(false)
-                                        document.getElementById('main-input').focus()
+                                        if (!is_mobile) document.getElementById('main-input').focus()
                                     }}
                                 />
                             </EmojiBoxWrapper>
