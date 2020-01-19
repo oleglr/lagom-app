@@ -2,14 +2,15 @@ import React from 'react'
 import styled from '@emotion/styled'
 import { PopoverBubble } from '../../../components/general/popover-bubble'
 import Popover from 'react-tiny-popover'
-import { Icon, Text } from '@chakra-ui/core'
+import { Text, Box } from '@chakra-ui/core'
 import { Flex } from '../../../components/container'
 import { ChatContext } from './chat-context'
 import { EmojiPicker } from './emoji-picker'
 import { addReaction } from './socket-methods'
 import { useGlobal } from '../../../context/global-context'
 import { useAuth0 } from '../../../react-auth0-spa'
-import { ReactComponent as SmilePlus } from '../../../assets/svgs/smile-plus.svg'
+import { ReactComponent as SmilePlusIcon } from '../../../assets/svgs/smile-plus.svg'
+import { ReactComponent as ReplyIcon } from '../../../assets/svgs/reply.svg'
 
 const Menu = styled(Flex)`
     border: 1px solid var(--grey-2);
@@ -65,7 +66,7 @@ export const HoverMenu = ({ message_idx, message }) => {
                         className="icon-container"
                         style={{ width: '38px', borderTopRightRadius: '5px', borderBottomRightRadius: '5px' }}
                     >
-                        <SmilePlus name="add" style={{ marginTop: '2px', marginLeft: '4px' }} />
+                        <SmilePlusIcon name="add" style={{ marginTop: '2px', marginLeft: '4px' }} />
                     </div>
                 </PopoverBubble>
             </Popover>
@@ -79,7 +80,7 @@ export const HoverMenu = ({ message_idx, message }) => {
                     className="icon-container"
                     style={{ borderTopLeftRadius: '5px', borderBottomLeftRadius: '5px' }}
                 >
-                    <Icon name="repeat-clock" size="18px" style={{ marginTop: '-2px', marginRight: '2px' }} />
+                    <Box color="black" opacity="0.8" as={ReplyIcon} size="18px" style={{ marginTop: '2px', marginRight: '2px' }} />
                 </div>
             </PopoverBubble>
         </Menu>

@@ -3,9 +3,10 @@ import styled from '@emotion/styled'
 import { Swipeable } from 'react-swipeable'
 import { Emoji } from 'emoji-mart'
 import { useMediaQuery } from 'react-responsive'
-import { Modal, ModalOverlay, ModalContent, Icon, Text, Stack } from '@chakra-ui/core'
+import { Modal, ModalOverlay, ModalContent, Icon, Text, Stack, Box } from '@chakra-ui/core'
 import { EmojiPicker } from './sections/app/chat/emoji-picker'
-import { ReactComponent as SmilePlus } from './assets/svgs/smile-plus.svg'
+import { ReactComponent as SmilePlusIcon } from './assets/svgs/smile-plus.svg'
+import { ReactComponent as ReplyIcon } from './assets/svgs/reply.svg'
 
 const MainContentStyle = styled.div`
     height: 100%;
@@ -125,7 +126,7 @@ const MobileMenu = ({ showMobileMenu, show_mobile_menu, selected_mobile_message 
                                         borderBottomRightRadius: '5px',
                                     }}
                                 >
-                                    <SmilePlus name="add" style={{ marginBottom: '3px', marginLeft: '5px' }} />
+                                    <SmilePlusIcon name="add" style={{ marginBottom: '3px', marginLeft: '5px' }} />
                                 </div>
                             </EmojiBubble>
                         </Stack>
@@ -140,7 +141,7 @@ const MobileMenu = ({ showMobileMenu, show_mobile_menu, selected_mobile_message 
                             pt="16px"
                             pb="8px"
                         >
-                            <Icon name="repeat-clock" size="24px" />
+                        <Box color="black" opacity="0.8" as={ReplyIcon} size="24px" style={{ marginTop: '2px', marginRight: '2px' }} />
                             <Text pl="8px" fontSize="24px" userSelect="none">
                                 Reply
                             </Text>

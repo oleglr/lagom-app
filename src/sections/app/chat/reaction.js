@@ -9,7 +9,7 @@ import { addReaction, removeReaction } from './socket-methods'
 import { useGlobal } from '../../../context/global-context'
 import { useAuth0 } from '../../../react-auth0-spa'
 import { useUI } from '../../../main-content'
-import { ReactComponent as SmilePlus } from '../../../assets/svgs/smile-plus.svg'
+import { ReactComponent as SmilePlusIcon } from '../../../assets/svgs/smile-plus.svg'
 
 const ReactionWrapper = styled(Flex)`
     padding-top: 3px;
@@ -159,7 +159,7 @@ export const Reaction = React.memo(function({ reactions, message_idx, message_re
                 >
                     <PopoverBubble text={<Text>Add reaction</Text>}>
                         <ReactionsBox style={{ width: is_mobile ? '40px' : '35px', height: '28px' }}>
-                            <SmilePlus style={{ height: '29px', marginTop: '-3px' }} onClick={openEmojiSelector} />
+                            <SmilePlusIcon style={{ height: '29px', marginTop: '-3px' }} onClick={openEmojiSelector} />
                         </ReactionsBox>
                     </PopoverBubble>
                 </Popover>
