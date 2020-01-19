@@ -9,7 +9,7 @@ export function useLongPress(callback: (e: MouseEvent | TouchEvent) => void, dur
     // dependencies so it only creates a new callback if either of these changes.
     const onPressStart = useCallback(
         (event: MouseEvent | TouchEvent) => {
-            event.preventDefault()
+            // event.preventDefault()
             // Start a timeout that, after the provided `duration`, will fire the
             // supplied callbacl.
             timeout.current = setTimeout(() => callback(event), duration)
