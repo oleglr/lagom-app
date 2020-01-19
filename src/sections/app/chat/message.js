@@ -50,6 +50,13 @@ const Divider = styled.div`
     height: 1px;
     background-color: #dddddd;
 `
+const LinkText = styled(Text)`
+    &:hover {
+        cursor: pointer;
+        color: var(--primary);
+    }
+`
+
 export const Message = React.memo(function({ message, idx, measure, is_thread }) {
     const [show_menu, setShowMenu] = React.useState(false)
     const { is_mobile } = useUI()
@@ -137,6 +144,22 @@ export const ChatMessage = React.memo(function({ showMenu, show_menu, message, i
     )
 })
 
+const Link = ({ text }) => {
+    // React.useEffect(() => {
+    //     console.log('fetch: ', text)
+    //     fetch('http://localhost:3002/?url=http://google.com/')
+    //         .then(res => res.json())
+    //         .then(data => {
+    //             console.log(data)
+    //         })
+    // }, [text])
+
+    return (
+        <LinkText as="a" color="blue.500" href={text} target="_blank">
+            {text}
+        </LinkText>
+    )
+}
 export const Content = ({ message, measure, is_thread }) => {
     const {
         action,
@@ -151,6 +174,8 @@ export const Content = ({ message, measure, is_thread }) => {
     switch (action) {
         case 'message':
             return <Text textAlign="left">{text}</Text>
+        case 'link':
+            return <Link text={text} />
         case 'image':
             return (
                 <>

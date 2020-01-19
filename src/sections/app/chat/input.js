@@ -9,6 +9,19 @@ import { Flex } from '../../../components/container'
 import { useUI } from '../../../main-content'
 import { useKeyDown } from '../../../components/hooks/keydown'
 
+function isUrl(str) {
+    var pattern = new RegExp(
+        '^(https?:\\/\\/)?' + // protocol
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+        '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+        '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+            '(\\#[-a-z\\d_]*)?$',
+        'i'
+    ) // fragment locator
+    return !!pattern.test(str)
+}
+
 const InputContainer = styled.div`
     padding-right: ${props => (props.is_mobile ? '' : '20px')};
     margin: ${props => (props.is_mobile ? '' : '10px 20px 30px 20px')};
@@ -144,6 +157,9 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
         if (is_quote) {
             action = 'quote'
             ref = quoted_message._id
+        }
+        if (isUrl(message_to_send)) {
+            action = 'link'
         }
 
         onSend({ message: message_to_send, action, ref })
