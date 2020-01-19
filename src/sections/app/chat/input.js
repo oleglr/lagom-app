@@ -77,6 +77,23 @@ const ChatEditableInput = styled.div`
     }
 `
 
+function placeCaretAtEnd(el) {
+    el.focus()
+    if (typeof window.getSelection != 'undefined' && typeof document.createRange != 'undefined') {
+        var range = document.createRange()
+        range.selectNodeContents(el)
+        range.collapse(false)
+        var sel = window.getSelection()
+        sel.removeAllRanges()
+        sel.addRange(range)
+    } else if (typeof document.body.createTextRange != 'undefined') {
+        var textRange = document.body.createTextRange()
+        textRange.moveToElementText(el)
+        textRange.collapse(false)
+        textRange.select()
+    }
+}
+
 export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
     const [emoji, setEmoji] = React.useState('😀')
     const [showEmojiBox, setShowEmojiBox] = React.useState(false)
@@ -104,9 +121,9 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
     }, [setQuotedMessage, is_mobile])
 
     const addEmojiToText = emoji => {
-        setMessage(message + '' + emoji.native)
+        input_ref.current.insertAdjacentHTML('beforeend', emoji.native)
         setShowEmojiBox(false)
-        document.getElementById('main-input').focus()
+        placeCaretAtEnd(input_ref.current)
     }
 
     function onSubmit(e) {
