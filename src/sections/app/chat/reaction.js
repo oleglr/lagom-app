@@ -14,8 +14,13 @@ import { ReactComponent as SmilePlus } from '../../../assets/svgs/smile-plus.svg
 const ReactionWrapper = styled(Flex)`
     padding-top: 3px;
     max-width: ${props => (props.is_thread ? '200px' : '')}
+
     &:hover {
         cursor: pointer;
+    }
+
+    div {
+        margin-bottom: 2px;
     }
 `
 
@@ -119,7 +124,7 @@ export const Reaction = React.memo(function({ reactions, message_idx, message_re
     }
 
     return (
-        <ReactionWrapper justify="flex-start" align="center">
+        <ReactionWrapper justify="flex-start" align="center" wrap="wrap">
             {sorted_reactions.map((r, idx) => {
                 const [text, has_user] = makeReactionText(r.users, user.sub, group_members)
                 return (
