@@ -200,6 +200,7 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
                         {showEmojiBox && (
                             <EmojiBoxWrapper>
                                 <EmojiPicker
+                                    is_mobile={is_mobile}
                                     showPicker={showEmojiBox}
                                     onSelectEmoji={addEmojiToText}
                                     closePicker={() => {
