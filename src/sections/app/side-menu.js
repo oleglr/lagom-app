@@ -30,6 +30,11 @@ const StyledDrawerContent = styled(DrawerContent)`
     min-width: 275px;
     height: 100%;
     background-color: var(--secondary);
+    font-size: 22px;
+
+    .group-name {
+        font-size: 22px;
+    }
 `
 const Nav = styled.nav`
     height: 100%;
@@ -127,15 +132,17 @@ const GroupAvatars = ({ onClose }) => {
 
 const SideContent = ({ onClose }) => {
     const history = useHistory()
-    const path_name = history.location.pathname
     const { active_group, group_members } = useGlobal()
     const { logout } = useAuth0()
+
+    const path_name = history.location.pathname
     const has_group = active_group && active_group.name
+
     return (
         <>
             {has_group && (
                 <>
-                    <GroupNameHeading size="md" onClick={() => history.push('/')}>
+                    <GroupNameHeading className="group-name" size="md" onClick={() => history.push('/')}>
                         {active_group.name}
                     </GroupNameHeading>
                     {group_members.length === 1 && (
@@ -286,24 +293,36 @@ const SideContent = ({ onClose }) => {
 }
 
 export const SideMenu = () => {
+    const btnRef = React.useRef()
+
     const { is_drawer_open, toggleDrawer, is_mobile } = useUI()
+    const history = useHistory()
+    const { active_group } = useGlobal()
+
     const closeDrawer = () => toggleDrawer(false)
     const openDrawer = () => toggleDrawer(true)
-    const btnRef = React.useRef()
+
+    const has_group = active_group && active_group.name
 
     if (is_mobile) {
         return (
             <>
-                <Stack backgroundColor="var(--secondary)">
-                    <Button
-                        width="50px"
-                        marginTop="8px"
-                        ref={btnRef}
-                        backgroundColor="transparent"
-                        onClick={openDrawer}
-                    >
+                <Stack backgroundColor="var(--secondary)" height="60px" align="center" isInline>
+                    <Button width="50px" ref={btnRef} backgroundColor="transparent" onClick={openDrawer}>
                         <Icon name="arrow-right" color="#fff" />
                     </Button>
+                    {has_group && (
+                        <Heading
+                            textOverflow="ellipsis"
+                            whiteSpace="nowrap"
+                            overflow="hidden"
+                            color="white"
+                            size="sm"
+                            onClick={() => history.push('/')}
+                        >
+                            {active_group.name}
+                        </Heading>
+                    )}
                 </Stack>
                 <Drawer isOpen={is_drawer_open} placement="left" onClose={closeDrawer} finalFocusRef={btnRef}>
                     <Swipeable style={{ height: '100%' }} onSwipedLeft={closeDrawer}>

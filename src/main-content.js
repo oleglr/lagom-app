@@ -11,7 +11,7 @@ const MainContentStyle = styled.div`
     height: 100%;
     display: flex;
     overflow: scroll;
-    flex-direction: ${props => (props.is_mobile ? 'column-reverse' : 'row')};
+    flex-direction: ${props => (props.is_mobile ? 'column' : 'row')};
 `
 
 export const useUI = () => React.useContext(UIContext)
