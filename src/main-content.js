@@ -140,7 +140,7 @@ const MobileMenu = ({ showMobileMenu, show_mobile_menu, selected_mobile_message 
                             pb="8px"
                         >
                             <Icon name="repeat-clock" size="24px" />
-                            <Text pl="8px" fontSize="24px">
+                            <Text pl="8px" fontSize="24px" userSelect="none">
                                 Reply
                             </Text>
                         </Stack>
