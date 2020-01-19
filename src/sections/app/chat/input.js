@@ -71,6 +71,11 @@ const ChatEditableInput = styled.div`
     margin-bottom: 5px;
     margin-left: 5px;
 
+    &:empty:not(:focus)::before {
+        content: attr(data-ph);
+        color: var(--grey);
+    }
+
     &:focus {
         box-shadow: rgb(49, 130, 206) 0px 0px 0px 1px;
         border-color: rgb(49, 130, 206);
@@ -97,14 +102,13 @@ function placeCaretAtEnd(el) {
 export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
     const [emoji, setEmoji] = React.useState('😀')
     const [showEmojiBox, setShowEmojiBox] = React.useState(false)
-    const [message, setMessage] = React.useState('')
     const [paste_file, setPasteFile] = React.useState('')
     const input_ref = React.useRef()
 
-    useKeyDown(input_ref, onSubmit, 13)
-
     const { quoted_message, setQuotedMessage } = React.useContext(ChatContext)
     const { is_mobile } = useUI()
+
+    useKeyDown(input_ref, onSubmit, 13)
 
     React.useEffect(() => {
         const handleUserKeyPress = e => {
@@ -185,11 +189,10 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
                                 role="textbox"
                                 id="main-input"
                                 data-lpignore="true"
+                                data-ph={'Type a message'}
                                 onPaste={onPaste}
                                 ref={input_ref}
-                            >
-                                {message}
-                            </ChatEditableInput>
+                            />
                             {/* eslint-disable-next-line jsx-a11y/accessible-emoji */}
                             <EmojiWrapper
                                 is_mobile={is_mobile}
