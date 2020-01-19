@@ -64,7 +64,7 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
             }
         }
         window.addEventListener('keydown', handleUserKeyPress)
-        document.getElementById('main-input').focus()
+        if (!is_mobile) document.getElementById('main-input').focus()
 
         return () => {
             window.removeEventListener('keydown', handleUserKeyPress)
