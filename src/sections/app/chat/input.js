@@ -198,8 +198,8 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
                     <form onSubmit={onSubmit}>
                         <Stack isInline>
                             <ChatEditableInput
-                                style={{ width: '100%' }}
-                                contenteditable="true"
+                                style={{ width: '100%', height: '46px' }}
+                                contentEditable="true"
                                 aria-multiline="true"
                                 spellcheck="true"
                                 role="textbox"
