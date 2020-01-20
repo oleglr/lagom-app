@@ -100,12 +100,18 @@ export class ChatFeedSocket extends React.Component {
         socket().on('message', this.newMessage)
         socket().on('added reaction', this.newReaction)
         socket().on('removed reaction', this.removeReaction)
+
+        // Hack to reset ScrollToIndex - else when scrolling down list scrolls instantly to bottom
+        setTimeout(() => {
+            this.setState({ scrollToIdx: -1 })
+        }, 1000)
     }
 
     render() {
         return (
             <section style={{ height: '100%' }}>
                 <VirtualizedList
+                    scrollToIdx={this.state.scrollToIdx || this.state.messages.length}
                     sortBy={this.state.sortBy}
                     items={this.state.messages}
                     cache={cache}

@@ -145,6 +145,7 @@ export const ChatMessage = React.memo(function({ showMenu, show_menu, message, i
 })
 
 const Link = ({ text }) => {
+    // TODO: fetch link metadata
     // React.useEffect(() => {
     //     console.log('fetch: ', text)
     //     fetch('http://localhost:3002/?url=http://google.com/')
