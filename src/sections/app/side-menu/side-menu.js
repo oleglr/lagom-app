@@ -16,11 +16,7 @@ const StyledDrawerContent = styled(DrawerContent)`
     min-width: 275px;
     height: 100%;
     background-color: var(--secondary);
-    font-size: 22px;
-
-    .group-name {
-        font-size: 22px;
-    }
+    font-size: 18px;
 `
 const Nav = styled.nav`
     height: 100%;
