@@ -19,7 +19,7 @@ const Profile = () => {
             <Heading size="xl" marginBottom="16px">
                 Members:
             </Heading>
-            <Flex wrap="wrap" justify="flex-start">
+            <Flex wrap="wrap" justify="center">
                 {!!group_members &&
                     !!group_members.length &&
                     group_members.map(member => (
