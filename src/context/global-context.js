@@ -11,6 +11,46 @@ export const GlobalContext = React.createContext({
     group_members: null,
     setGroupMembers: () => {},
 })
+
+function checkNotificationPromise() {
+    try {
+        Notification.requestPermission().then()
+    } catch (e) {
+        return false
+    }
+
+    return true
+}
+
+function handlePermission(permission) {
+    // Whatever the user answers, we make sure Chrome stores the information
+    if (!('permission' in Notification)) {
+        Notification.permission = permission
+    }
+
+    if (Notification.permission === 'denied' || Notification.permission === 'default') {
+        console.log('denied!')
+    } else {
+        console.log('accepted!')
+    }
+}
+
+const askForNotificationPermission = () => {
+    if (!'Notification' in window) {
+        console.log('This browser does not support notifications.')
+    } else {
+        if (checkNotificationPromise()) {
+            Notification.requestPermission().then(permission => {
+                handlePermission(permission)
+            })
+        } else {
+            Notification.requestPermission(function(permission) {
+                handlePermission(permission)
+            })
+        }
+    }
+}
+
 const LAGOMBOT = 'Lagom Robot'
 // TODO: consider moving to app.js instead of copying props here
 export const GlobalContextProvider = ({ children, activeGroup, groupMembers = [] }) => {
@@ -25,6 +65,9 @@ export const GlobalContextProvider = ({ children, activeGroup, groupMembers = []
 
         return { name: 'unkown user', img: LagomRobotImg }
     }
+
+    // ask for permission for notifications
+    askForNotificationPermission()
 
     return (
         <GlobalContext.Provider

@@ -96,6 +96,12 @@ export class ChatFeedSocket extends React.Component {
         this.setState({ messages: new_data, sortBy: this.state.sortBy + 1 })
     }
 
+    componentWillUnmount() {
+        socket().off('message', this.newMessage)
+        socket().off('added reaction', this.newReaction)
+        socket().off('removed reaction', this.removeReaction)
+    }
+
     componentDidMount() {
         socket().on('message', this.newMessage)
         socket().on('added reaction', this.newReaction)

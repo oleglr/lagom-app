@@ -121,7 +121,7 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
     const { quoted_message, setQuotedMessage } = React.useContext(ChatContext)
     const { is_mobile } = useUI()
 
-    useKeyDown(input_ref, onSubmit, 13)
+    useKeyDown(input_ref, onSubmit, 13, is_mobile)
 
     React.useEffect(() => {
         const handleUserKeyPress = e => {
@@ -198,7 +198,7 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
                     <form onSubmit={onSubmit}>
                         <Stack isInline>
                             <ChatEditableInput
-                                style={{ width: '100%', height: '46px' }}
+                                style={{ width: '100%', minHeight: '46px' }}
                                 contentEditable="true"
                                 aria-multiline="true"
                                 spellcheck="true"

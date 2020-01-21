@@ -41,6 +41,7 @@ class VirtualizedList extends React.Component {
                         ref={this.props.list_ref}
                         sortBy={this.props.sortBy}
                         scrollToIndex={this.props.scrollToIdx}
+                        estimatedRowSize={100}
                     />
                 )}
             </AutoSizer>

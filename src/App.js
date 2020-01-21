@@ -17,7 +17,7 @@ import { ExternalInvite } from './sections/invite/external_invite'
 import { NewGroup } from './sections/app/new-group/new-group'
 import { BouncingLoader, Error } from './components/elements'
 import { initSocket } from './api/socket'
-import { SideMenu } from './sections/app/side-menu'
+import { SideMenu } from './sections/app/side-menu/side-menu'
 import { Invite } from './sections/app/new-group/invite'
 import './App.css'
 
