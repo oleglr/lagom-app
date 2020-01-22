@@ -48,7 +48,7 @@ const GroupNameHeading = styled(Heading)`
 
 const NotificationCircle = styled.span`
     position: absolute;
-    right: -33%;
+    right: -35%;
     top: -5%;
     background: #fa3e3e;
     border-radius: 50%;
@@ -59,6 +59,16 @@ const NotificationCircle = styled.span`
 `
 
 const { title: DOCUMENT_TITLE } = document
+
+const addCountToTab = count => {
+    let new_title
+    if (count > 0) {
+        new_title = `(${count}) ${DOCUMENT_TITLE}`
+    } else {
+        new_title = DOCUMENT_TITLE
+    }
+    document.title = new_title
+}
 
 class SideContentController extends React.Component {
     constructor(props) {
@@ -84,13 +94,7 @@ class SideContentController extends React.Component {
         const new_notification_count = prev_notifications + 1
 
         this.setState({ notifications: new_notification_count }, () => {
-            let new_title
-            if (new_notification_count > 0) {
-                new_title = `(${new_notification_count}) ${DOCUMENT_TITLE}`
-            } else {
-                new_title = DOCUMENT_TITLE
-            }
-            document.title = new_title
+            addCountToTab(new_notification_count)
 
             const from = this.props.getUser(msg.user).name
             var notification = new Notification(this.props.active_group.name, {
@@ -102,12 +106,16 @@ class SideContentController extends React.Component {
     }
 
     removeNotification = () => {
-        this.setState({ notifications: 0 })
+        this.setState({ notifications: 0 }, () => {
+            addCountToTab(0)
+        })
     }
 
     getNotifications = res => {
         if (!res || !res.notifications || res.notifications.length === 0) return
-        this.setState({ notifications: res.notifications.length })
+        this.setState({ notifications: res.notifications.length }, () => {
+            addCountToTab(res.notifications.length)
+        })
     }
 
     componentDidMount() {
@@ -190,7 +198,7 @@ class SideContentController extends React.Component {
                                     <span aria-label="house" role="img">
                                         🏡
                                     </span>{' '}
-                                    Discussion{' '}
+                                    Chat
                                     {!!notifications && <NotificationCircle>{notifications}</NotificationCircle>}
                                 </Text>
                             </Stack>

@@ -5,9 +5,11 @@ import moment from 'moment'
 import { Flex } from '../../../components/container'
 import { useGlobal } from '../../../context/global-context'
 import { CreateGroup } from '../../../components/general/create-group'
+import { useUI } from '../../../main-content'
 
 const Profile = () => {
     const { group_members, active_group } = useGlobal()
+    const { is_mobile } = useUI()
     const history = useHistory()
 
     if (!active_group || !active_group.id) {
@@ -19,7 +21,7 @@ const Profile = () => {
             <Heading size="xl" marginBottom="16px">
                 Members:
             </Heading>
-            <Flex wrap="wrap" justify="center">
+            <Flex wrap="wrap" justify={is_mobile ? 'center' : 'flex-start'}>
                 {!!group_members &&
                     !!group_members.length &&
                     group_members.map(member => (
