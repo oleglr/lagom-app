@@ -57,21 +57,31 @@ const LinkText = styled(Text)`
     }
 `
 
-export const Message = React.memo(function({ message, idx, measure, is_thread }) {
+const formatDate = date => {
+    const is_today = moment().isSame(date, 'day')
+    if (is_today) return 'Today'
+
+    const is_yesterday = moment()
+        .subtract(1, 'days')
+        .isSame(date, 'day')
+    if (is_yesterday) return 'Yesterday'
+    else return date.format('ll')
+}
+
+function hasDateDivider(message_date, all_messages, message_idx) {
+    const previous_message = all_messages[message_idx - 1]
+    if (!previous_message) return false
+
+    const prev_date = formatDate(previous_message.createdAt)
+    const date = formatDate(message_date)
+
+    if (date !== prev_date) return date
+    return false
+}
+
+export const Message = React.memo(function({ all_items, message, idx, measure, is_thread }) {
     const [show_menu, setShowMenu] = React.useState(false)
     const { is_mobile } = useUI()
-
-    if (message.date) {
-        return (
-            <Stack isInline align="center">
-                <Divider />
-                <Text textAlign="center" fontSize="14px" fontWeight="500" minWidth="fit-content">
-                    {message.date}
-                </Text>
-                <Divider />
-            </Stack>
-        )
-    }
 
     const handleEnter = () => {
         if (is_mobile) return
@@ -82,20 +92,33 @@ export const Message = React.memo(function({ message, idx, measure, is_thread })
         setShowMenu(false)
     }
 
+    const date_divider = hasDateDivider(message.createdAt, all_items, idx)
+
     return (
-        <ChatContainer justify="start" onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
-            <ChatMessage
-                showMenu={setShowMenu}
-                show_menu={show_menu}
-                is_thread={is_thread}
-                message={message}
-                idx={idx}
-                measure={measure}
-            />
-            <HoverWrapper show_menu={show_menu}>
-                <HoverMenu message_idx={idx} message={message} />
-            </HoverWrapper>
-        </ChatContainer>
+        <div>
+            {date_divider && (
+                <Stack isInline align="center">
+                    <Divider />
+                    <Text textAlign="center" fontSize="14px" fontWeight="500" minWidth="fit-content">
+                        {date_divider}
+                    </Text>
+                    <Divider />
+                </Stack>
+            )}
+            <ChatContainer justify="start" onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
+                <ChatMessage
+                    showMenu={setShowMenu}
+                    show_menu={show_menu}
+                    is_thread={is_thread}
+                    message={message}
+                    idx={idx}
+                    measure={measure}
+                />
+                <HoverWrapper show_menu={show_menu}>
+                    <HoverMenu message_idx={idx} message={message} />
+                </HoverWrapper>
+            </ChatContainer>
+        </div>
     )
 })
 

@@ -1,6 +1,7 @@
 import React from 'react'
 import { List, AutoSizer, CellMeasurer } from 'react-virtualized'
 import { Message } from './message'
+import { Loader } from '../../../components/elements'
 
 class VirtualizedList extends React.Component {
     rowRenderer = ({
@@ -15,12 +16,17 @@ class VirtualizedList extends React.Component {
             <CellMeasurer key={key} cache={this.props.cache} parent={parent} columnIndex={0} rowIndex={index}>
                 {({ measure }) => (
                     <div style={style} onLoad={measure}>
-                        <Message
-                            message={this.props.items[index]}
-                            idx={index}
-                            measure={measure}
-                            is_thread={this.props.is_thread}
-                        />
+                        {index === 0 && this.props.isNextPageLoading ? (
+                            <Loader />
+                        ) : (
+                            <Message
+                                all_items={this.props.items}
+                                message={this.props.items[index]}
+                                idx={index}
+                                measure={measure}
+                                is_thread={this.props.is_thread}
+                            />
+                        )}
                     </div>
                 )}
             </CellMeasurer>
@@ -42,6 +48,7 @@ class VirtualizedList extends React.Component {
                         sortBy={this.props.sortBy}
                         scrollToIndex={this.props.scrollToIdx}
                         estimatedRowSize={100}
+                        onScroll={this.props.handleScroll}
                     />
                 )}
             </AutoSizer>
