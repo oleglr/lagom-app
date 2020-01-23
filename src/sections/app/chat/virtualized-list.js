@@ -4,6 +4,15 @@ import { Message } from './message'
 import { Loader } from '../../../components/elements'
 
 class VirtualizedList extends React.Component {
+    constructor(props, context) {
+        super(props, context)
+        this.scrollTop = -1
+        this.scrollHeight = -1
+        this.clientHeight = -1
+        this.canScroll = false
+        this.old_client_height = -1
+    }
+
     rowRenderer = ({
         key, // Unique key within array of rows
         index, // Index of row within collection
@@ -33,6 +42,30 @@ class VirtualizedList extends React.Component {
         )
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        console.log(prevProps.items.length, this.props.items.length)
+        if (prevProps.items.length !== this.props.items.length) {
+            this.props.list_ref.current.scrollToPosition(this.clientHeight)
+            this.props.cache.clearAll()
+        }
+    }
+
+    handleScroll = ({ scrollTop, scrollHeight, clientHeight }) => {
+        this.scrollHeight = scrollHeight
+        this.clientHeight = clientHeight
+
+        // scroll to bottom in beginning
+        const is_at_bottom_of_list = scrollTop + clientHeight === scrollHeight
+        if (is_at_bottom_of_list) {
+            this.canScroll = -1
+        }
+
+        if (scrollTop === 0 && !this.props.all_messages_loaded) {
+            this.old_client_height = scrollHeight
+            this.props.loadMoreChatHistory()
+        }
+    }
+
     render() {
         return (
             <AutoSizer>
@@ -46,9 +79,10 @@ class VirtualizedList extends React.Component {
                         rowRenderer={this.rowRenderer}
                         ref={this.props.list_ref}
                         sortBy={this.props.sortBy}
-                        scrollToIndex={this.props.scrollToIdx}
+                        scrollToIndex={this.canScroll || this.props.items.length}
                         estimatedRowSize={100}
-                        onScroll={this.props.handleScroll}
+                        onScroll={this.handleScroll}
+                        scrollTop={this.scrollTop}
                     />
                 )}
             </AutoSizer>

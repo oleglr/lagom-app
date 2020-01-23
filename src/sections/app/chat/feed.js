@@ -24,7 +24,7 @@ export class ChatFeedSocket extends React.Component {
             messages: [],
             sortBy: 0,
             is_next_page_loading: false,
-            all_messages_loaded: false,
+            all_rows_loaded: false,
             is_inital_loading: true,
         }
     }
@@ -62,12 +62,13 @@ export class ChatFeedSocket extends React.Component {
             messages: new_data,
             is_next_page_loading: false,
             is_inital_loading: false,
-            all_rows_loaded: messages.all_messages_loaded,
+            all_messages_loaded: messages.all_messages_loaded,
         })
     }
 
     loadMoreChatHistory = () => {
-        if (this.state.all_rows_loaded) return
+        console.log('load more')
+        if (this.state.all_messages_loaded) return
 
         this.setState({ is_next_page_loading: true })
 
@@ -112,12 +113,6 @@ export class ChatFeedSocket extends React.Component {
         }, 1000)
     }
 
-    handleScroll = ({ scrollTop }) => {
-        if (scrollTop <= 200 && !this.state.is_next_page_loading) {
-            this.loadMoreChatHistory()
-        }
-    }
-
     render() {
         if (this.state.is_inital_loading) return <Loader />
 
@@ -126,11 +121,9 @@ export class ChatFeedSocket extends React.Component {
         return (
             <section style={{ height: '100%' }}>
                 <VirtualizedList
-                    handleScroll={this.handleScroll}
+                    all_messages_loaded={this.state.all_messages_loaded}
                     isNextPageLoading={this.state.is_next_page_loading}
-                    hasNextPage={true}
-                    loadNextPage={this.loadMoreChatHistory}
-                    scrollToIdx={this.state.scrollToIdx || this.state.messages.length}
+                    loadMoreChatHistory={this.loadMoreChatHistory}
                     sortBy={this.state.sortBy}
                     items={this.state.messages}
                     cache={cache}
