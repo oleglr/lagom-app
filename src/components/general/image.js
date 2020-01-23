@@ -16,7 +16,16 @@ export const ImagePreview = ({ children, img_source }) => {
                 <ModalOverlay backgroundColor="rgba(0,0,0,0.9)" zIndex="1400" />
                 <ModalContent width="fit-content">
                     <ModalCloseButton />
-                    <ModalBody paddingRight="0" paddingLeft="0" paddingTop="0" paddingBottom="0">
+                    <ModalBody
+                        display="flex"
+                        alignItems="center"
+                        minHeight="50vh"
+                        minWidth="50vh"
+                        paddingRight="0"
+                        paddingLeft="0"
+                        paddingTop="0"
+                        paddingBottom="0"
+                    >
                         <Flex>
                             <StyledImage src={img_source} alt="modal preview" />
                         </Flex>

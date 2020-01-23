@@ -113,7 +113,7 @@ export class ChatFeedSocket extends React.Component {
     }
 
     handleScroll = ({ scrollTop }) => {
-        if (scrollTop === 0 && !this.state.is_next_page_loading) {
+        if (scrollTop <= 200 && !this.state.is_next_page_loading) {
             this.loadMoreChatHistory()
         }
     }
