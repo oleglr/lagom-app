@@ -25,7 +25,7 @@ class VirtualizedList extends React.Component {
             <CellMeasurer key={key} cache={this.props.cache} parent={parent} columnIndex={0} rowIndex={index}>
                 {({ measure }) => (
                     <div style={style} onLoad={measure}>
-                        {index === 0 && this.props.isNextPageLoading ? (
+                        {index === 0 && this.props.isNextPageLoading && !this.props.all_messages_loaded ? (
                             <Loader />
                         ) : (
                             <Message
