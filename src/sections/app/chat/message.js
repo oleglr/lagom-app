@@ -58,6 +58,8 @@ const LinkText = styled(Text)`
 `
 
 const formatDate = date => {
+    if (!date) return undefined
+
     const is_today = moment().isSame(date, 'day')
     if (is_today) return 'Today'
 
@@ -70,10 +72,10 @@ const formatDate = date => {
 
 function hasDateDivider(message_date, all_messages, message_idx) {
     const previous_message = all_messages[message_idx - 1]
-    if (!previous_message) return false
+    if (!previous_message || !previous_message.createdAt) return false
 
-    const prev_date = formatDate(previous_message.createdAt)
-    const date = formatDate(message_date)
+    const prev_date = formatDate(moment(previous_message.createdAt))
+    const date = formatDate(moment(message_date))
 
     if (date !== prev_date) return date
     return false
