@@ -189,12 +189,15 @@ const GoDownBtn = ({ list_ref, messages, notifications, setNotifications, is_vis
             justifyContent="center"
             transition="all .2s cubic-bezier(0.1, 0.25, 0.25, 1) 0s"
             transform={is_visible ? 'scale(1)' : 'scale(0)'}
+            userSelect="none"
         >
             <Icon color="white" aria-label="Scroll to new message" size="32px" name="chevron-down" />
             <span style={{ position: 'relative' }}>
-                <NotificationCircle top="-28px" left="-10px" p="0 5px" fontSize="12px">
-                    {notifications > 0 ? notifications : null}
-                </NotificationCircle>
+                {!!notifications && (
+                    <NotificationCircle top="-28px" left="-10px" p="0 5px" fontSize="12px">
+                        {notifications}
+                    </NotificationCircle>
+                )}
             </span>
         </Box>
     )
