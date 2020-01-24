@@ -28,7 +28,7 @@ export const Quote = ({ user: user_id, text, image_url, time, action, w, measure
     const is_multiple_image = action === 'multiple_image'
     const user = getUser(user_id)
 
-    let img_arr
+    let img_arr = []
     if (is_multiple_image) {
         if (image_url) {
             img_arr = image_url.split(',')
