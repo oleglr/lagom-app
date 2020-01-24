@@ -215,6 +215,7 @@ export const Content = ({ message, measure, is_thread, isScrolling, isVisible })
         t_message: quote_text,
         t_user: quote_user,
         t_createdAt: quote_created,
+        t_url: quote_url,
     } = message
 
     switch (action) {
@@ -272,13 +273,13 @@ export const Content = ({ message, measure, is_thread, isScrolling, isVisible })
         case 'quote':
             return (
                 <>
-                    {quote_text && (
+                    {quote_user && (
                         <Quote
                             action={quote_action}
                             measure={measure}
                             user={quote_user}
                             text={quote_text}
-                            image_url={image_url}
+                            image_url={quote_url}
                             time={moment(quote_created).format('lll')}
                         />
                     )}
