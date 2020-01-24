@@ -102,7 +102,15 @@ const MobileMenu = ({ showMobileMenu, show_mobile_menu, selected_mobile_message 
             <ModalOverlay />
             <ModalContent backgroundColor={status === 'add_reaction' ? 'transparent' : ''}>
                 {status === 'selection' && (
-                    <Stack backgroundColor="white" spacing="16px" pt="16px" pb="16px">
+                    <Stack
+                        backgroundColor="white"
+                        spacing="16px"
+                        pt="16px"
+                        pb="16px"
+                        mr="10px"
+                        ml="10px"
+                        borderRadius="5px"
+                    >
                         <Stack isInline justify="space-evenly" mt="8px" pb="8px" borderBottom="1px solid var(--grey-2)">
                             {common_emoji_reactions.map(emoji => (
                                 <EmojiBubble key={emoji.id}>
