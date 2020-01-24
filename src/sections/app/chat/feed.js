@@ -142,7 +142,7 @@ export class ChatFeedSocket extends React.Component {
         // TODO: prevent scrolling down if scrolled up and new message arrives
 
         return (
-            <section style={{ height: '100%' }}>
+            <section style={{ height: '100%', position: 'relative' }}>
                 <VirtualizedList
                     all_messages_loaded={this.state.all_messages_loaded}
                     isNextPageLoading={this.state.is_next_page_loading}
@@ -174,10 +174,10 @@ const GoDownBtn = ({ list_ref, messages, notifications, setNotifications, is_vis
                 list_ref.current.scrollToRow(messages.length - 1)
                 setNotifications(0)
             }}
-            position="fixed"
+            position="absolute"
             zIndex={50}
             right="4%"
-            bottom="15%"
+            bottom="1%"
             visibility={is_visible ? 'visible' : 'hidden'}
             backgroundColor="var(--secondary)"
             width="42px"
