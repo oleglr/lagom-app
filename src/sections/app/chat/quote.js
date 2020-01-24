@@ -30,7 +30,9 @@ export const Quote = ({ user: user_id, text, image_url, time, action, w, measure
 
     let img_arr
     if (is_multiple_image) {
-        img_arr = image_url.split(',')
+        if (image_url) {
+            img_arr = image_url.split(',')
+        }
     }
     return (
         <QuoteStyle w={w}>
