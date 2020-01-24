@@ -32,16 +32,25 @@ const Name = styled.span`
 `
 const ImageStyled = styled.img`
     border-radius: 5px;
-    max-height: ${props => (props.maxh ? props.maxh : '250px')};
-    max-width: ${props => (props.maxh ? props.maxw : '250px')};
+    max-height: ${props => (props.maxh ? props.maxh : '200px')};
+    max-width: ${props => (props.maxh ? props.maxw : '200px')};
     margin: ${props => (props.m ? props.m : '')};
     transition: all 0.2s;
-
     &:hover {
         cursor: pointer;
         filter: brightness(0.5);
     }
 `
+
+const ImagePlaceholder = styled.div`
+    border-radius: 5px;
+    background-color: var(--grey-3);
+    filter: blur(2px);
+    height: ${props => (props.height ? props.height : '200px')};
+    width: ${props => (props.width ? props.width : '200px')};
+    margin: ${props => (props.margin ? props.margin : '')};
+`
+
 const HoverWrapper = styled.span`
     visibility: ${props => (props.show_menu ? 'visible' : 'hidden')};
 `
@@ -81,7 +90,7 @@ function hasDateDivider(message_date, all_messages, message_idx) {
     return false
 }
 
-export const Message = React.memo(function({ all_items, message, idx, measure, is_thread }) {
+export const Message = React.memo(function({ all_items, message, idx, measure, isScrolling }) {
     const [show_menu, setShowMenu] = React.useState(false)
     const { is_mobile } = useUI()
 
@@ -111,7 +120,7 @@ export const Message = React.memo(function({ all_items, message, idx, measure, i
                 <ChatMessage
                     showMenu={setShowMenu}
                     show_menu={show_menu}
-                    is_thread={is_thread}
+                    isScrolling={isScrolling}
                     message={message}
                     idx={idx}
                     measure={measure}
@@ -124,7 +133,7 @@ export const Message = React.memo(function({ all_items, message, idx, measure, i
     )
 })
 
-export const ChatMessage = React.memo(function({ showMenu, show_menu, message, idx, measure }) {
+export const ChatMessage = React.memo(function({ showMenu, show_menu, message, idx, measure, isScrolling }) {
     const { getUser, active_group } = useGlobal()
     const { showMobileMenu, setSelectedMobileMessage, is_mobile } = useUI()
     const { setQuotedMessage } = React.useContext(ChatContext)
@@ -144,17 +153,25 @@ export const ChatMessage = React.memo(function({ showMenu, show_menu, message, i
 
     return (
         <>
-            <img
-                src={message_user.img}
-                alt="Profile"
-                style={{
-                    borderRadius: '5px',
-                    maxHeight: '45px',
-                    maxWidth: '45px',
-                    marginTop: '4px',
-                    backgroundColor: 'coral',
-                }}
-            />
+            {isScrolling ? (
+                <ImagePlaceholder height="45px" width="50px" margin="4px 0 0 0" />
+            ) : (
+                <img
+                    src={message_user.img}
+                    alt="Profile"
+                    style={{
+                        borderRadius: '5px',
+                        maxHeight: '45px',
+                        height: '45px',
+                        width: '45px',
+                        maxWidth: '45px',
+                        marginTop: '4px',
+                        backgroundColor: 'coral',
+                    }}
+                    height="45px"
+                    width="45px"
+                />
+            )}
             <Flex {...onPress} column align="flex-start" justify="flex-start" pl="5px">
                 <Text>
                     <Name className="bold">{message_user.name}</Name>{' '}
@@ -162,7 +179,7 @@ export const ChatMessage = React.memo(function({ showMenu, show_menu, message, i
                         {moment(message.createdAt).format('LT')}
                     </span>
                 </Text>
-                <Content message={message} measure={measure} />
+                <Content message={message} measure={measure} isScrolling={isScrolling} />
                 <Reaction reactions={message.reactions} message_idx={idx} message_ref={message._id} />
             </Flex>
         </>
@@ -186,7 +203,7 @@ const Link = ({ text }) => {
         </LinkText>
     )
 }
-export const Content = ({ message, measure, is_thread }) => {
+export const Content = ({ message, measure, is_thread, isScrolling }) => {
     const {
         action,
         image_url,
@@ -206,15 +223,20 @@ export const Content = ({ message, measure, is_thread }) => {
             return (
                 <>
                     <Text textAlign="left">{text}</Text>
-                    <ImagePreview img_source={image_url}>
-                        <ImageStyled
-                            maxh={is_thread ? '100px' : '200px'}
-                            m="10px"
-                            alt="received"
-                            src={image_url}
-                            onLoad={measure}
-                        />
-                    </ImagePreview>
+                    {isScrolling ? (
+                        <ImagePlaceholder height="200px" width="200px" margin="10px" />
+                    ) : (
+                        <ImagePreview img_source={image_url}>
+                            <ImageStyled
+                                maxh={is_thread ? '100px' : '200px'}
+                                alt="received"
+                                src={image_url}
+                                height="200px"
+                                width="200px"
+                                m="10px"
+                            />
+                        </ImagePreview>
+                    )}
                 </>
             )
         case 'multiple_image':
@@ -225,14 +247,20 @@ export const Content = ({ message, measure, is_thread }) => {
                     <Flex justify="unset" wrap="wrap">
                         {img_arr.map(url => (
                             <ImagePreview img_source={url} key={url}>
-                                <ImageStyled
-                                    maxh="100px"
-                                    maxw={is_thread ? '100px' : null}
-                                    m="10px"
-                                    alt="received"
-                                    src={url}
-                                    onLoad={measure}
-                                />
+                                {isScrolling ? (
+                                    <ImagePlaceholder height="100px" width="100px" margin="10px" />
+                                ) : (
+                                    <ImageStyled
+                                        maxh="100px"
+                                        maxw={is_thread ? '100px' : null}
+                                        m="10px"
+                                        alt="received"
+                                        src={url}
+                                        height="100px"
+                                        width="100px"
+                                        // onLoad={measure}
+                                    />
+                                )}
                             </ImagePreview>
                         ))}
                     </Flex>
