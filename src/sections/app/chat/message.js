@@ -92,7 +92,7 @@ function hasDateDivider(message_date, all_messages, message_idx) {
     return false
 }
 
-export const Message = React.memo(function({ all_items, message, idx, measure, isScrolling }) {
+export const Message = React.memo(function({ all_items, message, idx, measure, isScrolling, isVisible }) {
     const [show_menu, setShowMenu] = React.useState(false)
     const { is_mobile } = useUI()
 
@@ -123,6 +123,7 @@ export const Message = React.memo(function({ all_items, message, idx, measure, i
                     showMenu={setShowMenu}
                     show_menu={show_menu}
                     isScrolling={isScrolling}
+                    isVisible={isVisible}
                     message={message}
                     idx={idx}
                     measure={measure}
@@ -135,7 +136,7 @@ export const Message = React.memo(function({ all_items, message, idx, measure, i
     )
 })
 
-export const ChatMessage = React.memo(function({ showMenu, show_menu, message, idx, measure, isScrolling }) {
+export const ChatMessage = React.memo(function({ showMenu, show_menu, message, idx, measure, isScrolling, isVisible }) {
     const { getUser, active_group } = useGlobal()
     const { showMobileMenu, setSelectedMobileMessage, is_mobile } = useUI()
     const { setQuotedMessage } = React.useContext(ChatContext)
@@ -155,7 +156,7 @@ export const ChatMessage = React.memo(function({ showMenu, show_menu, message, i
 
     return (
         <>
-            {isScrolling ? (
+            {isScrolling && !isVisible ? (
                 <ImagePlaceholder height="45px" width="45px" margin="4px 0 0 0" />
             ) : (
                 <img
@@ -181,7 +182,7 @@ export const ChatMessage = React.memo(function({ showMenu, show_menu, message, i
                         {moment(message.createdAt).format('LT')}
                     </span>
                 </Text>
-                <Content message={message} measure={measure} isScrolling={isScrolling} />
+                <Content message={message} measure={measure} isScrolling={isScrolling} isVisible={isVisible} />
                 <Reaction reactions={message.reactions} message_idx={idx} message_ref={message._id} />
             </Flex>
         </>
@@ -205,7 +206,7 @@ const Link = ({ text }) => {
         </LinkText>
     )
 }
-export const Content = ({ message, measure, is_thread, isScrolling }) => {
+export const Content = ({ message, measure, is_thread, isScrolling, isVisible }) => {
     const {
         action,
         image_url,
@@ -225,7 +226,7 @@ export const Content = ({ message, measure, is_thread, isScrolling }) => {
             return (
                 <>
                     <Text textAlign="left">{text}</Text>
-                    {isScrolling ? (
+                    {isScrolling && !isVisible ? (
                         <ImagePlaceholder height="200px" width="200px" margin="10px" />
                     ) : (
                         <ImagePreview img_source={image_url}>
@@ -249,7 +250,7 @@ export const Content = ({ message, measure, is_thread, isScrolling }) => {
                     <Flex justify="unset" wrap="wrap">
                         {img_arr.map(url => (
                             <ImagePreview img_source={url} key={url}>
-                                {isScrolling ? (
+                                {isScrolling && !isVisible ? (
                                     <ImagePlaceholder height="100px" width="100px" margin="10px" />
                                 ) : (
                                     <ImageStyled

@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import styled from '@emotion/styled'
 import { Stack, Heading, Text, Button } from '@chakra-ui/core'
+import { NotificationCircle } from '../../../components/elements'
 import { useAuth0 } from '../../../react-auth0-spa'
 import { useGlobal } from '../../../context/global-context'
 import { getSocket as socket } from '../../../api/socket'
@@ -44,18 +45,6 @@ const GroupNameHeading = styled(Heading)`
     &:hover {
         cursor: pointer;
     }
-`
-
-const NotificationCircle = styled.span`
-    position: absolute;
-    right: -35%;
-    top: -5%;
-    background: #fa3e3e;
-    border-radius: 50%;
-    padding: 0 4px;
-    font-size: 10px;
-    border: 1px solid white;
-    font-weight: bold;
 `
 
 const { title: DOCUMENT_TITLE } = document
@@ -119,13 +108,15 @@ class SideContentController extends React.Component {
     }
 
     componentDidMount() {
-        socket().on('notification', this.addNotification)
-        socket().on('removed notification', this.removeNotification)
-        socket().on('got notifications', this.getNotifications)
+        if (this.props.active_group && this.props.active_group.name) {
+            socket().on('notification', this.addNotification)
+            socket().on('removed notification', this.removeNotification)
+            socket().on('got notifications', this.getNotifications)
 
-        socket().emit('get notifications', { user: this.props.user.sub }, e => {
-            console.log('error: ', e)
-        })
+            socket().emit('get notifications', { user: this.props.user.sub }, e => {
+                console.log('error: ', e)
+            })
+        }
     }
 
     componentWillUnmount() {
@@ -199,7 +190,11 @@ class SideContentController extends React.Component {
                                         🏡
                                     </span>{' '}
                                     Chat
-                                    {!!notifications && <NotificationCircle>{notifications}</NotificationCircle>}
+                                    {!!notifications && (
+                                        <NotificationCircle top="-5%" right="-35%" left="">
+                                            {notifications}
+                                        </NotificationCircle>
+                                    )}
                                 </Text>
                             </Stack>
                         </Link>

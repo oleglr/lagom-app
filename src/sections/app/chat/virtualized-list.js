@@ -11,6 +11,7 @@ class VirtualizedList extends React.Component {
         this.clientHeight = -1
         this.canScroll = false
         this.old_client_height = -1
+        this.scrollTopOffset = 150
     }
 
     rowRenderer = ({
@@ -34,6 +35,7 @@ class VirtualizedList extends React.Component {
                                 idx={index}
                                 measure={measure}
                                 isScrolling={isScrolling}
+                                isVisible={isVisible}
                             />
                         )}
                     </div>
@@ -43,7 +45,6 @@ class VirtualizedList extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        console.log(prevProps.items.length, this.props.items.length)
         const is_new_message = this.props.items.length - prevProps.items.length === 1
         if (prevProps.items.length !== this.props.items.length && !is_new_message) {
             this.props.list_ref.current.scrollToPosition(this.clientHeight)
@@ -56,9 +57,18 @@ class VirtualizedList extends React.Component {
         this.clientHeight = clientHeight
 
         // scroll to bottom in beginning
-        const is_at_bottom_of_list = scrollTop + clientHeight === scrollHeight
+        const position = scrollTop + clientHeight
+        const is_at_bottom_of_list = position === scrollHeight
         if (is_at_bottom_of_list) {
             this.canScroll = -1
+        }
+
+        const is_at_bottom_with_offset = position >= scrollHeight - this.scrollTopOffset
+        if (!is_at_bottom_with_offset) {
+            // show scroll down icon
+            this.props.setGoDownBtnVisibility(true)
+        } else {
+            this.props.setGoDownBtnVisibility(false)
         }
 
         if (scrollTop === 0 && !this.props.all_messages_loaded) {
