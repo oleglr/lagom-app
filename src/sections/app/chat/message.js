@@ -165,9 +165,11 @@ export const ChatMessage = React.memo(function({ showMenu, show_menu, message, i
                     style={{
                         borderRadius: '5px',
                         maxHeight: '45px',
+                        maxWidth: '45px',
+                        minWidth: '45px',
+                        minHeight: '45px',
                         height: '45px',
                         width: '45px',
-                        maxWidth: '45px',
                         marginTop: '4px',
                         backgroundColor: 'coral',
                     }}
