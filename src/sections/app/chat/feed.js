@@ -33,7 +33,7 @@ export class ChatFeedSocket extends React.Component {
         const messages = [...this.state.messages, msg]
 
         this.setState({ messages }, () => {
-            this.list_ref.current.scrollToRow(messages.length)
+            this.list_ref.current.scrollToRow(messages.length - 1)
         })
     }
 

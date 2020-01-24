@@ -44,7 +44,8 @@ class VirtualizedList extends React.Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         console.log(prevProps.items.length, this.props.items.length)
-        if (prevProps.items.length !== this.props.items.length) {
+        const is_new_message = this.props.items.length - prevProps.items.length === 1
+        if (prevProps.items.length !== this.props.items.length && !is_new_message) {
             this.props.list_ref.current.scrollToPosition(this.clientHeight)
             this.props.cache.clearAll()
         }
