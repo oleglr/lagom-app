@@ -48,6 +48,8 @@ const ImagePlaceholder = styled.div`
     filter: blur(2px);
     height: ${props => (props.height ? props.height : '200px')};
     width: ${props => (props.width ? props.width : '200px')};
+    min-height: ${props => (props.height ? props.height : '200px')};
+    min-width: ${props => (props.width ? props.width : '200px')};
     margin: ${props => (props.margin ? props.margin : '')};
 `
 
@@ -154,7 +156,7 @@ export const ChatMessage = React.memo(function({ showMenu, show_menu, message, i
     return (
         <>
             {isScrolling ? (
-                <ImagePlaceholder height="45px" width="50px" margin="4px 0 0 0" />
+                <ImagePlaceholder height="45px" width="45px" margin="4px 0 0 0" />
             ) : (
                 <img
                     src={message_user.img}
