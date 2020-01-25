@@ -26,7 +26,7 @@ import { useUI } from '../../../main-content'
 const IconWrapper = styled.span`
     position: absolute;
     left: 8px;
-    top: 3px;
+    top: ${props => (props.is_mobile ? '4px' : '3px')};
     height: 40px;
     width: 32px;
     z-index: 1;
@@ -46,7 +46,7 @@ const IconWrapper = styled.span`
 `
 
 const StyledImage = styled.img`
-    max-height: 80vh;
+    max-height: ${props => (props.is_mobile ? '80vh' : '50vh')};
     border-radius: 5px;
 `
 
@@ -92,7 +92,7 @@ const mobileFooterStyle = {
 const mobileModalStyle = {
     marginBottom: 0,
     marginTop: 0,
-    height: '100%',
+    height: '100vh',
 }
 
 const mobileButtonStyle = {
@@ -229,7 +229,7 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
                     multiple={is_thread ? false : true}
                     onChange={uploadFileClient}
                 />
-                <IconWrapper onClick={() => input_ref.current.click()}>
+                <IconWrapper onClick={() => input_ref.current.click()} is_mobile={is_mobile}>
                     <PopoverBubble text={<Text>Upload file</Text>}>
                         <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
                             <Icon name="attachment" size="14px" />
@@ -256,7 +256,7 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
                         <ModalBody>
                             {preview && preview.length === 1 && (
                                 <Flex height="unset">
-                                    <StyledImage alt="upload preview" src={preview[0]} />
+                                    <StyledImage is_mobile={is_mobile} alt="upload preview" src={preview[0]} />
                                 </Flex>
                             )}
                             <Flex justify="unset" wrap="wrap" height="unset">
