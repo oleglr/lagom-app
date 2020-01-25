@@ -46,11 +46,13 @@ const IconWrapper = styled.span`
 `
 
 const StyledImage = styled.img`
+    image-orientation: from-image;
     max-height: ${props => (props.is_mobile ? '100%' : '50vh')};
     border-radius: 5px;
 `
 
 const SmallImage = styled.img`
+    image-orientation: from-image;
     max-height: 100px;
     max-width: 100px;
     border-radius: 5px;
