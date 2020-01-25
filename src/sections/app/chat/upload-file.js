@@ -46,7 +46,7 @@ const IconWrapper = styled.span`
 `
 
 const StyledImage = styled.img`
-    max-height: ${props => (props.is_mobile ? '80vh' : '50vh')};
+    max-height: ${props => (props.is_mobile ? '100%' : '50vh')};
     border-radius: 5px;
 `
 
@@ -92,7 +92,7 @@ const mobileFooterStyle = {
 const mobileModalStyle = {
     marginBottom: 0,
     marginTop: 0,
-    height: '100vh',
+    height: '100%',
 }
 
 const mobileButtonStyle = {
