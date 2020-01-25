@@ -67,7 +67,12 @@ export class ChatFeedSocket extends React.Component {
 
         const new_data = [...this.state.messages]
         new_data[msg_idx] = msg
-        this.setState({ messages: new_data, sortBy: this.state.sortBy + 1 })
+        this.setState({ messages: new_data, sortBy: this.state.sortBy + 1 }, () => {
+            const is_last_message = msg_idx === this.state.messages.length - 1
+            if (is_last_message) {
+                this.list_ref.current.scrollToRow(this.state.messages.length - 1)
+            }
+        })
     }
 
     removeReaction = msg => {
@@ -76,7 +81,14 @@ export class ChatFeedSocket extends React.Component {
 
         const new_data = [...this.state.messages]
         new_data[msg_idx] = msg
-        this.setState({ messages: new_data, sortBy: this.state.sortBy + 1 })
+        this.setState({ messages: new_data, sortBy: this.state.sortBy + 1 }, () => {
+            const is_last_message = msg_idx === this.state.messages.length - 1
+            if (is_last_message) {
+                setTimeout(() => {
+                    this.list_ref.current.scrollToRow(this.state.messages.length - 1)
+                }, 100)
+            }
+        })
     }
 
     addChatHistory = messages => {
