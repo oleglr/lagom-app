@@ -92,8 +92,8 @@ const MobileMenu = ({ showMobileMenu, show_mobile_menu, selected_mobile_message 
         showMobileMenu(false)
     }
 
-    const setReaction = ({ native, colons }) => {
-        onAddReaction({ native, colons })
+    const setReaction = ({ native, colons, custom }) => {
+        onAddReaction({ native, colons, custom })
         cleanup()
     }
 
