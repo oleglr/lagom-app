@@ -3,6 +3,7 @@ import styled from '@emotion/styled'
 import { Picker } from 'emoji-mart'
 import { useOutsideClick } from '../../../components/hooks/outside-click'
 import { useKeyDown } from '../../../components/hooks/keydown'
+import { customEmojis } from '../../../utils/emoji'
 import 'emoji-mart/css/emoji-mart.css'
 
 const PickerWrapper = styled.div`
@@ -11,7 +12,7 @@ const PickerWrapper = styled.div`
     background-color: ${props => (props.is_mobile ? 'transparent' : '')};
 `
 
-export const EmojiPicker = ({ closePicker, onSelectEmoji, showPicker, is_mobile }) => {
+export const EmojiPicker = ({ closePicker, onSelectEmoji, showPicker, is_mobile, has_custom = true }) => {
     const ref = React.useRef()
 
     useOutsideClick(ref, closePicker)
@@ -29,6 +30,7 @@ export const EmojiPicker = ({ closePicker, onSelectEmoji, showPicker, is_mobile 
                     autoFocus={!is_mobile}
                     title="Pick your emoji…"
                     emoji="point_up"
+                    custom={has_custom ? customEmojis : []}
                     exclude={['foods', 'objects']}
                     include={['recent', 'custom', 'people', 'food', 'nature', 'activity', 'places', 'symbols', 'flags']}
                 />

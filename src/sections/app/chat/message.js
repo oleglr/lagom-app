@@ -142,8 +142,8 @@ export const ChatMessage = React.memo(function({ showMenu, show_menu, message, i
     const { setQuotedMessage } = React.useContext(ChatContext)
     const { user } = useAuth0()
 
-    const onAddReaction = ({ native: emoji, colons: emoji_code }) => {
-        addReaction({ emoji, emoji_code, ref: message._id, group_id: active_group.id, user_id: user.sub })
+    const onAddReaction = ({ native: emoji, colons: emoji_code, custom }) => {
+        addReaction({ emoji, emoji_code, ref: message._id, group_id: active_group.id, user_id: user.sub, custom })
     }
 
     const onPress = useLongPress(() => {

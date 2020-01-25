@@ -223,34 +223,42 @@ class SideContentController extends React.Component {
                             </Stack>
                         </Link>
                     </ItemWrapper>
-                    {/* <ItemWrapper
-                    isInline
-                    align="center"
-                    isActive={path_name === '/my-groups'}
-                >
-                    <Link to="my-groups">
-                        <Stack isInline align="center">
-                            <Text>
-                                <span aria-label="balloon" role="img">
-                                    🎈
-                                </span>{' '}
-                                Groups
-                            </Text>
-                        </Stack>
-                    </Link>
-                </ItemWrapper> */}
-                    {/* <ItemWrapper isInline align="center" isActive={path_name === '/expenses'}>
-                    <Link to="/expenses">
-                        <Stack isInline align="center">
-                            <Text>
-                                <span aria-label="money bag" role="img">
-                                    💰
-                                </span>{' '}
-                                Expenses
-                            </Text>
-                        </Stack>
-                    </Link>
-                </ItemWrapper> */}
+                    {/* <ItemWrapper isInline align="center" isActive={path_name === '/profile'}>
+                        <Link to="/profile">
+                            <Stack isInline align="center">
+                                <Text>
+                                    <span aria-label="bucket list" role="img">
+                                        📝
+                                    </span>{' '}
+                                    Bucket list
+                                </Text>
+                            </Stack>
+                        </Link>
+                    </ItemWrapper>
+                    <ItemWrapper isInline align="center" isActive={path_name === '/expenses'}>
+                        <Link to="/expenses">
+                            <Stack isInline align="center">
+                                <Text>
+                                    <span aria-label="money bag" role="img">
+                                        💰
+                                    </span>{' '}
+                                    Expenses
+                                </Text>
+                            </Stack>
+                        </Link>
+                    </ItemWrapper>
+                    <ItemWrapper isInline align="center" isActive={path_name === '/expenses'}>
+                        <Link to="/expenses">
+                            <Stack isInline align="center">
+                                <Text>
+                                    <span aria-label="travel plans" role="img">
+                                        ✈️
+                                    </span>{' '}
+                                    Travel plans
+                                </Text>
+                            </Stack>
+                        </Link>
+                    </ItemWrapper> */}
                     {/* Travel bucket list, new resolutions, new goals, restaurants to try this month, movies to watch */}
                     <SectionHeader>Personal</SectionHeader>
                     <ItemWrapper isInline align="center" isActive={path_name === '/profile'}>
@@ -265,22 +273,18 @@ class SideContentController extends React.Component {
                             </Stack>
                         </Link>
                     </ItemWrapper>
-                    {/* <ItemWrapper
-                    isInline
-                    align="center"
-                    isActive={path_name === '/my-groups'}
-                >
-                    <Link to="my-groups">
-                        <Stack isInline align="center">
-                            <Text>
-                                <span aria-label="balloon" role="img">
-                                    🎈
-                                </span>{' '}
-                                Groups
-                            </Text>
-                        </Stack>
-                    </Link>
-                </ItemWrapper> */}
+                    <ItemWrapper isInline align="center" isActive={path_name === '/my-groups'}>
+                        <Link to="my-groups">
+                            <Stack isInline align="center">
+                                <Text>
+                                    <span aria-label="balloon" role="img">
+                                        🎈
+                                    </span>{' '}
+                                    Groups
+                                </Text>
+                            </Stack>
+                        </Link>
+                    </ItemWrapper>
                 </Stack>
                 <Button
                     width="fit-content"

@@ -8,6 +8,7 @@ import { Upload } from './upload-file'
 import { Flex } from '../../../components/container'
 import { useUI } from '../../../main-content'
 import { useKeyDown } from '../../../components/hooks/keydown'
+import { showEmoji } from '../../../utils/emoji'
 
 function isUrl(str) {
     var pattern = new RegExp(
@@ -239,6 +240,7 @@ export const ChatInput = ({ onSend, is_thread, thread_message_id }) => {
                                     is_mobile={is_mobile}
                                     showPicker={showEmojiBox}
                                     onSelectEmoji={addEmojiToText}
+                                    has_custom={false}
                                     closePicker={() => {
                                         setShowEmojiPicker(false)
                                         if (!is_mobile) document.getElementById('main-input').focus()

@@ -41,9 +41,9 @@ export const HoverMenu = ({ message_idx, message }) => {
     const { user } = useAuth0()
     const { active_group } = useGlobal()
 
-    const onAddReaction = ({ native: emoji, colons: emoji_code }) => {
+    const onAddReaction = ({ native: emoji, colons: emoji_code, custom }) => {
         const { _id: ref } = message
-        addReaction({ emoji, emoji_code, ref, group_id: active_group.id, user_id: user.sub })
+        addReaction({ emoji, emoji_code, ref, group_id: active_group.id, user_id: user.sub, custom })
         setShowPicker(false)
     }
 
@@ -80,7 +80,13 @@ export const HoverMenu = ({ message_idx, message }) => {
                     className="icon-container"
                     style={{ borderTopLeftRadius: '5px', borderBottomLeftRadius: '5px' }}
                 >
-                    <Box color="black" opacity="0.8" as={ReplyIcon} size="18px" style={{ marginTop: '2px', marginRight: '2px' }} />
+                    <Box
+                        color="black"
+                        opacity="0.8"
+                        as={ReplyIcon}
+                        size="18px"
+                        style={{ marginTop: '2px', marginRight: '2px' }}
+                    />
                 </div>
             </PopoverBubble>
         </Menu>

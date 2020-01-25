@@ -9,6 +9,7 @@ import { addReaction, removeReaction } from './socket-methods'
 import { useGlobal } from '../../../context/global-context'
 import { useAuth0 } from '../../../react-auth0-spa'
 import { useUI } from '../../../main-content'
+import { showEmoji } from '../../../utils/emoji'
 import { ReactComponent as SmilePlusIcon } from '../../../assets/svgs/smile-plus.svg'
 
 const ReactionWrapper = styled(Flex)`
@@ -31,6 +32,10 @@ const ReactionsBox = styled.div`
     display: flex;
     align-items: center;
     font-weight: bold;
+    min-height: 29px;
+    min-width: 41px;
+    height: 29px;
+    width: 29px;
 
     background-color: ${props => (props.has_user ? 'var(light-purple)' : 'var(--grey-3)')};
     border: ${props => (props.has_user ? '2px solid var(--moon-blue)' : '2px solid var(--grey-3)')};
@@ -98,19 +103,19 @@ export const Reaction = React.memo(function({ reactions, message_idx, message_re
 
     const sorted_reactions = sortEmojis(reactions)
 
-    const onAddReaction = ({ native: emoji, colons: emoji_code }) => {
-        addReaction({ emoji, emoji_code, ref: message_ref, group_id: active_group.id, user_id: user.sub })
+    const onAddReaction = ({ native: emoji, colons: emoji_code, custom }) => {
+        addReaction({ emoji, emoji_code, ref: message_ref, group_id: active_group.id, user_id: user.sub, custom })
         setShowPicker(false)
     }
 
-    const handleClickReaction = (has_user, emoji, emoji_code) => {
+    const handleClickReaction = (has_user, emoji, emoji_code, custom) => {
         if (has_user) {
             const found_reaction = reactions.find(r => r.user === user.sub && r.emoji === emoji)
             if (found_reaction) {
                 removeReaction({ message_id: message_ref, group_id: active_group.id, reaction_id: found_reaction._id })
             }
         } else {
-            onAddReaction({ native: emoji, colons: emoji_code })
+            onAddReaction({ native: emoji, colons: emoji_code, custom })
         }
     }
 
@@ -138,9 +143,9 @@ export const Reaction = React.memo(function({ reactions, message_idx, message_re
                     >
                         <ReactionsBox
                             has_user={has_user}
-                            onClick={() => handleClickReaction(has_user, r.emoji, r.emoji_code)}
+                            onClick={() => handleClickReaction(has_user, r.emoji, r.emoji_code, r.custom)}
                         >
-                            {r.emoji} <span style={{ fontSize: '12px' }}>{r.users.length}</span>
+                            {showEmoji(r.emoji)} <span style={{ fontSize: '12px' }}>{r.users.length}</span>
                         </ReactionsBox>
                     </PopoverBubble>
                 )
