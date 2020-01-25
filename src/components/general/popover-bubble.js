@@ -38,10 +38,7 @@ export const PopoverBubble = ({ children, text, is_hover = true }) => {
                 </ArrowContainer>
             )}
         >
-            <div
-                onMouseEnter={() => setShowBubble(true)}
-                onMouseLeave={() => setShowBubble(false)}
-            >
+            <div onMouseEnter={() => setShowBubble(true)} onMouseLeave={() => setShowBubble(false)}>
                 {children}
             </div>
         </Popover>
