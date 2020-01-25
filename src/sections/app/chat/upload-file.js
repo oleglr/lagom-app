@@ -106,12 +106,10 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
     const [message, setMessage] = React.useState('')
     const [error_msg, setErrorMsg] = React.useState('')
     const { is_mobile } = useUI()
-
     const { getTokenSilently, user } = useAuth0()
     const { active_group } = useGlobal()
 
     const input_ref = React.useRef()
-    const text_input_ref = React.useRef()
     const initial_focus_ref = React.useRef()
 
     const onWriteMessage = e => {
@@ -126,7 +124,6 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
     }
 
     const uploadFileClient = e => {
-        console.log('uploadFile')
         const file = e.target.files
         addSetFile(file)
     }
@@ -213,6 +210,13 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
         }
     }, [files])
 
+    React.useEffect(() => {
+        const send_btn = document.getElementById('input-btn')
+        if (preview && send_btn && is_mobile) {
+            send_btn.focus()
+        }
+    }, [preview, is_mobile])
+
     return (
         <>
             <form encType="multipart/form-data">
@@ -240,17 +244,14 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
                     isOpen={!!files.length}
                     onClose={() => setFiles([])}
                     size={is_mobile ? 'full' : 'xl'}
-                    initialFocusRef={initial_focus_ref}
                     blockScrollOnMount={true}
                 >
                     <ModalOverlay zIndex="1400" />
                     <ModalContent borderRadius="5px" style={is_mobile ? mobileModalStyle : {}}>
                         <Stack isInline align="center" borderBottom="1px solid var(--grey-2)">
                             <ModalHeader style={{ marginRight: 'auto' }}>Upload a file</ModalHeader>
-                            <CloseModalWrapper>
-                                <Button onClick={() => setFiles('')} ref={initial_focus_ref} variant="ghost">
-                                    <Icon name="close" />
-                                </Button>
+                            <CloseModalWrapper onClick={() => setFiles('')}>
+                                <Icon name="close" />
                             </CloseModalWrapper>
                         </Stack>
                         <ModalBody>
@@ -274,13 +275,7 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
                             {!is_mobile && (
                                 <div style={{ marginTop: '1rem' }}>
                                     <FormLabel htmlFor="image_message">Add a comment (optional)</FormLabel>
-                                    <Input
-                                        id="image_message"
-                                        type="text"
-                                        value={message}
-                                        onChange={onWriteMessage}
-                                        ref={text_input_ref}
-                                    />
+                                    <Input id="image_message" type="text" value={message} onChange={onWriteMessage} />
                                 </div>
                             )}
                         </ModalBody>
@@ -301,7 +296,6 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
                                             type="text"
                                             value={message}
                                             onChange={onWriteMessage}
-                                            ref={text_input_ref}
                                         />
                                     </div>
                                 )}
@@ -311,9 +305,11 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
                                     </Button>
                                 )}
                                 <Button
+                                    id="input-btn"
                                     style={is_mobile ? mobileButtonStyle : {}}
                                     onClick={sendFiles}
                                     className="btn-primary"
+                                    ref={initial_focus_ref}
                                 >
                                     {status === 'loading' ? <Spinner /> : 'Send'}
                                 </Button>
