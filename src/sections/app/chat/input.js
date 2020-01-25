@@ -8,7 +8,6 @@ import { Upload } from './upload-file'
 import { Flex } from '../../../components/container'
 import { useUI } from '../../../main-content'
 import { useKeyDown } from '../../../components/hooks/keydown'
-import { showEmoji } from '../../../utils/emoji'
 
 function isUrl(str) {
     var pattern = new RegExp(

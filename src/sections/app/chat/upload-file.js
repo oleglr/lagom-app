@@ -21,15 +21,15 @@ import { PopoverBubble } from '../../../components/general/popover-bubble'
 import { Flex } from '../../../components/container'
 import { useAuth0 } from '../../../react-auth0-spa'
 import { useGlobal } from '../../../context/global-context'
+import { useUI } from '../../../main-content'
 
 const IconWrapper = styled.span`
     position: absolute;
-    left: 10px;
+    left: 8px;
     top: 3px;
-    height: 80%;
-    width: 30px;
+    height: 40px;
+    width: 32px;
     z-index: 1;
-    padding-top: 5px;
     border-radius: 5px;
     transition: 0.2s;
     display: flex;
@@ -46,7 +46,7 @@ const IconWrapper = styled.span`
 `
 
 const StyledImage = styled.img`
-    max-height: 40vh;
+    max-height: 80vh;
     border-radius: 5px;
 `
 
@@ -66,8 +66,6 @@ const CloseModalWrapper = styled.div`
     padding-right: 24px;
 
     &:hover {
-        background: black;
-        color: white;
         cursor: pointer;
     }
 `
@@ -87,18 +85,34 @@ const IconCloseWrapper = styled.div`
 `
 const MAX_FILE_SIZE = 5000000
 
+const mobileFooterStyle = {
+    padding: '10px',
+}
+
+const mobileModalStyle = {
+    marginBottom: 0,
+    marginTop: 0,
+    height: '100%',
+}
+
+const mobileButtonStyle = {
+    marginTop: '28px',
+}
+
 export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
     const [files, setFiles] = React.useState([])
     const [preview, setPreview] = React.useState([])
     const [status, setStatus] = React.useState('')
     const [message, setMessage] = React.useState('')
     const [error_msg, setErrorMsg] = React.useState('')
+    const { is_mobile } = useUI()
 
     const { getTokenSilently, user } = useAuth0()
     const { active_group } = useGlobal()
 
     const input_ref = React.useRef()
     const text_input_ref = React.useRef()
+    const initial_focus_ref = React.useRef()
 
     const onWriteMessage = e => {
         e.preventDefault()
@@ -110,7 +124,9 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
         setMessage('')
         setFiles(Array.from(file))
     }
+
     const uploadFileClient = e => {
+        console.log('uploadFile')
         const file = e.target.files
         addSetFile(file)
     }
@@ -206,31 +222,44 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
                     accept="image/*"
                     ref={input_ref}
                     type="file"
+                    onClick={event => {
+                        event.target.value = null
+                    }}
                     hidden
                     multiple={is_thread ? false : true}
                     onChange={uploadFileClient}
                 />
                 <IconWrapper onClick={() => input_ref.current.click()}>
                     <PopoverBubble text={<Text>Upload file</Text>}>
-                        <Icon name="attachment" size="14px" />
+                        <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
+                            <Icon name="attachment" size="14px" />
+                        </div>
                     </PopoverBubble>
                 </IconWrapper>
-                <Modal isOpen={!!files.length} onClose={() => setFiles('')} size={'xl'}>
+                <Modal
+                    isOpen={!!files.length}
+                    onClose={() => setFiles([])}
+                    size={is_mobile ? 'full' : 'xl'}
+                    initialFocusRef={initial_focus_ref}
+                    blockScrollOnMount={true}
+                >
                     <ModalOverlay zIndex="1400" />
-                    <ModalContent borderRadius="5px">
-                        <Stack isInline align="center">
+                    <ModalContent borderRadius="5px" style={is_mobile ? mobileModalStyle : {}}>
+                        <Stack isInline align="center" borderBottom="1px solid var(--grey-2)">
                             <ModalHeader style={{ marginRight: 'auto' }}>Upload a file</ModalHeader>
                             <CloseModalWrapper>
-                                <Icon name="close" />
+                                <Button onClick={() => setFiles('')} ref={initial_focus_ref} variant="ghost">
+                                    <Icon name="close" />
+                                </Button>
                             </CloseModalWrapper>
                         </Stack>
                         <ModalBody>
                             {preview && preview.length === 1 && (
-                                <Flex>
+                                <Flex height="unset">
                                     <StyledImage alt="upload preview" src={preview[0]} />
                                 </Flex>
                             )}
-                            <Flex justify="unset" wrap="wrap">
+                            <Flex justify="unset" wrap="wrap" height="unset">
                                 {preview &&
                                     preview.length > 1 &&
                                     preview.map((url, idx) => (
@@ -242,7 +271,7 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
                                         </ImageWrapper>
                                     ))}
                             </Flex>
-                            {!is_thread && (
+                            {!is_mobile && (
                                 <div style={{ marginTop: '1rem' }}>
                                     <FormLabel htmlFor="image_message">Add a comment (optional)</FormLabel>
                                     <Input
@@ -255,19 +284,40 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
                                 </div>
                             )}
                         </ModalBody>
-                        <ModalFooter>
-                            {status === 'error' && (
-                                <Alert status="error">
-                                    <AlertIcon />
-                                    {error_msg}
-                                </Alert>
-                            )}
-                            <Button variant="ghost" mr={3} onClick={() => setFiles('')}>
-                                Close
-                            </Button>
-                            <Button onClick={sendFiles} className="btn-primary">
-                                {status === 'loading' ? <Spinner /> : 'Send'}
-                            </Button>
+                        <ModalFooter style={is_mobile ? mobileFooterStyle : {}}>
+                            <Stack isInline width={is_mobile ? '100%' : 'unset'}>
+                                {status === 'error' && (
+                                    <Alert status="error">
+                                        <AlertIcon />
+                                        {error_msg}
+                                    </Alert>
+                                )}
+                                {is_mobile && (
+                                    <div style={{ width: '100%', marginRight: '10px' }}>
+                                        <FormLabel htmlFor="image_message">Add a comment (optional)</FormLabel>
+                                        <Input
+                                            width="100%"
+                                            id="image_message"
+                                            type="text"
+                                            value={message}
+                                            onChange={onWriteMessage}
+                                            ref={text_input_ref}
+                                        />
+                                    </div>
+                                )}
+                                {!is_mobile && (
+                                    <Button variant="ghost" mr={3} onClick={() => setFiles('')}>
+                                        Close
+                                    </Button>
+                                )}
+                                <Button
+                                    style={is_mobile ? mobileButtonStyle : {}}
+                                    onClick={sendFiles}
+                                    className="btn-primary"
+                                >
+                                    {status === 'loading' ? <Spinner /> : 'Send'}
+                                </Button>
+                            </Stack>
                         </ModalFooter>
                     </ModalContent>
                 </Modal>
