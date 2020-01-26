@@ -113,6 +113,7 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
 
     const input_ref = React.useRef()
     const initial_focus_ref = React.useRef()
+    const text_input_ref = React.useRef()
 
     const onWriteMessage = e => {
         e.preventDefault()
@@ -219,6 +220,17 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
         }
     }, [preview, is_mobile])
 
+    React.useEffect(() => {
+        if (text_input_ref && text_input_ref.current && is_mobile) {
+            console.log('here')
+            text_input_ref.current.onfocus = () => {
+                console.log('onfocus')
+                window.scrollTo(0, 0)
+                document.body.scrollTop = 0
+            }
+        }
+    })
+
     return (
         <>
             <form encType="multipart/form-data">
@@ -293,6 +305,7 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
                                     <div style={{ width: '100%', marginRight: '10px' }}>
                                         <FormLabel htmlFor="image_message">Add a comment (optional)</FormLabel>
                                         <Input
+                                            ref={text_input_ref}
                                             width="100%"
                                             id="image_message"
                                             type="text"

@@ -2,9 +2,9 @@ import React from 'react'
 import styled from '@emotion/styled'
 import { Text, Stack } from '@chakra-ui/core'
 import moment from 'moment'
+import Hammer from 'hammerjs'
 import { useAuth0 } from '../../../react-auth0-spa'
 import { useUI } from '../../../main-content'
-import { useLongPress } from '../../../components/hooks/on-press'
 import { Flex } from '../../../components/container'
 import { ImagePreview } from '../../../components/general/image'
 import { useGlobal } from '../../../context/global-context'
@@ -146,11 +146,10 @@ export const ChatMessage = React.memo(function({ showMenu, show_menu, message, i
         addReaction({ emoji, emoji_code, ref: message._id, group_id: active_group.id, user_id: user.sub, custom })
     }
 
-    const onPress = useLongPress(() => {
-        if (!is_mobile) return
+    const onPress = () => {
         showMobileMenu(true)
         setSelectedMobileMessage({ onReply: () => setQuotedMessage(message), onAddReaction })
-    }, 300)
+    }
 
     const message_user = getUser(message.user)
 
@@ -177,7 +176,7 @@ export const ChatMessage = React.memo(function({ showMenu, show_menu, message, i
                     width="45px"
                 />
             )}
-            <Flex {...onPress} column align="flex-start" justify="flex-start" pl="5px">
+            <LongPressWrapper onPress={onPress}>
                 <Text>
                     <Name className="bold">{message_user.name}</Name>{' '}
                     <span style={{ fontSize: '12px', color: 'var(--grey)' }}>
@@ -186,10 +185,24 @@ export const ChatMessage = React.memo(function({ showMenu, show_menu, message, i
                 </Text>
                 <Content message={message} measure={measure} isScrolling={isScrolling} isVisible={isVisible} />
                 <Reaction reactions={message.reactions} message_idx={idx} message_ref={message._id} />
-            </Flex>
+            </LongPressWrapper>
         </>
     )
 })
+
+class LongPressWrapper extends React.PureComponent {
+    componentDidMount() {
+        this.hammer = Hammer(this.container)
+        this.hammer.on('press', this.props.onPress)
+    }
+    render() {
+        return (
+            <Flex ref={el => (this.container = el)} column align="flex-start" justify="flex-start" pl="5px">
+                {this.props.children}
+            </Flex>
+        )
+    }
+}
 
 const Link = ({ text }) => {
     // TODO: fetch link metadata

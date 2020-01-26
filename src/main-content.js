@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { Swipeable } from 'react-swipeable'
 import { Emoji } from 'emoji-mart'
+import Hammer from 'hammerjs'
 import { useMediaQuery } from 'react-responsive'
 import { Modal, ModalOverlay, ModalContent, Text, Stack, Box } from '@chakra-ui/core'
 import { EmojiPicker } from './sections/app/chat/emoji-picker'
@@ -22,6 +22,21 @@ const UIContext = React.createContext({
     toggleDrawer: () => {},
 })
 
+class SwipeWrapper extends React.PureComponent {
+    componentDidMount() {
+        this.hammer = Hammer(this.container)
+        this.hammer.on('swipeleft', this.props.onSwipedLeft)
+        this.hammer.on('swiperight', this.props.onSwipedRight)
+    }
+    render() {
+        return (
+            <div ref={el => (this.container = el)} style={{ height: '100%' }}>
+                {this.props.children}
+            </div>
+        )
+    }
+}
+
 export const MainContent = ({ children }) => {
     const [is_drawer_open, toggleDrawer] = React.useState(false)
     const [show_mobile_menu, showMobileMenu] = React.useState(false)
@@ -39,7 +54,7 @@ export const MainContent = ({ children }) => {
     }
 
     return (
-        <Swipeable style={{ height: '100%' }} onSwipedRight={openDrawer} onSwipedLeft={closeDrawer}>
+        <SwipeWrapper onSwipedRight={openDrawer} onSwipedLeft={closeDrawer}>
             <UIContext.Provider
                 value={{
                     is_drawer_open,
@@ -56,7 +71,7 @@ export const MainContent = ({ children }) => {
                     showMobileMenu={showMobileMenu}
                 />
             </UIContext.Provider>
-        </Swipeable>
+        </SwipeWrapper>
     )
 }
 

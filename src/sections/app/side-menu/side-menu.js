@@ -1,8 +1,8 @@
 import React from 'react'
 import styled from '@emotion/styled'
+import Hammer from 'hammerjs'
 import { Stack, Heading, Button, Drawer, Icon, DrawerOverlay, DrawerContent, DrawerCloseButton } from '@chakra-ui/core'
 import { useHistory } from 'react-router-dom'
-import { Swipeable } from 'react-swipeable'
 import { useUI } from '../../../main-content'
 import { useGlobal } from '../../../context/global-context'
 import { SideContent } from './content'
@@ -24,6 +24,20 @@ const Nav = styled.nav`
     display: flex;
     flex-direction: column;
 `
+
+class SwipeWrapper extends React.PureComponent {
+    componentDidMount() {
+        this.hammer = Hammer(this.container)
+        this.hammer.on('swipeleft', this.props.onSwipedLeft)
+    }
+    render() {
+        return (
+            <div ref={el => (this.container = el)} style={{ height: '100%' }}>
+                {this.props.children}
+            </div>
+        )
+    }
+}
 
 export const SideMenu = () => {
     const btnRef = React.useRef()
@@ -57,13 +71,13 @@ export const SideMenu = () => {
                     )}
                 </Stack>
                 <Drawer isOpen={is_drawer_open} placement="left" onClose={closeDrawer} finalFocusRef={btnRef}>
-                    <Swipeable style={{ height: '100%' }} onSwipedLeft={closeDrawer}>
+                    <SwipeWrapper style={{ height: '100%' }} onSwipedLeft={closeDrawer}>
                         <DrawerOverlay />
                         <StyledDrawerContent>
                             <DrawerCloseButton color="#fff" />
                             <SideContent onClose={closeDrawer} />
                         </StyledDrawerContent>
-                    </Swipeable>
+                    </SwipeWrapper>
                 </Drawer>
             </>
         )

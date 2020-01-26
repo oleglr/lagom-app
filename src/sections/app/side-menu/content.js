@@ -223,7 +223,7 @@ class SideContentController extends React.Component {
                             </Stack>
                         </Link>
                     </ItemWrapper>
-                    {/* <ItemWrapper isInline align="center" isActive={path_name === '/profile'}>
+                    <ItemWrapper isInline align="center" isActive={path_name === '/profile'}>
                         <Link to="/profile">
                             <Stack isInline align="center">
                                 <Text>
@@ -235,6 +235,7 @@ class SideContentController extends React.Component {
                             </Stack>
                         </Link>
                     </ItemWrapper>
+                    {/* 
                     <ItemWrapper isInline align="center" isActive={path_name === '/expenses'}>
                         <Link to="/expenses">
                             <Stack isInline align="center">
