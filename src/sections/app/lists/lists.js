@@ -7,8 +7,10 @@ import {
     Icon,
     FormControl,
     Input,
+    Box,
     FormLabel,
     Popover,
+    PopoverTrigger,
     PopoverContent,
     PopoverHeader,
     PopoverBody,
@@ -21,19 +23,6 @@ import { useGlobal } from '../../../context/global-context'
 import { CreateGroup } from '../../../components/general/create-group'
 import { getSocket as socket } from '../../../api/socket'
 import { ListCard } from './list-card'
-
-// TODO:
-// const labels = {
-//     group_id: 'abc',
-//     default_labels: [
-//         { name: 'Shopping', _id: 'label_id', color: 'green' },
-//         { name: 'Travel', _id: 'label_id', color: 'red' },
-//         { name: 'Restaurants', _id: 'label_id', color: 'blue' },
-//         { name: 'Watch', _id: 'label_id', color: 'yellow' },
-//         { name: 'Read', _id: 'label_id', color: 'purple' },
-//         { name: 'Important', _id: 'label_id', color: 'purple' },
-//     ],
-// }
 
 class MediaListContainer extends React.Component {
     constructor(props) {
@@ -155,21 +144,28 @@ class MediaListContainer extends React.Component {
 
         return (
             <div style={{ height: '100%' }}>
-                <>
-                    <Stack isInline align="center">
-                        <Heading marginLeft="2rem" marginTop="2rem" size="xl" marginBottom="16px">
+                <Box marginTop="100px" marginLeft="100px" marginRight="100px">
+                    <Stack isInline>
+                        <Heading marginLeft="0" marginBottom="8px" size="xl" style={{ marginRight: 'auto' }}>
+                            <span role="img" aria-label="list pad" style={{ paddingRight: '15px' }}>
+                                📝
+                            </span>
                             Lists:
                         </Heading>
-                        <PopoverForm
-                            list_count={this.state.data.length}
-                            new_list_loading={this.state.new_list_loading}
-                            addNewListName={this.addNewListName}
-                        />
                     </Stack>
+                    <Text paddingBottom="16px">
+                        IKEA shopping lists, travel lists, restaurants to visit, movies to watch click "Add list" to
+                        create any list that fits your group.
+                    </Text>
+                    <PopoverForm
+                        list_count={this.state.data.length}
+                        new_list_loading={this.state.new_list_loading}
+                        addNewListName={this.addNewListName}
+                    />
                     <div style={{ height: '100%' }}>
                         {!!data.length && <ListCard deleteList={this.deleteList} labels={labels} items={data} />}
                     </div>
-                </>
+                </Box>
             </div>
         )
     }
@@ -224,13 +220,17 @@ const PopoverForm = ({ addNewListName, new_list_loading, list_count }) => {
     }, [new_list_name])
 
     return (
-        <div>
-            <Button onClick={open}>Add list</Button>
-            <Popover placement="bottom" initialFocusRef={input_ref} isOpen={isOpen} onClose={close}>
+        <div style={{ maxHeight: '40px', marginBottom: '20px' }}>
+            <Popover placement="right" initialFocusRef={input_ref} isOpen={isOpen} onClose={close}>
+                <PopoverTrigger>
+                    <Button className="btn-primary" onClick={open}>
+                        Add list
+                    </Button>
+                </PopoverTrigger>
                 <PopoverContent zIndex={4}>
                     <PopoverArrow />
                     <PopoverCloseButton />
-                    <PopoverHeader>Add new list</PopoverHeader>
+                    <PopoverHeader fontWeight="bold">Add new list</PopoverHeader>
                     <PopoverBody>
                         {default_error && (
                             <Stack isInline align="center">
@@ -241,17 +241,20 @@ const PopoverForm = ({ addNewListName, new_list_loading, list_count }) => {
                         {!default_error && (
                             <form onSubmit={newListName}>
                                 <FormControl>
-                                    <FormLabel htmlFor="list-name">Name</FormLabel>
+                                    <FormLabel fontWeight="normal" htmlFor="list-name">
+                                        Name
+                                    </FormLabel>
                                     <Input
                                         type="text"
                                         id="list-name"
-                                        placeholder="E.g. IKEA shopping list"
+                                        placeholder="E.g. Malaysia trip"
                                         data-lpignore="true"
                                         value={new_list_name}
                                         onChange={e => {
                                             onUpdateName(e)
                                         }}
                                         ref={input_ref}
+                                        marginBottom="16px"
                                     />
                                     {/* TODO: sharable error component */}
                                     {form_error && (
@@ -264,7 +267,7 @@ const PopoverForm = ({ addNewListName, new_list_loading, list_count }) => {
                                 <Button
                                     isDisabled={status === 'submitting'}
                                     isLoading={status === 'submitting'}
-                                    className="btn-primary"
+                                    variantColor="teal"
                                     type="submit"
                                 >
                                     Add list

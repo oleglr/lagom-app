@@ -31,8 +31,6 @@ export const EmojiPicker = ({ closePicker, onSelectEmoji, showPicker, is_mobile,
                     title="Pick your emoji…"
                     emoji="point_up"
                     custom={has_custom ? customEmojis : []}
-                    exclude={['foods', 'objects']}
-                    include={['recent', 'custom', 'people', 'food', 'nature', 'activity', 'places', 'symbols', 'flags']}
                 />
             )}
         </PickerWrapper>

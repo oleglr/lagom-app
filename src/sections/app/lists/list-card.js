@@ -196,32 +196,55 @@ const Card = ({ todo_list, deleteList }) => {
             }
         )
     }
+    const completed = todo_list.list_items.filter(li => li.status === 'complete').length
+    const total = todo_list.list_items.length
 
     return (
-        <Box key={todo_list._id} maxWidth="600px" overflow="hidden" margin="5px" height="fit-content">
-            <Stack isInline justify="space-between">
-                <Heading size="md">{todo_list.name}</Heading>
+        <Box key={todo_list._id} maxWidth="600px" padding="8px" overflow="hidden" margin="5px" height="fit-content">
+            <Stack
+                isInline
+                justify="space-between"
+                borderBottom="1px solid var(--grey-2)"
+                paddingBottom="8px"
+                marginBottom="8px"
+            >
+                <div>
+                    <Heading size="md">
+                        <span aria-label="shopping cart" role="img" style={{ paddingRight: '8px' }}>
+                            🛒
+                        </span>
+                        {todo_list.name}
+                    </Heading>
+                    <Box maxHeight="98px">
+                        <Box maxWidth="180px" as="div" color="gray.600" fontSize="sm">
+                            {`${completed}/${total} completed`}
+                        </Box>
+                    </Box>
+                </div>
                 {todo_list.label && <Badge>{todo_list.label}</Badge>}
                 <Popover>
                     <PopoverTrigger>
-                        <Button>Delete</Button>
+                        <Button size="sm" marginTop="auto" variant="outline">
+                            Delete
+                        </Button>
                     </PopoverTrigger>
                     <PopoverContent zIndex={4}>
                         <PopoverArrow />
                         <PopoverCloseButton />
-                        <PopoverHeader>Delete {todo_list.name}?</PopoverHeader>
+                        <PopoverHeader fontWeight="bold">Delete {todo_list.name}?</PopoverHeader>
                         <PopoverBody>Deleting a list is permanent and there is no way to get it back.</PopoverBody>
-                        <Button variantColor="red" onClick={() => deleteList(todo_list._id, todo_list.name)}>
+                        <Button
+                            marginRight="0.75rem"
+                            marginLeft="0.75rem"
+                            marginBottom="0.75rem"
+                            variantColor="red"
+                            onClick={() => deleteList(todo_list._id, todo_list.name)}
+                        >
                             Delete list
                         </Button>
                     </PopoverContent>
                 </Popover>
             </Stack>
-            <Box p="5px" maxHeight="98px">
-                <Box maxWidth="180px" as="div" color="gray.600" fontSize="sm">
-                    {moment(todo_list.createdAt).format('ll')}
-                </Box>
-            </Box>
             <Stack>
                 {todo_list.list_items.map((todo, idx) => {
                     return (
@@ -232,12 +255,14 @@ const Card = ({ todo_list, deleteList }) => {
                             onMouseEnter={() => toggleItemMenu(todo._id)}
                             onMouseLeave={() => toggleItemMenu(-1)}
                         >
-                            <Stack isInline align="center" width="100%">
+                            <Stack isInline width="100%">
                                 <Checkbox
                                     onChange={() => toggleListItem(todo._id, todo.status)}
                                     isChecked={todo.status === 'complete'}
                                     size="lg"
                                     variantColor="teal"
+                                    alignItems="unset"
+                                    paddingTop="8px"
                                 />
                                 {status !== idx && (
                                     <Text
@@ -252,17 +277,28 @@ const Card = ({ todo_list, deleteList }) => {
                                     </Text>
                                 )}
                                 {status === idx && (
-                                    <Stack>
+                                    <Stack width="100%" marginRight="20px" marginTop="9px">
                                         <Input
+                                            width="100%"
                                             value={edit_list_item_text}
                                             type="text"
                                             onChange={e => setEditedText(e.target.value)}
                                             id={`edit_text_${idx}`}
                                             ref={el => (itemsRef.current[idx] = el)}
                                         />
-                                        <Stack isInline>
-                                            <Button onClick={() => editListText(todo._id)}>Save</Button>
-                                            <div onClick={() => setStatus('initial_view')}>X</div>
+                                        <Stack isInline marginBottom="5px" align="center">
+                                            <Button variantColor="teal" onClick={() => editListText(todo._id)}>
+                                                Save
+                                            </Button>
+                                            <PopoverBubble text={<Text>Close</Text>}>
+                                                <IconButton
+                                                    onClick={() => setStatus('initial_view')}
+                                                    aria-label="Close new list item"
+                                                    icon="close"
+                                                    size="sm"
+                                                    variant="ghost"
+                                                />
+                                            </PopoverBubble>
                                         </Stack>
                                     </Stack>
                                 )}
@@ -284,28 +320,32 @@ const Card = ({ todo_list, deleteList }) => {
             {status === 'add_new_item' && (
                 <Stack>
                     <Input
+                        placeholder="Add an item"
                         ref={new_item_input_ref}
                         type="text"
                         id="new_list_item_text"
                         value={new_list_item_text}
                         onChange={onSetNewText}
                     />
-                    <Stack isInline>
-                        <Button className="btn-primary" onClick={addNewListIem}>
+                    <Stack isInline align="center">
+                        <Button variantColor="teal" onClick={addNewListIem}>
                             Add
                         </Button>
                         <PopoverBubble text={<Text>Close</Text>}>
                             <IconButton
+                                variant="ghost"
                                 onClick={() => setStatus('initial_view')}
                                 aria-label="Close new list item"
-                                icon="small-close"
+                                icon="close"
                                 size="sm"
                             />
                         </PopoverBubble>
                     </Stack>
                 </Stack>
             )}
-            <Button onClick={onNewListItem}>Add an item</Button>
+            <Button marginTop="8px" onClick={onNewListItem}>
+                Add an item
+            </Button>
         </Box>
     )
 }
