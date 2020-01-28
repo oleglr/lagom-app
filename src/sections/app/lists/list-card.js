@@ -1,12 +1,9 @@
 import React from 'react'
-import moment from 'moment'
 import styled from '@emotion/styled'
 import {
     Box,
     Stack,
     Text,
-    Heading,
-    Badge,
     Checkbox,
     Button,
     Input,
@@ -24,6 +21,7 @@ import { useGlobal } from '../../../context/global-context'
 import { useAuth0 } from '../../../react-auth0-spa'
 import { getSocket as socket } from '../../../api/socket'
 import { PopoverBubble } from '../../../components/general/popover-bubble'
+import { CardHeader } from './card-header'
 
 const MAX_LIST_ITEM_LENGTH = 300
 const MAX_LIST_ITEMS = 20
@@ -85,6 +83,26 @@ const Card = ({ todo_list, deleteList }) => {
         }
     }, [status])
 
+    React.useEffect(() => {
+        const onNewListItem = item => {
+            const is_same_list = item._id === todo_list._id
+            const last_item = todo_list.list_items[todo_list.list_items.length - 1]
+            const is_edited_by_user = last_item.last_edited_by === user.sub
+
+            if (is_same_list && is_edited_by_user) {
+                setStatus('add_new_item')
+            }
+        }
+
+        socket().on('new_list_item_added', onNewListItem)
+
+        return () => {
+            socket().off('new_list_item_added', onNewListItem)
+        }
+        // socket response so I think we can ignore here
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
     const handleClickOutside = e => {
         if (status === 'add_new_item' && new_item_input_ref.current && !new_item_input_ref.current.contains(e.target)) {
             setStatus('initial_view')
@@ -135,7 +153,6 @@ const Card = ({ todo_list, deleteList }) => {
             }
         )
         setNewText('')
-        setStatus('initial_view')
     }
 
     const editListText = text_id => {
@@ -196,8 +213,6 @@ const Card = ({ todo_list, deleteList }) => {
             }
         )
     }
-    const completed = todo_list.list_items.filter(li => li.status === 'complete').length
-    const total = todo_list.list_items.length
 
     return (
         <Box key={todo_list._id} maxWidth="600px" padding="8px" overflow="hidden" margin="5px" height="fit-content">
@@ -208,20 +223,7 @@ const Card = ({ todo_list, deleteList }) => {
                 paddingBottom="8px"
                 marginBottom="8px"
             >
-                <div>
-                    <Heading size="md">
-                        <span aria-label="shopping cart" role="img" style={{ paddingRight: '8px' }}>
-                            🛒
-                        </span>
-                        {todo_list.name}
-                    </Heading>
-                    <Box maxHeight="98px">
-                        <Box maxWidth="180px" as="div" color="gray.600" fontSize="sm">
-                            {`${completed}/${total} completed`}
-                        </Box>
-                    </Box>
-                </div>
-                {todo_list.label && <Badge>{todo_list.label}</Badge>}
+                <CardHeader icon={todo_list.icon} name={todo_list.name} todo_list={todo_list} />
                 <Popover>
                     <PopoverTrigger>
                         <Button size="sm" marginTop="auto" variant="outline">

@@ -24,7 +24,7 @@ import { CreateGroup } from '../../../components/general/create-group'
 import { getSocket as socket } from '../../../api/socket'
 import { ListCard } from './list-card'
 
-class MediaListContainer extends React.Component {
+class ListContainer extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -45,10 +45,10 @@ class MediaListContainer extends React.Component {
     }
 
     populateList = res => {
-        this.setState({ is_loading: false, data: res.bucket_list })
+        this.setState({ is_loading: false, data: res.list })
     }
 
-    listUpdated = res => {
+    listItemUpdated = res => {
         const { data } = this.state
         const list_idx = data.findIndex(l => l._id === res._id)
         const new_data = data
@@ -57,13 +57,13 @@ class MediaListContainer extends React.Component {
         // existing list updated by user or other user
     }
 
-    new_bucket_added = new_bucket => {
-        this.setState({ data: [new_bucket, ...this.state.data], new_list_loading: false })
+    newListAdded = new_list => {
+        this.setState({ data: [new_list, ...this.state.data], new_list_loading: false })
     }
 
     deleteList = (list_id, list_name) => {
         socket().emit(
-            'delete_bucket_list',
+            'delete_list_list',
             { list_id, list_name, group_id: this.props.group_id, user_name: this.props.user.nickname },
             e => {
                 console.log(e)
@@ -84,6 +84,15 @@ class MediaListContainer extends React.Component {
         this.setState({ data: new_data })
     }
 
+    listUpdated = res => {
+        const { data } = this.state
+        const list_idx = data.findIndex(l => l._id === res._id)
+        const new_data = [...data]
+        new_data[list_idx].icon = res.icon
+
+        this.setState({ data: new_data })
+    }
+
     onNewListItem = res => {
         const { data } = this.state
         const list_idx = data.findIndex(l => l._id === res._id)
@@ -95,7 +104,7 @@ class MediaListContainer extends React.Component {
     addNewListName = name => {
         this.setState({ new_list_loading: true })
         socket().emit(
-            'new_bucket_list',
+            'new_list',
             {
                 name,
                 label: '',
@@ -111,17 +120,18 @@ class MediaListContainer extends React.Component {
 
     componentDidMount() {
         // fetch data
-        socket().on('get_bucket_list', this.populateList)
+        socket().on('get_list', this.populateList)
 
-        socket().on('new_bucket_added', this.new_bucket_added)
-        socket().on('bucket_list_deleted', this.onListRemoved)
+        socket().on('new_list_added', this.newListAdded)
+        socket().on('list_deleted', this.onListRemoved)
+        socket().on('list_updated', this.listUpdated)
 
-        socket().on('list_item_updated', this.listUpdated)
+        socket().on('list_item_updated', this.listItemUpdated)
         socket().on('list_item_deleted', this.onDeleteListItem)
         socket().on('new_list_item_added', this.onNewListItem)
 
         socket().emit(
-            'get_bucket_list',
+            'get_list',
             {
                 group_id: this.props.group_id,
             },
@@ -132,9 +142,13 @@ class MediaListContainer extends React.Component {
     }
 
     componentWillUnmount() {
-        socket().off('get_bucket_list', this.populateList)
-        socket().off('bucket_list_item_updated', this.listUpdated)
-        socket().off('new_bucket_added', this.new_bucket_added)
+        socket().off('get_list', this.populateList)
+        socket().off('new_list_added', this.newListAdded)
+        socket().off('list_deleted', this.onListRemoved)
+        socket().off('list_updated', this.listUpdated)
+        socket().off('list_item_updated', this.listItemUpdated)
+        socket().off('list_item_deleted', this.onDeleteListItem)
+        socket().off('new_list_item_added', this.onNewListItem)
     }
 
     render() {
@@ -153,6 +167,7 @@ class MediaListContainer extends React.Component {
                             Lists:
                         </Heading>
                     </Stack>
+                    {/* Travel bucket list, new resolutions, new goals, restaurants to try this month, movies to watch */}
                     <Text paddingBottom="16px">
                         IKEA shopping lists, travel lists, restaurants to visit, movies to watch click "Add list" to
                         create any list that fits your group.
@@ -181,6 +196,7 @@ const PopoverForm = ({ addNewListName, new_list_loading, list_count }) => {
     } else {
         default_error = ''
     }
+
     const [new_list_name, setNewListName] = React.useState('')
     const [form_error, setFormError] = React.useState(default_error)
     const [isOpen, setIsOpen] = React.useState(false)
@@ -235,7 +251,7 @@ const PopoverForm = ({ addNewListName, new_list_loading, list_count }) => {
                         {default_error && (
                             <Stack isInline align="center">
                                 <Icon color="blue.500" name="info" size="18px" />
-                                <Text>{form_error}</Text>
+                                <Text>{default_error}</Text>
                             </Stack>
                         )}
                         {!default_error && (
@@ -281,7 +297,7 @@ const PopoverForm = ({ addNewListName, new_list_loading, list_count }) => {
     )
 }
 
-const Media = () => {
+const Lists = () => {
     const { active_group } = useGlobal()
     const { user } = useAuth0()
 
@@ -289,7 +305,7 @@ const Media = () => {
         return <CreateGroup />
     }
 
-    return <MediaListContainer user={user} group_id={active_group.id} />
+    return <ListContainer user={user} group_id={active_group.id} />
 }
 
-export default Media
+export default Lists

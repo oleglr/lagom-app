@@ -156,7 +156,7 @@ function App() {
                                     <PrivateRoute path="/members" component={Members} />
                                     <PrivateRoute path="/invite" component={Invite} />
                                     <PrivateRoute path="/expenses" component={Profile} />
-                                    <PrivateRoute path="/bucket-list" component={Lists} />
+                                    <PrivateRoute path="/lists" component={Lists} />
                                     <PrivateRoute path="/new-group" component={NewGroup} />
                                 </Switch>
                             </div>
