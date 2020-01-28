@@ -7,7 +7,7 @@ import history from './utils/history'
 import Profile from './components/general/profile'
 import Members from './sections/app/members/members'
 import Media from './sections/app/media/media'
-import BucketList from './sections/app/bucketlist/bucket-list'
+import Lists from './sections/app/lists/lists'
 import PrivateRoute from './components/general/private-route'
 import { useAuth0 } from './react-auth0-spa'
 import { GlobalContextProvider } from './context/global-context'
@@ -156,7 +156,7 @@ function App() {
                                     <PrivateRoute path="/members" component={Members} />
                                     <PrivateRoute path="/invite" component={Invite} />
                                     <PrivateRoute path="/expenses" component={Profile} />
-                                    <PrivateRoute path="/bucket-list" component={BucketList} />
+                                    <PrivateRoute path="/bucket-list" component={Lists} />
                                     <PrivateRoute path="/new-group" component={NewGroup} />
                                 </Switch>
                             </div>

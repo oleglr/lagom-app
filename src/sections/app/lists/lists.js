@@ -5,7 +5,6 @@ import {
     Stack,
     Text,
     Icon,
-    useToast,
     FormControl,
     Input,
     FormLabel,
@@ -21,7 +20,7 @@ import { Loader } from '../../../components/elements'
 import { useGlobal } from '../../../context/global-context'
 import { CreateGroup } from '../../../components/general/create-group'
 import { getSocket as socket } from '../../../api/socket'
-import { List } from './list'
+import { ListCard } from './list-card'
 
 // TODO:
 // const labels = {
@@ -166,10 +165,9 @@ class MediaListContainer extends React.Component {
                             new_list_loading={this.state.new_list_loading}
                             addNewListName={this.addNewListName}
                         />
-                        {/* <Button onClick={this.showForm}>Add list</Button> */}
                     </Stack>
                     <div style={{ height: '100%' }}>
-                        {!!data.length && <List deleteList={this.deleteList} labels={labels} items={data} />}
+                        {!!data.length && <ListCard deleteList={this.deleteList} labels={labels} items={data} />}
                     </div>
                 </>
             </div>

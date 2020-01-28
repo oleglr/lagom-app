@@ -5,10 +5,12 @@ import {
     Box,
     Stack,
     Text,
+    Heading,
     Badge,
     Checkbox,
     Button,
     Input,
+    IconButton,
     useToast,
     Popover,
     PopoverTrigger,
@@ -21,18 +23,19 @@ import {
 import { useGlobal } from '../../../context/global-context'
 import { useAuth0 } from '../../../react-auth0-spa'
 import { getSocket as socket } from '../../../api/socket'
-
-const ImageCard = styled(Box)`
-    &:hover {
-        cursor: pointer;
-        .media-img {
-            filter: brightness(0.5);
-        }
-    }
-`
+import { PopoverBubble } from '../../../components/general/popover-bubble'
 
 const MAX_LIST_ITEM_LENGTH = 300
 const MAX_LIST_ITEMS = 20
+
+const CheckListItem = styled(Stack)`
+    margin-bottom: 0;
+
+    &:hover {
+        background-color: var(--grey-hover);
+        cursor: pointer;
+    }
+`
 
 const too_long_list_item_toast = {
     title: 'Cannot add the item to the list',
@@ -52,18 +55,58 @@ const too_many_list_item_toast = {
     position: 'top-right',
 }
 
-const BucketListCard = ({ todo_list, deleteList }) => {
+const Card = ({ todo_list, deleteList }) => {
     const [status, setStatus] = React.useState('initial_view')
     const [new_list_item_text, setNewText] = React.useState('')
     const [edit_list_item_text, setEditedText] = React.useState('')
+    const [item_menu, toggleItemMenu] = React.useState(-1)
 
     const { active_group } = useGlobal()
     const { user } = useAuth0()
     const toast = useToast()
 
+    const new_item_input_ref = React.useRef()
+    const itemsRef = React.useRef([])
+
     const onNewListItem = () => {
         setStatus('add_new_item')
     }
+
+    React.useEffect(() => {
+        itemsRef.current = itemsRef.current.slice(0, todo_list.list_items.length)
+    }, [todo_list.list_items])
+
+    React.useEffect(() => {
+        if (status === 'add_new_item') {
+            new_item_input_ref.current.focus()
+        }
+        if (typeof status === 'number') {
+            itemsRef.current[status].focus()
+        }
+    }, [status])
+
+    const handleClickOutside = e => {
+        if (status === 'add_new_item' && new_item_input_ref.current && !new_item_input_ref.current.contains(e.target)) {
+            setStatus('initial_view')
+        }
+        if (
+            typeof status === 'number' &&
+            itemsRef.current &&
+            itemsRef.current.length &&
+            itemsRef.current[status] &&
+            !itemsRef.current[status].contains(e.target)
+        ) {
+            setStatus('initial_view')
+        }
+    }
+
+    React.useEffect(() => {
+        document.addEventListener('click', handleClickOutside)
+
+        return () => {
+            document.removeEventListener('click', handleClickOutside)
+        }
+    })
 
     const onSetNewText = e => {
         setNewText(e.target.value)
@@ -91,6 +134,7 @@ const BucketListCard = ({ todo_list, deleteList }) => {
                 console.log(e)
             }
         )
+        setNewText('')
         setStatus('initial_view')
     }
 
@@ -154,17 +198,9 @@ const BucketListCard = ({ todo_list, deleteList }) => {
     }
 
     return (
-        <ImageCard
-            key={todo_list._id}
-            maxWidth="600px"
-            borderWidth="1px"
-            rounded="lg"
-            overflow="hidden"
-            margin="5px"
-            height="fit-content"
-        >
+        <Box key={todo_list._id} maxWidth="600px" overflow="hidden" margin="5px" height="fit-content">
             <Stack isInline justify="space-between">
-                <Text>{todo_list.name}</Text>
+                <Heading size="md">{todo_list.name}</Heading>
                 {todo_list.label && <Badge>{todo_list.label}</Badge>}
                 <Popover>
                     <PopoverTrigger>
@@ -189,16 +225,24 @@ const BucketListCard = ({ todo_list, deleteList }) => {
             <Stack>
                 {todo_list.list_items.map((todo, idx) => {
                     return (
-                        <Stack key={idx} isInline justify="space-between">
-                            <Stack isInline align="center">
+                        <CheckListItem
+                            key={todo._id}
+                            isInline
+                            justify="space-between"
+                            onMouseEnter={() => toggleItemMenu(todo._id)}
+                            onMouseLeave={() => toggleItemMenu(-1)}
+                        >
+                            <Stack isInline align="center" width="100%">
                                 <Checkbox
                                     onChange={() => toggleListItem(todo._id, todo.status)}
                                     isChecked={todo.status === 'complete'}
                                     size="lg"
-                                    variantColor="green"
+                                    variantColor="teal"
                                 />
                                 {status !== idx && (
                                     <Text
+                                        padding="5px"
+                                        width="100%"
                                         onClick={() => {
                                             setStatus(idx)
                                             setEditedText(todo.text)
@@ -212,8 +256,9 @@ const BucketListCard = ({ todo_list, deleteList }) => {
                                         <Input
                                             value={edit_list_item_text}
                                             type="text"
-                                            id="edit_text"
                                             onChange={e => setEditedText(e.target.value)}
+                                            id={`edit_text_${idx}`}
+                                            ref={el => (itemsRef.current[idx] = el)}
                                         />
                                         <Stack isInline>
                                             <Button onClick={() => editListText(todo._id)}>Save</Button>
@@ -222,35 +267,59 @@ const BucketListCard = ({ todo_list, deleteList }) => {
                                     </Stack>
                                 )}
                             </Stack>
-                            {status !== idx && <Button onClick={() => deleteItem(todo._id)}>delete</Button>}
-                        </Stack>
+                            {status !== idx && item_menu === todo._id && (
+                                <PopoverBubble text={<Text>Delete item</Text>}>
+                                    <IconButton
+                                        onClick={() => deleteItem(todo._id)}
+                                        aria-label="Delete list item"
+                                        icon="small-close"
+                                        size="sm"
+                                    />
+                                </PopoverBubble>
+                            )}
+                        </CheckListItem>
                     )
                 })}
             </Stack>
             {status === 'add_new_item' && (
                 <Stack>
-                    <Input type="text" id="new_list_item_text" value={new_list_item_text} onChange={onSetNewText} />
+                    <Input
+                        ref={new_item_input_ref}
+                        type="text"
+                        id="new_list_item_text"
+                        value={new_list_item_text}
+                        onChange={onSetNewText}
+                    />
                     <Stack isInline>
-                        <Button onClick={addNewListIem}>Add</Button>
-                        <div onClick={() => setStatus('initial_view')}>X</div>
+                        <Button className="btn-primary" onClick={addNewListIem}>
+                            Add
+                        </Button>
+                        <PopoverBubble text={<Text>Close</Text>}>
+                            <IconButton
+                                onClick={() => setStatus('initial_view')}
+                                aria-label="Close new list item"
+                                icon="small-close"
+                                size="sm"
+                            />
+                        </PopoverBubble>
                     </Stack>
                 </Stack>
             )}
-            {status === 'initial_view' && <Button onClick={onNewListItem}>Add an item</Button>}
-        </ImageCard>
+            <Button onClick={onNewListItem}>Add an item</Button>
+        </Box>
     )
 }
 
-class List extends React.Component {
+class ListCard extends React.Component {
     render() {
         return (
             <div>
                 {this.props.items.map((item, idx) => (
-                    <BucketListCard deleteList={this.props.deleteList} key={idx} todo_list={item} />
+                    <Card deleteList={this.props.deleteList} key={idx} todo_list={item} />
                 ))}
             </div>
         )
     }
 }
 
-export { List }
+export { ListCard }
