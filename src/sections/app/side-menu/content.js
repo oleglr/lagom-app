@@ -223,14 +223,14 @@ class SideContentController extends React.Component {
                             </Stack>
                         </Link>
                     </ItemWrapper>
-                    <ItemWrapper isInline align="center" isActive={path_name === '/profile'}>
-                        <Link to="/profile">
+                    <ItemWrapper isInline align="center" isActive={path_name === '/lists'}>
+                        <Link to="/lists">
                             <Stack isInline align="center">
                                 <Text>
-                                    <span aria-label="bucket list" role="img">
+                                    <span aria-label="lists" role="img">
                                         📝
                                     </span>{' '}
-                                    Bucket list
+                                    Lists
                                 </Text>
                             </Stack>
                         </Link>
@@ -260,7 +260,6 @@ class SideContentController extends React.Component {
                             </Stack>
                         </Link>
                     </ItemWrapper> */}
-                    {/* Travel bucket list, new resolutions, new goals, restaurants to try this month, movies to watch */}
                     <SectionHeader>Personal</SectionHeader>
                     <ItemWrapper isInline align="center" isActive={path_name === '/profile'}>
                         <Link to="/profile">

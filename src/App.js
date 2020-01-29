@@ -7,6 +7,7 @@ import history from './utils/history'
 import Profile from './components/general/profile'
 import Members from './sections/app/members/members'
 import Media from './sections/app/media/media'
+import Lists from './sections/app/lists/lists'
 import PrivateRoute from './components/general/private-route'
 import { useAuth0 } from './react-auth0-spa'
 import { GlobalContextProvider } from './context/global-context'
@@ -65,10 +66,12 @@ function App() {
                     return
                 }
                 // 1. get group
+                console.log('Date: ', Date.now())
                 const res_group = await initSocket({
                     group_id: user_metadata.group.id,
                     user_id: user.sub,
                 })
+                console.log('After: ', Date.now())
                 setActiveGroup({
                     name: res_group.group.name,
                     id: res_group.group._id,
@@ -153,6 +156,7 @@ function App() {
                                     <PrivateRoute path="/members" component={Members} />
                                     <PrivateRoute path="/invite" component={Invite} />
                                     <PrivateRoute path="/expenses" component={Profile} />
+                                    <PrivateRoute path="/lists" component={Lists} />
                                     <PrivateRoute path="/new-group" component={NewGroup} />
                                 </Switch>
                             </div>
