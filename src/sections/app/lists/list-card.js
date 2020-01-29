@@ -1,27 +1,13 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import {
-    Box,
-    Stack,
-    Text,
-    Checkbox,
-    Button,
-    Input,
-    IconButton,
-    useToast,
-    Popover,
-    PopoverTrigger,
-    PopoverContent,
-    PopoverHeader,
-    PopoverBody,
-    PopoverArrow,
-    PopoverCloseButton,
-} from '@chakra-ui/core'
+import { Box, Stack, Text, Checkbox, Button, Input, IconButton, useToast } from '@chakra-ui/core'
 import { useGlobal } from '../../../context/global-context'
 import { useAuth0 } from '../../../react-auth0-spa'
 import { getSocket as socket } from '../../../api/socket'
 import { PopoverBubble } from '../../../components/general/popover-bubble'
 import { CardHeader } from './card-header'
+import { DeleteListPopover } from './delete-list-popover'
+import { addNewListItem, editListItem, deleteListItem, toggleListItem } from './list-socket-methods'
 
 const MAX_LIST_ITEM_LENGTH = 300
 const MAX_LIST_ITEMS = 20
@@ -63,12 +49,14 @@ const Card = ({ todo_list, deleteList }) => {
     const { user } = useAuth0()
     const toast = useToast()
 
+    const { _id: list_id } = todo_list
+    const { id: group_id } = active_group
+    const user_id = user.sub
+
     const new_item_input_ref = React.useRef()
     const itemsRef = React.useRef([])
 
-    const onNewListItem = () => {
-        setStatus('add_new_item')
-    }
+    const onNewListItem = () => setStatus('add_new_item')
 
     React.useEffect(() => {
         itemsRef.current = itemsRef.current.slice(0, todo_list.list_items.length)
@@ -85,9 +73,9 @@ const Card = ({ todo_list, deleteList }) => {
 
     React.useEffect(() => {
         const onNewListItem = item => {
-            const is_same_list = item._id === todo_list._id
+            const is_same_list = item._id === list_id
             const last_item = todo_list.list_items[todo_list.list_items.length - 1]
-            const is_edited_by_user = last_item.last_edited_by === user.sub
+            const is_edited_by_user = last_item.last_edited_by === user_id
 
             if (is_same_list && is_edited_by_user) {
                 setStatus('add_new_item')
@@ -126,32 +114,20 @@ const Card = ({ todo_list, deleteList }) => {
         }
     })
 
-    const onSetNewText = e => {
-        setNewText(e.target.value)
-    }
+    const onSetNewText = e => setNewText(e.target.value)
 
-    const addNewListIem = () => {
+    const onAddNewListItem = () => {
         if (!new_list_item_text) return
+
         if (new_list_item_text.length >= MAX_LIST_ITEM_LENGTH) {
-            toast(too_long_list_item_toast)
-            return
+            return toast(too_long_list_item_toast)
         }
+
         if (todo_list.list_items.length > MAX_LIST_ITEMS) {
-            toast(too_many_list_item_toast)
-            return
+            return toast(too_many_list_item_toast)
         }
-        socket().emit(
-            'add_new_list_item',
-            {
-                group_id: active_group.id,
-                list_id: todo_list._id,
-                text: new_list_item_text,
-                user_id: user.sub,
-            },
-            e => {
-                console.log(e)
-            }
-        )
+
+        addNewListItem({ group_id, list_id, text: new_list_item_text, user_id })
         setNewText('')
     }
 
@@ -161,61 +137,25 @@ const Card = ({ todo_list, deleteList }) => {
             toast(too_long_list_item_toast)
             return
         }
-
-        socket().emit(
-            'edit_list_item',
-            {
-                group_id: active_group.id,
-                list_id: todo_list._id,
-                text: edit_list_item_text,
-                text_id,
-                user_id: user.sub,
-            },
-            e => {
-                console.log(e)
-            }
-        )
+        editListItem({ group_id, list_id, text: edit_list_item_text, text_id, user_id })
         setStatus('initial_view')
     }
 
-    const deleteItem = text_id => {
-        socket().emit(
-            'delete_list_item',
-            {
-                group_id: active_group.id,
-                list_id: todo_list._id,
-                text_id,
-            },
-            e => {
-                console.log(e)
-            }
-        )
+    const onDeleteItem = text_id => {
+        deleteListItem({ group_id, list_id, text_id })
         setStatus('initial_view')
     }
 
-    const toggleListItem = (text_id, status) => {
+    const onToggleListItem = (text_id, status) => {
         let send_status = 'complete'
         if (status === 'complete') {
             send_status = 'pending'
         }
-
-        socket().emit(
-            'toggle_list_item',
-            {
-                group_id: active_group.id,
-                list_id: todo_list._id,
-                text_id,
-                user_id: user.sub,
-                status: send_status,
-            },
-            e => {
-                console.log(e)
-            }
-        )
+        toggleListItem({ group_id, list_id, text_id, user_id, status: send_status })
     }
 
     return (
-        <Box key={todo_list._id} maxWidth="600px" padding="8px" overflow="hidden" margin="5px" height="fit-content">
+        <Box key={list_id} maxWidth="600px" padding="8px" overflow="hidden" margin="5px" height="fit-content">
             <Stack
                 isInline
                 justify="space-between"
@@ -224,28 +164,7 @@ const Card = ({ todo_list, deleteList }) => {
                 marginBottom="8px"
             >
                 <CardHeader icon={todo_list.icon} name={todo_list.name} todo_list={todo_list} />
-                <Popover>
-                    <PopoverTrigger>
-                        <Button size="sm" marginTop="auto" variant="outline">
-                            Delete
-                        </Button>
-                    </PopoverTrigger>
-                    <PopoverContent zIndex={4}>
-                        <PopoverArrow />
-                        <PopoverCloseButton />
-                        <PopoverHeader fontWeight="bold">Delete {todo_list.name}?</PopoverHeader>
-                        <PopoverBody>Deleting a list is permanent and there is no way to get it back.</PopoverBody>
-                        <Button
-                            marginRight="0.75rem"
-                            marginLeft="0.75rem"
-                            marginBottom="0.75rem"
-                            variantColor="red"
-                            onClick={() => deleteList(todo_list._id, todo_list.name)}
-                        >
-                            Delete list
-                        </Button>
-                    </PopoverContent>
-                </Popover>
+                <DeleteListPopover name={todo_list.name} list_id={list_id} deleteList={deleteList} />
             </Stack>
             <Stack>
                 {todo_list.list_items.map((todo, idx) => {
@@ -259,7 +178,7 @@ const Card = ({ todo_list, deleteList }) => {
                         >
                             <Stack isInline width="100%">
                                 <Checkbox
-                                    onChange={() => toggleListItem(todo._id, todo.status)}
+                                    onChange={() => onToggleListItem(todo._id, todo.status)}
                                     isChecked={todo.status === 'complete'}
                                     size="lg"
                                     variantColor="teal"
@@ -308,7 +227,7 @@ const Card = ({ todo_list, deleteList }) => {
                             {status !== idx && item_menu === todo._id && (
                                 <PopoverBubble text={<Text>Delete item</Text>}>
                                     <IconButton
-                                        onClick={() => deleteItem(todo._id)}
+                                        onClick={() => onDeleteItem(todo._id)}
                                         aria-label="Delete list item"
                                         icon="small-close"
                                         size="sm"
@@ -330,7 +249,7 @@ const Card = ({ todo_list, deleteList }) => {
                         onChange={onSetNewText}
                     />
                     <Stack isInline align="center">
-                        <Button variantColor="teal" onClick={addNewListIem}>
+                        <Button variantColor="teal" onClick={onAddNewListItem}>
                             Add
                         </Button>
                         <PopoverBubble text={<Text>Close</Text>}>

@@ -1,12 +1,12 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { Button, Heading, Input, Spinner, Text, Stack, Icon } from '@chakra-ui/core'
+import { Button, Heading, Input, Spinner, Text, Stack, Icon, useToast } from '@chakra-ui/core'
 import { useAuth0 } from '../../../react-auth0-spa'
 import { useGlobal } from '../../../context/global-context'
 import Popover, { ArrowContainer } from 'react-tiny-popover'
 import { Bubble } from '../../../components/general/popover-bubble'
-import { useToast } from '@chakra-ui/core'
 import { useOutsideClick } from '../../../components/hooks/outside-click'
+import { Error } from '../../../components/elements'
 
 const HoverStack = styled(Stack)`
     &:hover {
@@ -100,24 +100,10 @@ export const InviteForm = ({ has_skip = false, onSuccess, onSkip }) => {
                             <Text>Add another</Text>
                         </HoverStack>
                     </Stack>
-                    {invite_status === 'missing_inputs' && (
-                        <Stack isInline align="center">
-                            <Icon color="red.500" name="warning" size="18px" />
-                            <Text>Add at least one email</Text>
-                        </Stack>
-                    )}
-                    {invite_status === 'incorrect_email' && (
-                        <Stack isInline align="center">
-                            <Icon color="red.500" name="warning" size="18px" />
-                            <Text>Emails should be in the format name@email.com</Text>
-                        </Stack>
-                    )}
-                    {invite_status === 'api_error' && (
-                        <Stack isInline align="center">
-                            <Icon color="red.500" name="warning" size="18px" />
-                            <Text>Server error, please try again</Text>
-                        </Stack>
-                    )}
+                    {invite_status === 'missing_inputs' && <Error error={'Add at least one email'} />}
+                    {invite_status === 'incorrect_email' &&
+                        (<Error error={'Emails should be in the format name@email.com'} />)()}
+                    {invite_status === 'api_error' && <Error error={'Server error, please try again'} />}
                     <Button className="btn-primary" type="submit" width="150px" alignSelf="flex-end">
                         {invite_status === 'sending' ? <Spinner /> : 'Send invite'}
                     </Button>

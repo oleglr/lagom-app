@@ -6,6 +6,7 @@ import { EmojiPicker } from '../chat/emoji-picker'
 import { useUI } from '../../../main-content'
 import { getSocket as socket } from '../../../api/socket'
 import { useGlobal } from '../../../context/global-context'
+import { editListIcon } from './list-socket-methods'
 
 const EmojiWrapper = styled.div`
     margin-right: 8px;
@@ -16,6 +17,10 @@ const EmojiWrapper = styled.div`
         background-color: var(--grey-3);
     }
 `
+const PopoverContainer = styled.div`
+    height: ${props => (props.is_mobile ? '300px' : '')};
+    width: ${props => (props.is_mobile ? '300px' : '')};
+`
 export const CardHeader = ({ name, icon, todo_list }) => {
     const [show_picker, setShowPicker] = React.useState(false)
     const completed = todo_list.list_items.filter(li => li.status === 'complete').length
@@ -25,17 +30,7 @@ export const CardHeader = ({ name, icon, todo_list }) => {
     const { active_group } = useGlobal()
 
     const updateListIcon = ({ native }) => {
-        socket().emit(
-            'edit_list_icon',
-            {
-                group_id: active_group.id,
-                list_id: todo_list._id,
-                icon: native,
-            },
-            e => {
-                console.log(e)
-            }
-        )
+        editListIcon({ group_id: active_group.id, list_id: todo_list._id, icon: native })
         setShowPicker(false)
     }
 
@@ -48,13 +43,13 @@ export const CardHeader = ({ name, icon, todo_list }) => {
                     padding={10}
                     content={({ position, targetRect, popoverRect }) => (
                         <ArrowContainer
-                            position={position}
+                            position={'bottom'}
                             targetRect={targetRect}
                             popoverRect={popoverRect}
                             arrowColor={'black'}
                             arrowSize={7}
                         >
-                            <div>
+                            <PopoverContainer is_mobile={is_mobile}>
                                 <EmojiPicker
                                     is_mobile={is_mobile}
                                     showPicker={true}
@@ -64,7 +59,7 @@ export const CardHeader = ({ name, icon, todo_list }) => {
                                         setShowPicker(false)
                                     }}
                                 />
-                            </div>
+                            </PopoverContainer>
                         </ArrowContainer>
                     )}
                 >

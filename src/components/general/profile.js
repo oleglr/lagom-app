@@ -22,6 +22,7 @@ import {
 import { Formik, Form, Field } from 'formik'
 import { useAuth0 } from '../../react-auth0-spa'
 import { MainSection, FormWrapper } from '../container'
+import { Error } from '../../components/elements'
 import AvatarEditor from 'react-avatar-editor'
 
 const MAX_FILE_SIZE = 3000000
@@ -220,12 +221,7 @@ const Profile = () => {
                                         </FormControl>
                                     )}
                                 />
-                                {status && status.msg && (
-                                    <Stack isInline align="center">
-                                        <Icon color="red.500" name="warning" size="18px" />
-                                        <Text>Error {status.msg}</Text>
-                                    </Stack>
-                                )}
+                                {status && status.msg && <Error error={status.msg} />}
                                 <Stack justify="flex-end">
                                     <Button
                                         mt={4}
