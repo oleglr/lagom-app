@@ -18,8 +18,8 @@ const EmojiWrapper = styled.div`
     }
 `
 const PopoverContainer = styled.div`
-    height: ${props => (props.is_mobile ? '300px' : '')};
-    width: ${props => (props.is_mobile ? '300px' : '')};
+    height: ${props => (props.is_mobile ? '372px' : '')};
+    width: ${props => (props.is_mobile ? '254px' : '')};
 `
 export const CardHeader = ({ name, icon, todo_list }) => {
     const [show_picker, setShowPicker] = React.useState(false)
@@ -50,15 +50,17 @@ export const CardHeader = ({ name, icon, todo_list }) => {
                             arrowSize={7}
                         >
                             <PopoverContainer is_mobile={is_mobile}>
-                                <EmojiPicker
-                                    is_mobile={is_mobile}
-                                    showPicker={true}
-                                    onSelectEmoji={updateListIcon}
-                                    has_custom={false}
-                                    closePicker={() => {
-                                        setShowPicker(false)
-                                    }}
-                                />
+                                <div>
+                                    <EmojiPicker
+                                        is_mobile={is_mobile}
+                                        showPicker={true}
+                                        onSelectEmoji={updateListIcon}
+                                        has_custom={false}
+                                        closePicker={() => {
+                                            setShowPicker(false)
+                                        }}
+                                    />
+                                </div>
                             </PopoverContainer>
                         </ArrowContainer>
                     )}
