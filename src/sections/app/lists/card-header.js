@@ -4,7 +4,6 @@ import { Box, Heading } from '@chakra-ui/core'
 import Popover, { ArrowContainer } from 'react-tiny-popover'
 import { EmojiPicker } from '../chat/emoji-picker'
 import { useUI } from '../../../main-content'
-import { getSocket as socket } from '../../../api/socket'
 import { useGlobal } from '../../../context/global-context'
 import { editListIcon } from './list-socket-methods'
 

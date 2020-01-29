@@ -9,11 +9,7 @@ import history from './utils/history'
 // A function that routes the user to the right place
 // after login
 const onRedirectCallback = appState => {
-    history.push(
-        appState && appState.targetUrl
-            ? appState.targetUrl
-            : window.location.pathname
-    )
+    history.push(appState && appState.targetUrl ? appState.targetUrl : window.location.pathname)
 }
 
 ReactDOM.render(
