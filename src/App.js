@@ -8,6 +8,7 @@ import Profile from './components/general/profile'
 import Members from './sections/app/members/members'
 import Media from './sections/app/media/media'
 import Lists from './sections/app/lists/lists'
+import Groups from './sections/app/groups/groups'
 import PrivateRoute from './components/general/private-route'
 import { useAuth0 } from './react-auth0-spa'
 import { GlobalContextProvider } from './context/global-context'
@@ -47,12 +48,18 @@ function App() {
     const [groupMembers, setGroupMembers] = React.useState()
 
     React.useEffect(() => {
+        let active_group = localStorage.getItem('active_group')
+        let user_id = localStorage.getItem('user_id')
+
         async function getLoginAndInitSocket() {
+            // 1. Save metadata in localstorage
+            // if localstorage --> connect to that group
+
             try {
                 const is_invited_and_just_signed_up =
                     localStorage.getItem('signup_group_id') && localStorage.getItem('signup_inviter_id')
                 const user_metadata = user[`${process.env.REACT_APP_META_KEY}/user_metadata`]
-                const has_group = user_metadata && user_metadata.group && user_metadata.group.id
+                const has_group = user_metadata && user_metadata.group && user_metadata.group.length
 
                 if (is_invited_and_just_signed_up && !has_group) {
                     const temp_token = await getTokenSilently()
@@ -65,13 +72,14 @@ function App() {
                     setSocketStatus(APP_STATUS.NO_GROUP)
                     return
                 }
-                // 1. get group
-                console.log('Date: ', Date.now())
-                const res_group = await initSocket({
-                    group_id: user_metadata.group.id,
-                    user_id: user.sub,
-                })
-                console.log('After: ', Date.now())
+
+                // else show overall dashboard
+                if (!active_group || !user_id) {
+                    active_group = user_metadata.group[0].id
+                    user_id = user.sub
+                }
+                // gets users of group + Group from db
+                const res_group = await initSocket({ group_id: active_group, user_id })
                 setActiveGroup({
                     name: res_group.group.name,
                     id: res_group.group._id,
@@ -151,7 +159,7 @@ function App() {
                                     <Route path="/external-invite" component={ExternalInvite} />
 
                                     <PrivateRoute path="/profile" component={Profile} />
-                                    <PrivateRoute path="/my-groups" component={Profile} />
+                                    <PrivateRoute path="/groups" component={Groups} />
                                     <PrivateRoute path="/media" component={Media} />
                                     <PrivateRoute path="/members" component={Members} />
                                     <PrivateRoute path="/invite" component={Invite} />

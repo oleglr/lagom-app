@@ -1,5 +1,4 @@
 import React from 'react'
-import styled from '@emotion/styled'
 import { Box, Icon } from '@chakra-ui/core'
 import { CellMeasurerCache } from 'react-virtualized'
 import { VirtualizedList } from './virtualized-list'

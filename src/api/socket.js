@@ -12,8 +12,10 @@ export const initSocket = ({ token, group_id, user_id }) => {
         socket.on('connect', () => {
             socket.emit('join group', { group_id, user_id }, res => {
                 if (res.err) {
+                    console.log('res: ', res)
                     reject(res.error)
                 }
+                console.log('res: ', res)
                 resolve(res)
             })
         })

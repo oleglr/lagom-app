@@ -10,8 +10,7 @@ import { initSocket } from '../../../api/socket'
 
 export const NewGroup = () => {
     const [form_status, setFormStatus] = React.useState('create_group')
-    const { setActiveGroup } = useGlobal()
-
+    const { setActiveGroup, active_group } = useGlobal()
     const { getTokenSilently, user } = useAuth0()
 
     const setNewGroup = (group, admin_id) => {
@@ -86,6 +85,15 @@ export const NewGroup = () => {
                                 console.log('res: ', res)
                                 if (res.error) {
                                     setStatus({ msg: res.error })
+                                    return
+                                }
+                                // TODO: make this smoother
+                                // has group and adds a new group
+                                if (active_group && active_group.name) {
+                                    // set group to local storage and refresh
+                                    localStorage.setItem('active_group', res.group_id)
+                                    localStorage.setItem('user_id', user.sub)
+                                    window.location.replace(`${process.env.REACT_APP_META_KEY}`)
                                     return
                                 }
                                 const res_group = await initSocket({

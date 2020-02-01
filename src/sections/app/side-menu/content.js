@@ -273,18 +273,20 @@ class SideContentController extends React.Component {
                             </Stack>
                         </Link>
                     </ItemWrapper>
-                    <ItemWrapper isInline align="center" isActive={path_name === '/my-groups'}>
-                        <Link to="my-groups">
-                            <Stack isInline align="center">
-                                <Text>
-                                    <span aria-label="balloon" role="img">
-                                        🎈
-                                    </span>{' '}
-                                    Groups
-                                </Text>
-                            </Stack>
-                        </Link>
-                    </ItemWrapper>
+                    {active_group && active_group.name && (
+                        <ItemWrapper isInline align="center" isActive={path_name === '/groups'}>
+                            <Link to="groups">
+                                <Stack isInline align="center">
+                                    <Text>
+                                        <span aria-label="balloon" role="img">
+                                            🎈
+                                        </span>{' '}
+                                        Groups
+                                    </Text>
+                                </Stack>
+                            </Link>
+                        </ItemWrapper>
+                    )}
                 </Stack>
                 <Button
                     width="fit-content"

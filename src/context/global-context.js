@@ -36,7 +36,7 @@ function handlePermission(permission) {
 }
 
 const askForNotificationPermission = () => {
-    if (typeof Notification === 'undefined' || !Notification in window) {
+    if (typeof Notification === 'undefined') {
         console.log('This browser does not support notifications.')
     } else {
         if (checkNotificationPromise()) {

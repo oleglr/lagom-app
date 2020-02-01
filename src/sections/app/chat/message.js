@@ -138,7 +138,7 @@ export const Message = React.memo(function({ all_items, message, idx, measure, i
 
 export const ChatMessage = React.memo(function({ showMenu, show_menu, message, idx, measure, isScrolling, isVisible }) {
     const { getUser, active_group } = useGlobal()
-    const { showMobileMenu, setSelectedMobileMessage, is_mobile } = useUI()
+    const { showMobileMenu, setSelectedMobileMessage } = useUI()
     const { setQuotedMessage } = React.useContext(ChatContext)
     const { user } = useAuth0()
 

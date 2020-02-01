@@ -12,6 +12,7 @@ import { PopoverForm } from './add-list-popover'
 import { getList, addNewList, deleteList } from './list-socket-methods'
 
 const PageLayout = styled(Box)`
+    height: 100%;
     margin-top: ${props => (props.is_mobile ? '' : '100px')};
     margin-right: ${props => (props.is_mobile ? '' : '100px')};
     margin-left: ${props => (props.is_mobile ? '' : '100px')};
@@ -118,30 +119,28 @@ class ListContainer extends React.Component {
         if (is_loading) return <Loader />
 
         return (
-            <div style={{ height: '100%' }}>
-                <PageLayout is_mobile={this.props.is_mobile}>
-                    <Stack isInline>
-                        <Heading marginLeft="0" marginBottom="8px" size="xl" style={{ marginRight: 'auto' }}>
-                            <span role="img" aria-label="list pad" style={{ paddingRight: '15px' }}>
-                                📝
-                            </span>
-                            Lists:
-                        </Heading>
-                    </Stack>
-                    <Text paddingBottom="16px">
-                        IKEA shopping list, Travel bucket list, restaurants to try 2020, movies to watch - click "Add
-                        list" to create a checklist that fits your group.
-                    </Text>
-                    <PopoverForm
-                        list_count={this.state.data.length}
-                        new_list_loading={this.state.new_list_loading}
-                        addNewListName={this.addNewListName}
-                    />
-                    <div style={{ height: '100%' }}>
-                        {!!data.length && <ListCard deleteList={this.deleteList} labels={labels} items={data} />}
-                    </div>
-                </PageLayout>
-            </div>
+            <PageLayout as="section" is_mobile={this.props.is_mobile}>
+                <Stack isInline>
+                    <Heading marginLeft="0" marginBottom="8px" size="xl" style={{ marginRight: 'auto' }}>
+                        <span role="img" aria-label="list pad" style={{ paddingRight: '15px' }}>
+                            📝
+                        </span>
+                        Lists:
+                    </Heading>
+                </Stack>
+                <Text paddingBottom="16px">
+                    IKEA shopping list, Travel bucket list, restaurants to try 2020, movies to watch - click "Add list"
+                    to create a checklist that fits your group.
+                </Text>
+                <PopoverForm
+                    list_count={this.state.data.length}
+                    new_list_loading={this.state.new_list_loading}
+                    addNewListName={this.addNewListName}
+                />
+                <div style={{ height: '100%' }}>
+                    {!!data.length && <ListCard deleteList={this.deleteList} labels={labels} items={data} />}
+                </div>
+            </PageLayout>
         )
     }
 }
