@@ -133,7 +133,10 @@ export const SignUpForm = () => {
                                 'Content-Type': 'application/json',
                             },
                         })
-                            .then(data => data.json())
+                            .then(data => {
+                                console.log('data: ', data)
+                                return data.json()
+                            })
                             .then(res => {
                                 setSubmitting(false)
                                 setStatus('complete')
