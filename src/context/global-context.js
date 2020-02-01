@@ -59,8 +59,8 @@ export const GlobalContextProvider = ({ children, activeGroup, groupMembers = []
     const [all_groups, setAllGroups] = React.useState([])
 
     const getUser = id => {
-        const user = group_members.find(u => u.user_id === id)
-        if (user) return { name: user.nickname, img: user.picture }
+        const user = group_members.find(u => u.id === id)
+        if (user) return { name: user.name, img: user.picture }
         if (id === LAGOMBOT) return { name: LAGOMBOT, img: LagomRobotImg }
 
         return { name: 'unkown user', img: LagomRobotImg }

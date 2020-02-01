@@ -33,7 +33,7 @@ export const GroupAvatars = ({ onClose }) => {
                     overflow="scroll"
                 >
                     {group_members.slice(0, 12).map(m => (
-                        <PopoverBubble key={m.user_id} text={<Text>{m.nickname}</Text>}>
+                        <PopoverBubble key={m.id} text={<Text>{m.nickname}</Text>}>
                             <Avatar margin="2px" src={m.picture} size="sm">
                                 {/* <AvatarBadge border="0.1em solid" borderColor="papayawhip" bg="green.400" size="1em" /> */}
                             </Avatar>

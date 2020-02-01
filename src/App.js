@@ -59,7 +59,6 @@ function App() {
                 const is_invited_and_just_signed_up =
                     localStorage.getItem('signup_group_id') && localStorage.getItem('signup_inviter_id')
                 const user_metadata = user[`${process.env.REACT_APP_META_KEY}/user_metadata`]
-                console.log('user_metadata: ', user_metadata)
                 const has_group = user_metadata && user_metadata.group && user_metadata.group.length
 
                 if (is_invited_and_just_signed_up && !has_group) {
@@ -86,6 +85,7 @@ function App() {
                 // gets users of group + Group from db
                 console.log({ group_id: active_group, user_id })
                 const res_group = await initSocket({ group_id: active_group, user_id })
+                console.log('res_group: ', res_group)
                 setActiveGroup({
                     name: res_group.group.name,
                     id: res_group.group._id,

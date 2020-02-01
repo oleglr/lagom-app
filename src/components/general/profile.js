@@ -22,6 +22,7 @@ import { useAuth0 } from '../../react-auth0-spa'
 import { MainSection, FormWrapper } from '../container'
 import { Error } from '../../components/elements'
 import AvatarEditor from 'react-avatar-editor'
+import { useGlobal } from '../../context/global-context'
 
 const MAX_FILE_SIZE = 3000000
 
@@ -32,7 +33,7 @@ const Profile = () => {
     const [show_modal, setShowModal] = React.useState(false)
 
     const { user, getTokenSilently } = useAuth0()
-
+    const { active_group } = useGlobal()
     const input_ref = React.useRef()
     const avatar_ref = React.useRef()
 
@@ -164,6 +165,7 @@ const Profile = () => {
                                 const formData = new FormData()
                                 formData.append('user_id', user.sub)
                                 formData.append('nickname', values.nickname)
+                                formData.append('group_id', active_group.id)
                                 formData.append('chatfile', files.blob)
                                 fetch(`${process.env.REACT_APP_API}/update-profile-img`, {
                                     method: 'POST',
@@ -188,6 +190,7 @@ const Profile = () => {
                                     body: JSON.stringify({
                                         user_id: user.sub,
                                         nickname: values.nickname,
+                                        group_id: active_group.id,
                                     }),
                                     headers: {
                                         'Content-Type': 'application/json',

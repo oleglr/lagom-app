@@ -1,13 +1,13 @@
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 import { Heading, Image, Box, Badge, Button } from '@chakra-ui/core'
-import moment from 'moment'
+// import moment from 'moment'
 import { Flex } from '../../../components/container'
 import { useGlobal } from '../../../context/global-context'
 import { CreateGroup } from '../../../components/general/create-group'
 import { useUI } from '../../../main-content'
 
-const Profile = () => {
+const Members = () => {
     const { group_members, active_group } = useGlobal()
     const { is_mobile } = useUI()
     const history = useHistory()
@@ -26,7 +26,7 @@ const Profile = () => {
                     !!group_members.length &&
                     group_members.map(member => (
                         <Box
-                            key={member.user_id}
+                            key={member.id}
                             maxW="200px"
                             minW="200px"
                             borderWidth="1px"
@@ -59,9 +59,9 @@ const Profile = () => {
                                 <Box as="div" color="gray.600" fontSize="sm">
                                     Member since:
                                 </Box>
-                                <Box as="div" color="gray.600" fontSize="sm">
+                                {/* <Box as="div" color="gray.600" fontSize="sm">
                                     {moment(member.created_at).format('ll')}
-                                </Box>
+                                </Box> */}
                             </Box>
                         </Box>
                     ))}
@@ -73,4 +73,4 @@ const Profile = () => {
     )
 }
 
-export default Profile
+export default Members

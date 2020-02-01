@@ -91,11 +91,10 @@ export const ExternalInvite = ({ ...props }) => {
         localStorage.setItem('signup_inviter_id', group_res.inviter_id)
         history.push(`/sign-up`)
     }
-
     return (
         <MainSection>
             <FormWrapper>
-                {status === 'error' && <Error text={`Error: ${group_res}`} />}
+                {status === 'error' && <Error error={`Error: ${group_res}`} />}
                 {status === 'loading' && <Spinner />}
                 {status === 'has_group_details' && (
                     <Stack>
