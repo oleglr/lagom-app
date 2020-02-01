@@ -290,7 +290,11 @@ class SideContentController extends React.Component {
                 </Stack>
                 <Button
                     width="fit-content"
-                    onClick={() => logout()}
+                    onClick={() => {
+                        localStorage.removeItem('active_group')
+                        localStorage.removeItem('user_id')
+                        logout()
+                    }}
                     variant="link"
                     color="white"
                     marginTop="32px"

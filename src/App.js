@@ -65,11 +65,15 @@ function App() {
                 if (is_invited_and_just_signed_up && !has_group) {
                     const temp_token = await getTokenSilently()
                     setToken(temp_token)
+                    localStorage.removeItem('active_group')
+                    localStorage.removeItem('user_id')
                     setSocketStatus(APP_STATUS.ADDING_USER_TO_GROUP)
                     return
                 }
 
                 if (!user_metadata || !has_group) {
+                    localStorage.removeItem('active_group')
+                    localStorage.removeItem('user_id')
                     setSocketStatus(APP_STATUS.NO_GROUP)
                     return
                 }

@@ -83,6 +83,7 @@ const ChatEditableInput = styled.div`
     border-style: solid;
     border-image: initial;
     border-color: rgb(0, 0, 0);
+    user-select: text;
 
     &:empty:not(:focus)::before {
         content: attr(data-ph);

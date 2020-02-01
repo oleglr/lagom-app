@@ -37,6 +37,8 @@ const Container = styled.section`
 
 const SignUp_ = ({ ...props }) => {
     const { loginWithRedirect } = useAuth0()
+    localStorage.removeItem('active_group')
+    localStorage.removeItem('user_id')
 
     return (
         <Container>
