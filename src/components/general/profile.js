@@ -165,7 +165,9 @@ const Profile = () => {
                                 const formData = new FormData()
                                 formData.append('user_id', user.sub)
                                 formData.append('nickname', values.nickname)
-                                formData.append('group_id', active_group.id)
+                                if (active_group && active_group.id) {
+                                    formData.append('group_id', active_group.id)
+                                }
                                 formData.append('chatfile', files.blob)
                                 fetch(`${process.env.REACT_APP_API}/update-profile-img`, {
                                     method: 'POST',
@@ -190,7 +192,7 @@ const Profile = () => {
                                     body: JSON.stringify({
                                         user_id: user.sub,
                                         nickname: values.nickname,
-                                        group_id: active_group.id,
+                                        group_id: active_group ? active_group.id : '',
                                     }),
                                     headers: {
                                         'Content-Type': 'application/json',
