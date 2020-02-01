@@ -17,6 +17,7 @@ import {
     ModalBody,
     Stack,
 } from '@chakra-ui/core'
+import Div100vh from 'react-div-100vh'
 import { PopoverBubble } from '../../../components/general/popover-bubble'
 import { Flex } from '../../../components/container'
 import { useAuth0 } from '../../../react-auth0-spa'
@@ -47,7 +48,7 @@ const IconWrapper = styled.span`
 
 const StyledImage = styled.img`
     image-orientation: from-image;
-    max-height: ${props => (props.is_mobile ? '100%' : '50vh')};
+    max-height: ${props => (props.is_mobile ? '65vh' : '50vh')};
     border-radius: 5px;
 `
 
@@ -250,50 +251,35 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
                 >
                     <ModalOverlay zIndex="1400" />
                     <ModalContent borderRadius="5px" style={is_mobile ? mobileModalStyle : {}}>
-                        <Stack isInline align="center" borderBottom="1px solid var(--grey-2)">
-                            <ModalHeader style={{ marginRight: 'auto' }}>Upload a file</ModalHeader>
-                            <CloseModalWrapper onClick={() => setFiles('')}>
-                                <Icon name="close" />
-                            </CloseModalWrapper>
-                        </Stack>
-                        <ModalBody>
-                            {preview && preview.length === 1 && (
-                                <Flex height="unset">
-                                    <StyledImage is_mobile={is_mobile} alt="upload preview" src={preview[0]} />
-                                </Flex>
-                            )}
-                            <Flex justify="unset" wrap="wrap" height="unset">
-                                {preview &&
-                                    preview.length > 1 &&
-                                    preview.map((url, idx) => (
-                                        <ImageWrapper key={idx}>
-                                            <IconCloseWrapper onClick={() => removeFile(idx)}>
-                                                <Icon name="close" size="10px" />
-                                            </IconCloseWrapper>
-                                            <SmallImage alt="Upload preview" src={url} />
-                                        </ImageWrapper>
-                                    ))}
-                            </Flex>
-                            {!is_mobile && (
-                                <div style={{ marginTop: '1rem' }}>
-                                    <FormLabel htmlFor="image_message">Add a comment (optional)</FormLabel>
-                                    <Input id="image_message" type="text" value={message} onChange={onWriteMessage} />
-                                </div>
-                            )}
-                        </ModalBody>
-                        <ModalFooter style={is_mobile ? mobileFooterStyle : {}}>
-                            <Stack isInline width={is_mobile ? '100%' : 'unset'}>
-                                {status === 'error' && (
-                                    <Alert status="error">
-                                        <AlertIcon />
-                                        {error_msg}
-                                    </Alert>
+                        <Div100vh>
+                            <Stack isInline align="center" borderBottom="1px solid var(--grey-2)">
+                                <ModalHeader style={{ marginRight: 'auto' }}>Upload a file</ModalHeader>
+                                <CloseModalWrapper onClick={() => setFiles('')}>
+                                    <Icon name="close" />
+                                </CloseModalWrapper>
+                            </Stack>
+                            <ModalBody>
+                                {preview && preview.length === 1 && (
+                                    <Flex height="unset">
+                                        <StyledImage is_mobile={is_mobile} alt="upload preview" src={preview[0]} />
+                                    </Flex>
                                 )}
-                                {is_mobile && (
-                                    <div style={{ width: '100%', marginRight: '10px' }}>
+                                <Flex justify="unset" wrap="wrap" height="unset">
+                                    {preview &&
+                                        preview.length > 1 &&
+                                        preview.map((url, idx) => (
+                                            <ImageWrapper key={idx}>
+                                                <IconCloseWrapper onClick={() => removeFile(idx)}>
+                                                    <Icon name="close" size="10px" />
+                                                </IconCloseWrapper>
+                                                <SmallImage alt="Upload preview" src={url} />
+                                            </ImageWrapper>
+                                        ))}
+                                </Flex>
+                                {!is_mobile && (
+                                    <div style={{ marginTop: '1rem' }}>
                                         <FormLabel htmlFor="image_message">Add a comment (optional)</FormLabel>
                                         <Input
-                                            width="100%"
                                             id="image_message"
                                             type="text"
                                             value={message}
@@ -301,22 +287,44 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
                                         />
                                     </div>
                                 )}
-                                {!is_mobile && (
-                                    <Button variant="ghost" mr={3} onClick={() => setFiles('')}>
-                                        Close
+                            </ModalBody>
+                            <ModalFooter style={is_mobile ? mobileFooterStyle : {}}>
+                                <Stack isInline width={is_mobile ? '100%' : 'unset'}>
+                                    {status === 'error' && (
+                                        <Alert status="error">
+                                            <AlertIcon />
+                                            {error_msg}
+                                        </Alert>
+                                    )}
+                                    {is_mobile && (
+                                        <div style={{ width: '100%', marginRight: '10px' }}>
+                                            <FormLabel htmlFor="image_message">Add a comment (optional)</FormLabel>
+                                            <Input
+                                                width="100%"
+                                                id="image_message"
+                                                type="text"
+                                                value={message}
+                                                onChange={onWriteMessage}
+                                            />
+                                        </div>
+                                    )}
+                                    {!is_mobile && (
+                                        <Button variant="ghost" mr={3} onClick={() => setFiles('')}>
+                                            Close
+                                        </Button>
+                                    )}
+                                    <Button
+                                        id="input-btn"
+                                        style={is_mobile ? mobileButtonStyle : {}}
+                                        onClick={sendFiles}
+                                        className="btn-primary"
+                                        ref={initial_focus_ref}
+                                    >
+                                        {status === 'loading' ? <Spinner /> : 'Send'}
                                     </Button>
-                                )}
-                                <Button
-                                    id="input-btn"
-                                    style={is_mobile ? mobileButtonStyle : {}}
-                                    onClick={sendFiles}
-                                    className="btn-primary"
-                                    ref={initial_focus_ref}
-                                >
-                                    {status === 'loading' ? <Spinner /> : 'Send'}
-                                </Button>
-                            </Stack>
-                        </ModalFooter>
+                                </Stack>
+                            </ModalFooter>
+                        </Div100vh>
                     </ModalContent>
                 </Modal>
             </form>

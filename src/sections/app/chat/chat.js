@@ -2,6 +2,7 @@ import React from 'react'
 import { ChatFeed } from './feed'
 import { SendMessage } from './send-message'
 import { ChatContextProvider } from './chat-context'
+
 // TODO: enable thread
 // import { ThreadDrawer } from './thread'
 
