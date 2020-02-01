@@ -91,6 +91,7 @@ function App() {
                     id: res_group.group._id,
                     admin: res_group.group.admin.id,
                 })
+                console.log('res_group.users: ', res_group.users)
                 setGroupMembers(res_group.users)
                 setSocketStatus('')
             } catch (e) {
