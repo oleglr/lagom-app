@@ -23,6 +23,7 @@ import { Flex } from '../../../components/container'
 import { useAuth0 } from '../../../react-auth0-spa'
 import { useGlobal } from '../../../context/global-context'
 import { useUI } from '../../../main-content'
+import Compress from 'compress.js'
 
 const IconWrapper = styled.span`
     position: absolute;
@@ -142,6 +143,22 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
 
         setStatus('loading')
 
+        const compress = new Compress()
+        const compressed_files = await compress.compress(files, {
+            size: 2,
+            quality: 0.75,
+            maxWidth: 1920,
+            maxHeight: 1920,
+            resize: true,
+        })
+
+        const test = compressed_files.map(f => {
+            const base64str = f.data
+            const imgExt = f.ext
+            const base_64 = Compress.convertBase64ToFile(base64str, imgExt)
+            return base_64
+        })
+
         const formData = new FormData()
         formData.append('group_id', active_group.id)
         formData.append('user_id', user.sub)
@@ -153,7 +170,7 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
             formData.append('message_id', thread_message_id)
         }
 
-        files.forEach(file => {
+        test.forEach(file => {
             formData.append('chatfile', file)
         })
 
