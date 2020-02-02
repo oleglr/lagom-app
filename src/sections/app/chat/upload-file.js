@@ -24,6 +24,7 @@ import { useAuth0 } from '../../../react-auth0-spa'
 import { useGlobal } from '../../../context/global-context'
 import { useUI } from '../../../main-content'
 import Compress from 'compress.js'
+import imageCompression from 'browser-image-compression'
 
 const IconWrapper = styled.span`
     position: absolute;
@@ -87,6 +88,31 @@ const IconCloseWrapper = styled.div`
         cursor: pointer;
     }
 `
+const StyledInput = styled.input`
+    width: 100%;
+    display: flex;
+    align-items: center;
+    position: relative;
+    font-size: 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    height: 2.5rem;
+    line-height: 2.5rem;
+    background-color: rgb(255, 255, 255);
+    transition: all 0.2s ease 0s;
+    outline: none;
+    border-radius: 0.25rem;
+    border-width: 1px;
+    border-style: solid;
+    border-image: initial;
+    border-color: inherit;
+
+    &:focus {
+        border-color: #3182ce;
+        box-shadow: 0 0 0 1px #3182ce;
+    }
+`
+
 const MAX_FILE_SIZE = 5000000
 
 const mobileFooterStyle = {
@@ -103,12 +129,20 @@ const mobileButtonStyle = {
     marginTop: '28px',
 }
 
+var compress_options = {
+    maxSizeMB: 2,
+    maxWidthOrHeight: 1920,
+    useWebWorker: true,
+}
+
 export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
+    const [modal_status, setModalStatus] = React.useState('')
     const [files, setFiles] = React.useState([])
     const [preview, setPreview] = React.useState([])
     const [status, setStatus] = React.useState('')
     const [message, setMessage] = React.useState('')
     const [error_msg, setErrorMsg] = React.useState('')
+
     const { is_mobile } = useUI()
     const { getTokenSilently, user } = useAuth0()
     const { active_group } = useGlobal()
@@ -120,6 +154,7 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
         e.preventDefault()
         setMessage(e.target.value)
     }
+
     const addSetFile = file => {
         setErrorMsg('')
         setStatus('')
@@ -127,9 +162,23 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
         setFiles(Array.from(file))
     }
 
-    const uploadFileClient = e => {
+    const uploadFileClient = async e => {
+        setModalStatus('loading')
+
         const file = e.target.files
-        addSetFile(file)
+        const compressed_files = []
+        for (let i = 0; i < file.length; i++) {
+            if (file[i].size > 20000) {
+                const compressed_and_resized_file = await imageCompression(file[i], compress_options)
+                compressed_files.push(compressed_and_resized_file)
+            } else {
+                compressed_files.push(file[i])
+            }
+        }
+
+        setModalStatus('ready')
+
+        addSetFile(compressed_files)
     }
 
     React.useEffect(() => {
@@ -152,7 +201,7 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
             resize: true,
         })
 
-        const test = compressed_files.map(f => {
+        const compressed_blobs = compressed_files.map(f => {
             const base64str = f.data
             const imgExt = f.ext
             const base_64 = Compress.convertBase64ToFile(base64str, imgExt)
@@ -170,7 +219,7 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
             formData.append('message_id', thread_message_id)
         }
 
-        test.forEach(file => {
+        compressed_blobs.forEach(file => {
             formData.append('chatfile', file)
         })
 
@@ -237,6 +286,12 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
         }
     }, [preview, is_mobile])
 
+    const cleanUpAndClose = () => {
+        if (modal_status === 'loading') return
+        setModalStatus('')
+        setFiles([])
+    }
+
     return (
         <>
             <form encType="multipart/form-data">
@@ -261,8 +316,8 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
                     </PopoverBubble>
                 </IconWrapper>
                 <Modal
-                    isOpen={!!files.length}
-                    onClose={() => setFiles([])}
+                    isOpen={!!modal_status}
+                    onClose={cleanUpAndClose}
                     size={is_mobile ? 'full' : 'xl'}
                     blockScrollOnMount={true}
                 >
@@ -271,38 +326,48 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
                         <Div100vh>
                             <Stack isInline align="center" borderBottom="1px solid var(--grey-2)">
                                 <ModalHeader style={{ marginRight: 'auto' }}>Upload a file</ModalHeader>
-                                <CloseModalWrapper onClick={() => setFiles('')}>
+                                <CloseModalWrapper onClick={cleanUpAndClose}>
                                     <Icon name="close" />
                                 </CloseModalWrapper>
                             </Stack>
                             <ModalBody>
-                                {preview && preview.length === 1 && (
-                                    <Flex height="unset">
-                                        <StyledImage is_mobile={is_mobile} alt="upload preview" src={preview[0]} />
-                                    </Flex>
-                                )}
-                                <Flex justify="unset" wrap="wrap" height="unset">
-                                    {preview &&
-                                        preview.length > 1 &&
-                                        preview.map((url, idx) => (
-                                            <ImageWrapper key={idx}>
-                                                <IconCloseWrapper onClick={() => removeFile(idx)}>
-                                                    <Icon name="close" size="10px" />
-                                                </IconCloseWrapper>
-                                                <SmallImage alt="Upload preview" src={url} />
-                                            </ImageWrapper>
-                                        ))}
-                                </Flex>
-                                {!is_mobile && (
-                                    <div style={{ marginTop: '1rem' }}>
-                                        <FormLabel htmlFor="image_message">Add a comment (optional)</FormLabel>
-                                        <Input
-                                            id="image_message"
-                                            type="text"
-                                            value={message}
-                                            onChange={onWriteMessage}
-                                        />
-                                    </div>
+                                {modal_status === 'loading' && <Spinner />}
+                                {modal_status === 'ready' && (
+                                    <>
+                                        {preview && preview.length === 1 && (
+                                            <Flex height="unset">
+                                                <StyledImage
+                                                    is_mobile={is_mobile}
+                                                    alt="upload preview"
+                                                    src={preview[0]}
+                                                />
+                                            </Flex>
+                                        )}
+                                        <Flex justify="unset" wrap="wrap" height="unset">
+                                            {preview &&
+                                                preview.length > 1 &&
+                                                preview.map((url, idx) => (
+                                                    <ImageWrapper key={idx}>
+                                                        <IconCloseWrapper onClick={() => removeFile(idx)}>
+                                                            <Icon name="close" size="10px" />
+                                                        </IconCloseWrapper>
+                                                        <SmallImage alt="Upload preview" src={url} />
+                                                    </ImageWrapper>
+                                                ))}
+                                        </Flex>
+                                        {!is_mobile && (
+                                            <div style={{ marginTop: '1rem' }}>
+                                                <FormLabel htmlFor="image_message">Add a comment (optional)</FormLabel>
+                                                <StyledInput
+                                                    className="input"
+                                                    id="image_message"
+                                                    type="text"
+                                                    value={message}
+                                                    onChange={onWriteMessage}
+                                                />
+                                            </div>
+                                        )}
+                                    </>
                                 )}
                             </ModalBody>
                             <ModalFooter style={is_mobile ? mobileFooterStyle : {}}>
@@ -326,7 +391,7 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
                                         </div>
                                     )}
                                     {!is_mobile && (
-                                        <Button variant="ghost" mr={3} onClick={() => setFiles('')}>
+                                        <Button variant="ghost" mr={3} onClick={cleanUpAndClose}>
                                             Close
                                         </Button>
                                     )}
@@ -342,6 +407,7 @@ export const Upload = ({ is_thread, thread_message_id, paste_file }) => {
                                 </Stack>
                             </ModalFooter>
                         </Div100vh>
+                        )}
                     </ModalContent>
                 </Modal>
             </form>
